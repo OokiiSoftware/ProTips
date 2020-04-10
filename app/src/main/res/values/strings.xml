@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">ProTips</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="facebook_app_id">560218498115674</string>
+    <string name="fb_login_protocol_scheme">fb560218498115674</string>
+
+    <string name="perfil_usuario_nome">Nome</string>
+    <string name="perfil_usuario_email">Email</string>
+    <string name="perfil_usuario_tipname">TipName</string>
+    <string name="perfil_usuario_preferencias">Preferencias</string>
+    <string name="perfil_usuario_editar">Editar</string>
+
+    <string name="perfil_usuario_et_nome">SEU NOME</string>
+    <string name="perfil_usuario_et_email">SEU EMAIL</string>
+    <string name="perfil_usuario_et_tipname">SEU TIPNAME</string>
+
+    <string name="ajuda_1">FEED DE POSTAGENS GRÁTIS DE TIPSTERS</string>
+
+    <!--Titulos de cada activity e fragmento-->
+    <string name="titulo_inicio">FEED</string>
+    <string name="titulo_pesquisa">ENCONTRE TIPSTERS</string>
+    <string name="titulo_notificacoes">MEUS TIPSTERS</string>
+    <string name="titulo_perfil">MEU PERFIL</string>
+
+    <string name="titulo_conversas">CONVERSAS</string>
+    <string name="titulo_contatos">CONTATOS</string>
+
+    <string name="titulo_batepapo">BATEPAPO</string>
+    <string name="titulo_preferencias">PREFERENCIAS</string>
+    <string name="titulo_edit_user">EDITAR PERFIL</string>
+
+    <!--Titulos da Navbar-->
+    <string name="nav_titulo_inicio">Início</string>
+    <string name="nav_titulo_pesquisa">Tipsters</string>
+    <string name="nav_titulo_perfil">Perfil</string>
+    <string name="nav_titulo_notificacoes">Notificações</string>
+
+    <!--Menus em geral-->
+    <string name="menu_logout">Logout</string>
+    <string name="menu_pesquisa">Pesquisar</string>
+    <string name="menu_add_contato">Adicionar Contato</string>
+
+    <string name="menu_batepapo">Batepapo</string>
+    <string name="menu_postar_feed">Fazer uma postagem</string>
+
+    <string name="alert_erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="txt_cadastro">Cadastre-se</string>
+    <string name="txt_ou">OU</string>
+    <string name="txt_entre_com">Entre com</string>
+    <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
+    <string name="popup_titulo">Faça sua postagem</string>
+    <string name="nao">Não</string>
+    <string name="sim">Sim</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="postar">Postar</string>
+    <string name="popup_caixa_de_texto">Escreva aqui..</string>
+    <string name="perfil_usuario_categoria">Sou um</string>
+    <string name="salvar">Salvar</string>
+    <string name="voltar">Voltar</string>
+    <string name="confirmar_senha">Confirmar senha</string>
+    <string name="senha">Senha</string>
+    <string name="e_mail">e-mail</string>
+    <string name="nome">Nome</string>
+    <string name="criar">CRIAR</string>
+    <string name="conta">CONTA</string>
+    <string name="bem_vindo_ao">Bem vindo ao</string>
+    <string name="protips">PROTIPS</string>
+    <string name="erro_de_autencicacao">Erro de autencicação</string>
+    <string name="login_cancelado">Login Cancelado</string>
+    <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
+    <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
+    <string name="submenu">Submenu Drawer</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
+    <string name="faca_sua_postagem">Faça sua postagem</string>
+    <string name="erro_foto_salvar">Ocorreu um erro ao salvar esta foto</string>
+    <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
+    <string name="carregando_a_imagem">Carregando a imagem</string>
+    <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
+    <string name="tipName_obrigatório">TipName obrigatório</string>
+    <string name="TipName_deve_conter_no_mínimo_6_dígitos">TipName deve conter no mínimo 6 dígitos</string>
+    <string name="insira_seu_nome">Insira seu nome</string>
+    <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatoria</string>
+    <string name="selecione_uma_categoria">Sou um: seleciona uma opção</string>
+    <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
+    <string name="erro_foto_carregar">Erro ao carregar a foto</string>
+    <string name="campo_obrigatório">Campo obrigatório</string>
+    <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
+    <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
+    <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
+    <string name="cadastro_email_invalido">Este email não é inválido</string>
+    <string name="cadastro_email_repetido">Este email já está cadastrado</string>
+    <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
+    <string name="usuario_salvo">Dados Salvos com sucesso</string>
+    <string name="nome_do_tipster">Nome do Tipster</string>
+    <string name="texto_aqui">Texto aqui</string>
+    <string name="_00_00_01_jan">00:00 01/jan</string>
+    <string name="bom">Bom</string>
+    <string name="ruim">Ruim</string>
+    <string name="legenda">Legenda</string>
+    <string name="tip_voto_bom">Tip marcado como BOM</string>
+    <string name="tip_voto_ruim">Tip marcado como RUIM</string>
+    <string name="post_erro">Ocorreu um erro ao postar seu Tip</string>
+    <string name="_00_00">00:00</string>
+    <string name="_0">0</string>
+    <string name="more_info">Mais Informações do Tipster</string>
+
+    <string-array name="usuario_sou_um">
+        <item>Apostador</item>
+        <item>Tipster</item>
+    </string-array>
+</resources>
