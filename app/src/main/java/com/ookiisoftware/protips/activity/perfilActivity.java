@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,7 +45,7 @@ import com.ookiisoftware.protips.modelo.Usuario;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-public class UserEditActivity extends AppCompatActivity {
+public class perfilActivity extends AppCompatActivity {
 
     //region Variáveis
     private static final String TAG = "EditFragment";
@@ -72,7 +73,7 @@ public class UserEditActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_edit);
+        setContentView(R.layout.activity_perfil);
         Init();
     }
 
@@ -158,39 +159,40 @@ onActivityResult em fragments
         //endregion
 
         txt_email.setEnabled(false);
-        // Firebase
-        user = Import.getFirebase.getUser();
-        isTipster = Import.getFirebase.isTipster();
-        if (isTipster) {
-            Tipster userU = Import.getFirebase.getTipster();
-            if (userU != null) {
-                txt_tipName.setText(userU.getDados().getTipname());
-                txt_tipName.setEnabled(false);
-                spinner.setSelection(userU.getDados().getCategoria());
-            }
-        } else {
-            Apostador userU = Import.getFirebase.getApostador();
-            if (userU != null) {
-                txt_tipName.setText(userU.getDados().getTipname());
-                txt_tipName.setEnabled(false);
-                spinner.setSelection(userU.getDados().getCategoria());
-            }
-        }
 
         // Spinner
         ArrayAdapter adapter = ArrayAdapter.createFromResource(activity, R.array.usuario_sou_um, R.layout.item_spinner);
         spinner.setAdapter(adapter);
 
+        // Firebase
+        user = Import.getFirebase.getUser();
+        isTipster = Import.getFirebase.isTipster();
+        if (!isPrimeiroLogin) {
+            if (isTipster) {
+                Tipster userU = Import.getFirebase.getTipster();
+                if (userU != null) {
+                    txt_tipName.setText(userU.getDados().getTipname());
+                    spinner.setSelection(userU.getDados().getCategoria());
+                }
+            } else {
+                Apostador userU = Import.getFirebase.getApostador();
+                if (userU != null) {
+                    txt_tipName.setText(userU.getDados().getTipname());
+                    spinner.setSelection(userU.getDados().getCategoria());
+                }
+            }
+        }
+        txt_tipName.setEnabled(isPrimeiroLogin);
+
         txt_nome.setText(user.getDisplayName());
         txt_email.setText(user.getEmail());
-
 
         if (user.getPhotoUrl() != null)
             foto_uri = user.getPhotoUrl().toString();
 
         Glide.with(activity).load(foto_uri).into(foto_user);
 
-        //region Eventos de Clique
+        //region setListener
         foto_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,6 +239,15 @@ onActivityResult em fragments
             }
         });
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                isTipster = position == Usuario.Categoria.Tipster.ordinal();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
         //endregion
     }
 
@@ -307,6 +318,7 @@ onActivityResult em fragments
     private void Salvar(Apostador usuario) {
         // Salva no firebase
         usuario.salvar();
+        Import.getFirebase.setUser(activity, usuario);
         Glide.with(activity).load(usuario.getDados().getFoto()).into(foto_user);
 
         SalvarComum();
@@ -314,6 +326,7 @@ onActivityResult em fragments
     private void Salvar(Tipster usuario) {
         // Salva no firebase
         usuario.salvar();
+        Import.getFirebase.setUser(activity, usuario);
         Glide.with(activity).load(usuario.getDados().getFoto()).into(foto_user);
 
         SalvarComum();

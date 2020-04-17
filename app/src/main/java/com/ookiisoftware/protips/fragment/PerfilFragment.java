@@ -1,5 +1,6 @@
 package com.ookiisoftware.protips.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,15 +15,20 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.UserEditActivity;
+import com.ookiisoftware.protips.activity.perfilActivity;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-
-import java.util.Objects;
 
 public class PerfilFragment extends Fragment {
 
 //    private static final String TAG = "PerfilFragment";
+
+    private Activity activity;
+
+    public PerfilFragment(){}
+    public PerfilFragment(Activity activity) {
+        this.activity = activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,13 +58,13 @@ public class PerfilFragment extends Fragment {
         }
         txt_tipname.setText(Import.getFirebase.getId());
 
-        Glide.with(Objects.requireNonNull(getActivity())).load(uri).into(img_foto_usuario);
+        Glide.with(activity).load(uri).into(img_foto_usuario);
 
         // Ação de click dos botões
         btm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), UserEditActivity.class);
+                Intent intent = new Intent(activity, perfilActivity.class);
                 intent.putExtra(Constantes.FRAGMENT, Constantes.FRAGMENT_EDIT);
                 startActivity(intent);
             }

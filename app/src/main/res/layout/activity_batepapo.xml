@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/batepapo_toolbar"
-        layout="@layout/toolbar_layout"/>
+        layout="@layout/toolbar"/>
 
     <include
         android:id="@+id/batepapo_tabs"

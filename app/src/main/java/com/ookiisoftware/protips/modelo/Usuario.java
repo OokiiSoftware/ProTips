@@ -11,7 +11,7 @@ public class Usuario {
     private String id, nome, email, tipname, senha, foto;
     private int categoria;
 
-    public static enum Categoria {
+    public enum Categoria {
         Apostador, Tipster
     }
 

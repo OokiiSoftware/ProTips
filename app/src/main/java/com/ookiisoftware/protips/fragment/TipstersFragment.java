@@ -2,38 +2,41 @@ package com.ookiisoftware.protips.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.TipsterAdapter;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Tipster;
 
-import java.util.ArrayList;
+public class TipstersFragment extends Fragment {
 
-public class TipsFragment extends Fragment {
+    //region Variáveis
+//    private static final String TAG = "TipstersFragment";
 
-    final private ArrayList<Tipster> tipsters;
+//    final private ArrayList<Tipster> tipsters;
     private Activity activity;
     private TipsterAdapter adapter;
+    public SwipeRefreshLayout refreshLayout;
+    //endregion
 
-    public TipsFragment(Activity activity) {
+    public TipstersFragment(){
+
+    }
+    public TipstersFragment(Activity activity) {
         this.activity = activity;
-        tipsters = Import.get.tipsters.getAll();
+//        tipsters = Import.get.tipsters.getAll();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tips, container, false);
+        View view = inflater.inflate(R.layout.fragment_tipsters, container, false);
         Init(view);
         return view;
     }
@@ -41,15 +44,41 @@ public class TipsFragment extends Fragment {
     //region Métodos
 
     private void Init(View view) {
-        final EditText et_pesquisa = view.findViewById(R.id.et_pesquisa);
-        //region Variáveis
+        //region findViewById
+//        final SearchView et_pesquisa = view.findViewById(R.id.et_pesquisa);
         LinearLayout btn_filtro = view.findViewById(R.id.btn_filtro);
         RecyclerView recyclerView = view.findViewById(R.id.recycler);
+        refreshLayout = view.findViewById(R.id.swipe_refresh);
+        //endregion
 
-        adapter = new TipsterAdapter(activity, tipsters);
+        refreshLayout.setRefreshing(true);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Import.activites.getMainActivity().feedUpdate();
+            }
+        });
+
+        adapter = new TipsterAdapter(activity, Import.get.tipsters.getAll());
         recyclerView.setAdapter(adapter);
 
-        et_pesquisa.addTextChangedListener(new TextWatcher() {
+        /*final SearchView et_pesquisa = view.findViewById(R.id.et_pesquisa);
+        et_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        et_pesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                refreshLayout.setEnabled(newText.isEmpty());
+                Import.activites.getMainActivity().inicioFragment.refreshLayout.setEnabled(newText.isEmpty());
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });*/
+        /*et_pesquisa.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -67,7 +96,7 @@ public class TipsFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {}
-        });
+        });*/
 
         btn_filtro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,12 +111,8 @@ public class TipsFragment extends Fragment {
             adapter.notifyDataSetChanged();
     }
 
-    private ArrayList<Tipster> pesquisa(String busca) {
-        ArrayList<Tipster> items = new ArrayList<>();
-        for (Tipster item : Import.get.tipsters.getAll())
-            if (item.getDados().getNome().contains(busca))
-                items.add(item);
-        return items;
+    public TipsterAdapter getAdapter () {
+        return adapter;
     }
 
     private void popupFiltro() {

@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,7 +37,7 @@ public class CadastroActivity extends AppCompatActivity {
 
     private EditText et_nome, et_email, et_senha, et_confirmar_senha;
     private ProgressBar progressBar;
-    private LinearLayout img_foto_bg;
+    private ImageView foto;
 
     //endregion
 
@@ -66,7 +66,7 @@ public class CadastroActivity extends AppCompatActivity {
         et_nome = findViewById(R.id.cadastro_et_nome);
         et_email = findViewById(R.id.cadastro_et_email);
         et_senha = findViewById(R.id.cadastro_et_senha);
-        img_foto_bg = findViewById(R.id.cadastro_foto_bg);
+        foto = findViewById(R.id.foto);
         et_confirmar_senha = findViewById(R.id.cadastro_et_confirmar_senha);
         FloatingActionButton btn_cadastrar = findViewById(R.id.cadastro_btn_cadastrar);
         //endregion
@@ -103,27 +103,27 @@ public class CadastroActivity extends AppCompatActivity {
             }
         });
 
-        img_foto_bg.setOnClickListener(new View.OnClickListener() {
+        foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (random.nextInt(5)){
                     case 0:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_amarelo));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_amarelo));
                         break;
                     case 1:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
                         break;
                     case 2:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_azul_light));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_azul_light));
                         break;
                     case 3:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_azul_light2));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_azul_light2));
                         break;
                     case 4:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_verde));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_verde));
                         break;
                     case 5:
-                        img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_color_primary));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_color_primary));
                         break;
                 }
             }

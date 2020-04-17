@@ -2,6 +2,8 @@ package com.ookiisoftware.protips.modelo;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
@@ -25,13 +27,26 @@ import java.util.List;
 
 public class Post {
 
+    public enum Esporte {
+        esporte, testeE
+    }
+    public enum Mercado {
+        mercado, testeM
+    }
+
     //region Variáveis
     private String id;
     private String id_tipster;
-//    private String titulo;
-    private String foto;
+    private String titulo;
     private String texto;
+    private String foto;
+    private String odd_maxima;
+    private String odd_minima;
+    private String horario_maximo;
+    private String horario_minimo;
     private String data;
+    private int esporte;
+    private int mercado;
 
     private List<String> bom, ruim;
     //endregion
@@ -41,38 +56,47 @@ public class Post {
         ruim = new LinkedList<>();
     }
 
-    public void salvar(final Activity activity, boolean fotoLocal) {
-        if (fotoLocal)
+    public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
+        if (isFotoLocal) {
             Import.getFirebase.getStorage()
                     .child(Constantes.firebase.child.POSTES)
                     .child(getId())
                     .putFile(Uri.parse(getFoto()))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
-                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.getResult() != null) {
-                                        setFoto(task.getResult().toString());
-                                        salvar();
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
+                                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.getResult() != null) {
+                                            setFoto(task.getResult().toString());
+                                            salvar();
+                                            activity.finish();
+                                            Import.get.tipsters.postes().add(Post.this);
+                                            Import.activites.getMainActivity().inicioFragment.adapterUpdate();
+                                        }
                                     }
-                                }
-                            });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
+                                });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_erro));
+                    progressBar.setVisibility(View.GONE);
                 }
             });
+        } else {
+            salvar();
+        }
     }
+
     private void salvar() {
         String id = getId_tipster() == null ? Import.getFirebase.getId() : getId_tipster();
         DatabaseReference reference = Import.getFirebase.getReference();
         reference
                 .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
                 .child(id)
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -103,7 +127,7 @@ public class Post {
                         item.getRuim().add(myId);
                     else if (!getRuim().contains(myId))
                         item.getRuim().remove(myId);
-                    item.salvar(null, false);
+                    item.salvar(null, null, false);
                 } else
                     Import.Alert.msg("Post", "atualizar", "item null");
             }
@@ -122,16 +146,6 @@ public class Post {
     public void setId(String id) {
         this.id = id;
     }
-/*
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-*/
 
     public String getId_tipster() {
         return id_tipster;
@@ -183,6 +197,62 @@ public class Post {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getOdd_maxima() {
+        return odd_maxima;
+    }
+
+    public void setOdd_maxima(String odd_maxima) {
+        this.odd_maxima = odd_maxima;
+    }
+
+    public String getOdd_minima() {
+        return odd_minima;
+    }
+
+    public void setOdd_minima(String odd_minima) {
+        this.odd_minima = odd_minima;
+    }
+
+    public String getHorario_maximo() {
+        return horario_maximo;
+    }
+
+    public void setHorario_maximo(String horario_maximo) {
+        this.horario_maximo = horario_maximo;
+    }
+
+    public String getHorario_minimo() {
+        return horario_minimo;
+    }
+
+    public void setHorario_minimo(String horario_minimo) {
+        this.horario_minimo = horario_minimo;
+    }
+
+    public int getEsporte() {
+        return esporte;
+    }
+
+    public void setEsporte(int esporte) {
+        this.esporte = esporte;
+    }
+
+    public int getMercado() {
+        return mercado;
+    }
+
+    public void setMercado(int mercado) {
+        this.mercado = mercado;
     }
 
     //endregion

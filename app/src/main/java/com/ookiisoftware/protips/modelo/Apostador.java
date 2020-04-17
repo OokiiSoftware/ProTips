@@ -22,7 +22,7 @@ public class Apostador {
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.APOSTADOR)
                 .child(dados.getId())
-                .child(Constantes.firebase.child.DADOS)
+//                .child(Constantes.firebase.child.DADOS)
                 .setValue(this);
 
         reference

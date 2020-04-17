@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.fragment.TipsFragment;
+import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.fragment.InicioFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.batepapo.ContatosFragment;
@@ -27,18 +27,18 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final String className;
     private final Activity activity;
     private InicioFragment inicioFragment;
-    private TipsFragment tipsFragment;
+    private TipstersFragment tipstersFragment;
     private PerfilFragment perfilFragment;
 
     public SectionsPagerAdapter(FragmentManager fm, int behavior, Activity activity,
-                                InicioFragment inicioFragment, TipsFragment tipsFragment, PerfilFragment perfilFragment) {
+                                InicioFragment inicioFragment, TipstersFragment tipstersFragment, PerfilFragment perfilFragment) {
         super(fm, behavior);
         this.className = activity.getClass().getSimpleName();
         this.activity = activity;
 
         this.inicioFragment = inicioFragment;
         this.perfilFragment = perfilFragment;
-        this.tipsFragment = tipsFragment;
+        this.tipstersFragment = tipstersFragment;
     }
 
     public SectionsPagerAdapter(FragmentManager fm, int behavior, Activity activity) {
@@ -56,7 +56,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                     case 0:
                         return inicioFragment;
                     case 1:
-                        return tipsFragment;
+                        return tipstersFragment;
                     case 2:
                         return perfilFragment;
 //                    case 3:

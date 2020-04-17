@@ -18,4 +18,5 @@
     <color name="verde">#8bca3b</color>
     <color name="verdeDark">#136d09</color>
     <color name="preto">#000000</color>
+    <color name="pretoLight">#333</color>
 </resources>

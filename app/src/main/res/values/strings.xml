@@ -106,9 +106,39 @@
     <string name="_00_00">00:00</string>
     <string name="_0">0</string>
     <string name="more_info">Mais Informações do Tipster</string>
+    <string name="titulo">Titulo</string>
+    <string name="odd_maxima">Odd Máxima</string>
+    <string name="odd_minima">Odd Minima</string>
+    <string name="mercado">Mercado</string>
+    <string name="horario_minimo">Horario minimo indicado</string>
+    <string name="horario_maximo">Horario máximo indicado</string>
+    <string name="criar_tip">CRIAR TIP</string>
+    <string name="titulo_criar_tip">Criar Tip</string>
+    <string name="imagem">Imagem</string>
+    <string name="descricao">Descrição..</string>
+    <string name="post_titulo_obrigatorio">O Titulo é obrigatório</string>
+    <string name="post_texto_obrigatorio">A Descrição é obrigatória</string>
+    <string name="post_foto_obrigatorio">A Foto é obrigatória</string>
+    <string name="post_odd_maxima_obrigatorio">Odd Máxima é obrigatória</string>
+    <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
+    <string name="post_esporte_obrigatorio">Selecione o esporte</string>
+    <string name="post_mercado_obrigatorio">Selecione o mercado</string>
+    <string name="login">LOGIN</string>
+    <string name="pass_hint">***********</string>
+    <string name="usuario">Usuário</string>
 
     <string-array name="usuario_sou_um">
         <item>Apostador</item>
         <item>Tipster</item>
     </string-array>
+
+    <string-array name="mercado">
+        <item>Mercado</item>
+        <item>testeM</item>
+    </string-array>
+    <string-array name="esporte">
+        <item>Esporte</item>
+        <item>testeE</item>
+    </string-array>
+
 </resources>

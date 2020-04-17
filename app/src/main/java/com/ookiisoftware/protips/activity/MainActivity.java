@@ -1,23 +1,12 @@
 package com.ookiisoftware.protips.activity;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.ChildEventListener;
@@ -26,13 +15,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.SegundoPlanoService;
 import com.ookiisoftware.protips.fragment.InicioFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
-import com.ookiisoftware.protips.fragment.TipsFragment;
+import com.ookiisoftware.protips.fragment.TipstersFragment;
+import com.ookiisoftware.protips.modelo.Activites;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.Tipster;
 
@@ -41,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -56,28 +48,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private static final String TAG = "MainActivity";
     private Activity activity;
 
-    private ViewPager viewPager;
+    public CustomViewPager viewPager;
     private DrawerLayout drawer;
     private BottomNavigationView navView;
-    private Dialog popup_post;
 
     // Itens do Menu
-    MenuItem inicio_postar_feed;
+    MenuItem menu_new_feed;
+    MenuItem menu_pesquisa;
 
     private SectionsPagerAdapter sectionsPagerAdapter;
     private int NavCurrentItem = 0;
-    private String foto_post_path;
 
-    private DatabaseReference refMeusTipsters;
-    private ChildEventListener eventMeusTipsters;
+    private DatabaseReference refMeusClientes;
+    private ChildEventListener eventMeusClientes;
     private DatabaseReference refAllTipsters;
     private ChildEventListener eventAllTipsters;
 
     // Titulo personalizado pra ActionBar
     private AppCompatTextView action_bar_titulo_1, action_bar_titulo_2;
 
-    private InicioFragment inicioFragment;
-    private TipsFragment tipsFragment;
+    public InicioFragment inicioFragment;
+    private TipstersFragment tipstersFragment;
     private PerfilFragment perfilFragment;
 
     //endregion
@@ -97,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         try {
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
-                Intent intent = new Intent(activity, UserEditActivity.class);
+                Intent intent = new Intent(activity, perfilActivity.class);
                 intent.putExtra(Constantes.PRIMEIRO_LOGIN, true);
                 startActivity(intent);
             }
@@ -112,22 +103,44 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onStart() {
         super.onStart();
-//        refMeusTipsters.addChildEventListener(eventMeusTipsters);
-        if (!Import.getFirebase.isTipster())
+        if (Import.getFirebase.isTipster())
+            refMeusClientes.addChildEventListener(eventMeusClientes);
+        else
             refAllTipsters.addChildEventListener(eventAllTipsters);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (!Import.getFirebase.isTipster())
+        if (Import.getFirebase.isTipster())
+            refMeusClientes.removeEventListener(eventMeusClientes);
+        else
             refAllTipsters.removeEventListener(eventAllTipsters);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        inicio_postar_feed = menu.getItem(0);
+        menu_new_feed = menu.findItem(R.id.menu_postar_feed);
+        menu_pesquisa = menu.findItem(R.id.menu_pesquisa);
+
+        SearchView et_pesquisa = (SearchView) menu_pesquisa.getActionView();
+        et_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        et_pesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                tipstersFragment.refreshLayout.setEnabled(newText.isEmpty());
+                inicioFragment.refreshLayout.setEnabled(newText.isEmpty());
+                tipstersFragment.getAdapter().getFilter().filter(newText);
+                return false;
+            }
+        });
+
         SwithMenu(0);
         return super.onCreateOptionsMenu(menu);
     }
@@ -140,7 +153,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             }
             case R.id.menu_postar_feed: {
-                PopupPost();
+                Intent intent = new Intent(activity, PostActivity.class);
+                startActivity(intent);
                 break;
             }
         }
@@ -215,25 +229,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void onPageScrollStateChanged(int state) {}
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.REQUEST_PERMISSION_STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null){
-            if (popup_post != null) {
-                Uri uri = data.getData();
-//                Import.Alert.msg(TAG, "onActivityResult", uri);
-                ImageView imageView = popup_post.findViewById(R.id.foto);
-                Glide.with(activity).load(uri).into(imageView);
-                foto_post_path = uri.toString();
-            }
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         if(viewPager.getCurrentItem() != 0)
             viewPager.setCurrentItem(0);
         else {
-            super.onBackPressed();
+            if (inicioFragment.scrollInTop())
+                super.onBackPressed();
+            else
+                inicioFragment.rollToTop();
         }
     }
 
@@ -251,8 +254,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //endregion
 
         inicioFragment = new InicioFragment(activity);
-        tipsFragment = new TipsFragment(activity);
-        perfilFragment = new PerfilFragment();
+        tipstersFragment = new TipstersFragment(activity);
+        perfilFragment = new PerfilFragment(activity);
+
+        Import.activites = new Activites();
+        Import.activites.setMainActivity(this);
 
         //region Toolbar
         setSupportActionBar(toolbar);
@@ -271,99 +277,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //endregion
 
         //region SectionsPagerAdapter
-        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), 0, activity, inicioFragment, tipsFragment, perfilFragment);
+        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), 0, activity, inicioFragment, tipstersFragment, perfilFragment);
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.addOnPageChangeListener(this);
         //endregion
 
-//        getMyTipsters();
         getAllTipsters();
+        getMyTips();
     }
 
     private void SwithMenu(int position) {
         switch (position) {
             case 0: {
-                if (Import.getFirebase.isTipster())
-                    inicio_postar_feed.setVisible(true);
+//                inicio_postar_feed.setVisible(Import.getFirebase.isTipster());
                 break;
             }
             case 1:
             case 2:
             case 3:
-                inicio_postar_feed.setVisible(false);
                 break;
         }
-    }
-
-    private void PopupPost () {
-        popup_post = new Dialog(activity);
-        popup_post.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        popup_post.setCanceledOnTouchOutside(false);
-        popup_post.setContentView(R.layout.popup_post);
-        pegarFotoDaGaleria();
-        
-        //region findViewById
-        final TextView textLength = popup_post.findViewById(R.id.popup_length);
-        final EditText editText = popup_post.findViewById(R.id.texto);
-        final Button btn_positivo = popup_post.findViewById(R.id.popup_btn_positivo);
-        final Button btn_negativo = popup_post.findViewById(R.id.popup_btn_negativo);
-        final ImageView foto = popup_post.findViewById(R.id.foto);
-        //endregion
-
-        //region Listener
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String valor = editText.getText().length() + "/200";
-                textLength.setText(valor);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
-        foto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pegarFotoDaGaleria();
-            }
-        });
-        btn_positivo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String texto = editText.getText().toString();
-                if (texto.isEmpty() || foto_post_path == null)
-                    return;
-
-                Post post = new Post();
-                post.setTexto(texto);
-                post.setFoto(foto_post_path);
-                post.setId(Import.get.randomString());
-                post.setData(Import.get.Data());
-                post.salvar(activity,true);
-                popup_post.dismiss();
-                Import.get.tipsters.postes().add(post);
-                inicioFragment.adapterUpdate();
-            }
-        });
-        btn_negativo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popup_post.dismiss();
-            }
-        });
-        //endregion
-
-        popup_post.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                popup_post = null;
-            }
-        });
-        popup_post.show();
+        menu_new_feed.setVisible(position == 0 && Import.getFirebase.isTipster());
+        menu_pesquisa.setVisible(position == 1);
     }
 
     private void getAllTipsters() {
@@ -376,15 +311,26 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
                     Tipster item = dataSnapshot.getValue(Tipster.class);
-                    if (item != null)
-                        if (Import.get.tipsters.FindTipster(item.getDados().getId()) == null) {
+                    if (item != null){
+                        Tipster item_2 = Import.get.tipsters.FindTipster(item.getDados().getId());
+                        if (item_2 == null) {
                             Import.get.tipsters.getAll().add(item);
-                            tipsFragment.adapterUpdate();
-                            if (Import.getFirebase.getApostador().getTipsters().contains(item.getDados().getId())){
-                                Import.get.tipsters.postes().addAll(item.getPostes());
-                                inicioFragment.adapterUpdate();
+                            Import.get.tipsters.getAllAux().add(item);
+                        } else {
+                            Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
+                            Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
+                        }
+                        if (Import.getFirebase.getApostador().getTipsters().contains(item.getDados().getId())) {
+                            for (Post post : item.getPostes().values()) {
+                                if (Import.get.tipsters.FindPost(post.getId()) == null)
+                                    Import.get.tipsters.postes().add(post);
                             }
                         }
+                        tipstersFragment.adapterUpdate();
+                        inicioFragment.adapterUpdate();
+                    }
+                    inicioFragment.refreshLayout.setRefreshing(false);
+                    tipstersFragment.refreshLayout.setRefreshing(false);
                 } catch (Exception ex) {
                     Import.Alert.erro(TAG, ex);
                     Import.Alert.msg(TAG, "onChildAdded", dataSnapshot.getKey());
@@ -422,8 +368,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getKey();
                 Import.get.tipsters.getAll().remove(Import.get.tipsters.FindTipster(value));
+                Import.get.tipsters.getAllAux().remove(Import.get.tipsters.FindTipster(value));
                 Import.Alert.msg(TAG, "onChildRemoved", value);
-                tipsFragment.adapterUpdate();
+                tipstersFragment.adapterUpdate();
             }
 
             @Override
@@ -434,14 +381,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         };
     }
 
-    private void getMyTipsters() {
-        refMeusTipsters = Import.getFirebase.getReference()
+    private void getMyTips() {
+        refMeusClientes = Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.APOSTADOR)
+                .child(Constantes.firebase.child.TIPSTERS)
                 .child(Import.getFirebase.getId())
-                .child(Constantes.firebase.child.TIPSTERS);
+                .child(Constantes.firebase.child.APOSTADORES);
 
-        eventMeusTipsters = new ChildEventListener() {
+        eventMeusClientes = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 String value = dataSnapshot.getValue(String.class);
@@ -449,16 +396,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Import.getFirebase.getReference()
                             .child(Constantes.firebase.child.USUARIO)
                             .child(Constantes.firebase.child.TIPSTERS)
-//                            .child(value)
-//                            .child(Constantes.firebase.child.DADOS)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Tipster item = dataSnapshot.getValue(Tipster.class);
-//                                    if (item != null)
-//                                        if (Import.get.tipsters.FindMyTipster(item.getDados().getId()) == null)
-//                                            Import.get.tipsters.meusTipsters().add(item);
-//                                        tipsFragment.adapterUpdate();
+//                                    Tipster item = dataSnapshot.getValue(Tipster.class);
                                 }
 
                                 @Override
@@ -498,10 +439,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getKey();
-//                Import.get.tipsters.meusTipsters().remove(Import.get.tipsters.FindMyTipster(value));
-//                Import.Alert.msg(TAG, "onChildRemoved", value);
-//                tipsFragment.adapterUpdate();
+//                String value = dataSnapshot.getKey();
             }
 
             @Override
@@ -512,11 +450,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         };
     }
 
-    private void pegarFotoDaGaleria() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, Constantes.REQUEST_PERMISSION_STORANGE);
+    public void feedUpdate() {
+        onStop();
+        onStart();
     }
 
     //endregion

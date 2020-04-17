@@ -9,7 +9,7 @@
 
     <include
         android:id="@+id/conversa_toolbar"
-        layout="@layout/toolbar_layout" />
+        layout="@layout/toolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/conversa_recyclerView"

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -128,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
         ImageView btn_login_twitter = findViewById(R.id.login_btn_twitter);
         ImageView btn_login_google = findViewById(R.id.login_btn_google);
         TextView btn_cadastrar = findViewById(R.id.login_txt_cadastrar);
-        LinearLayout btn_login = findViewById(R.id.login_btn_login);
+        TextView btn_login = findViewById(R.id.login_btn_login);
         splashScreen = findViewById(R.id.splash_screen);
         progressBar = findViewById(R.id.progressBar);
         et_senha = findViewById(R.id.login_et_senha);
@@ -137,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
 
         activity = this;
 
-        et_email.setText(Import.getFirebase.getEmail());
+        et_email.setText(Import.getFirebase.getUltinoEmail(this));
 
         // Initialize Firebase Auth
         firebaseAuth = Import.getFirebase.getAuth();
@@ -346,6 +347,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startIntent(Intent intent){
+        Import.getFirebase.setUltinoEmail(this, Import.getFirebase.getEmail());
+
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         finish();

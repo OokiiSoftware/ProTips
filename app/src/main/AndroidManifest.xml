@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ookiisoftware.protips">
 
@@ -42,11 +41,12 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
 
-        <activity android:name=".activity.BatepapoActivity"/>
+        <activity android:name=".activity.BatepapoActivity" />
         <activity android:name=".activity.ConversaActivity" />
-        <activity android:name=".activity.CadastroActivity"/>
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.UserEditActivity"/>
+        <activity android:name=".activity.CadastroActivity" />
+        <activity android:name=".activity.perfilActivity" android:screenOrientation="sensorPortrait"/>
+        <activity android:name=".activity.MainActivity" android:screenOrientation="sensorPortrait"/>
+        <activity android:name=".activity.PostActivity"/>
 
         <activity
             android:name=".activity.LoginActivity"

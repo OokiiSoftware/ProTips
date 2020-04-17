@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/azulLight"
+    tools:context=".activity.LoginActivity">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/login_item_margin"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        android:stretchColumns="0,1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/img_1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/ic_launcher"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:id="@+id/edit_text0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:enabled="false"
+                android:text="@string/bem_vindo_ao"
+                android:textColor="@color/branco"
+                android:textSize="25sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/protips"
+                android:textColor="@color/branco"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TableRow android:layout_marginTop="@dimen/login_item_margin">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_stroke_edittext_login"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_user"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@null" />
+
+                <EditText
+                    android:id="@+id/login_et_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="40sp"
+                    android:background="@color/transparente"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColorHint="@color/colorPrimary"
+                    android:textColor="@color/colorPrimary"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/usuario"
+                    android:importantForAutofill="no" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/login_txt_cadastrar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:textAlignment="center"
+                android:text="@string/txt_cadastro"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimaryDark"/>
+
+        </TableRow>
+
+        <TableRow android:layout_marginTop="@dimen/login_item_margin">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_stroke_edittext_login"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_lock"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="@null" />
+
+                <EditText
+                    android:id="@+id/login_et_senha"
+                    android:layout_width="match_parent"
+                    android:layout_height="40sp"
+                    android:background="@color/transparente"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColorHint="@color/colorPrimary"
+                    android:textColor="@color/colorPrimary"
+                    android:inputType="textPassword"
+                    android:hint="@string/pass_hint"
+                    android:importantForAutofill="no" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="0dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:text="@string/txt_ou"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="2dp"
+                    android:text="@string/txt_entre_com"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorPrimary"/>
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow android:layout_marginTop="@dimen/login_item_margin">
+
+            <TextView
+                android:id="@+id/login_btn_login"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo_branco"
+                android:text="@string/login"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textColor="@color/azulLight"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RelativeLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp">
+
+                    <com.facebook.login.widget.LoginButton
+                        android:id="@+id/login_btn_facebook"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:padding="3dp"/>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_facebook"/>
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/login_btn_twitter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_twitter"
+                    android:padding="3dp" />
+
+                <ImageView
+                    android:id="@+id/login_btn_google"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:contentDescription="@null"
+                    android:background="@drawable/ic_google"
+                    android:padding="3dp"/>
+
+            </LinearLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <include
+        layout="@layout/splash_screen"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

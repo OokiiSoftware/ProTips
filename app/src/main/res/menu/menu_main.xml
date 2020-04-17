@@ -9,4 +9,11 @@
         android:icon="@drawable/ic_add"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/menu_pesquisa"
+        android:title="@string/menu_pesquisa"
+        android:icon="@drawable/ic_pesquisa"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
 </menu>

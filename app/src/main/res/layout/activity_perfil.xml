@@ -9,7 +9,7 @@
     android:background="@color/azulLight2"
     android:focusable="false"
     android:id="@+id/fragment_edit"
-    tools:context=".activity.UserEditActivity">
+    tools:context=".activity.perfilActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_0"

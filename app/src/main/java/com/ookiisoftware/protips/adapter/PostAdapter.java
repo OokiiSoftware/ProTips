@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -20,7 +19,6 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.Tipster;
-import com.ookiisoftware.protips.modelo.Usuario;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -41,7 +39,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
     @NonNull
     @Override
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.item_feed, parent, false);
+        View view = LayoutInflater.from(activity).inflate(R.layout.item_post, parent, false);
         view.setOnClickListener(this);
         return new Holder(view);
     }
@@ -108,7 +106,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
             holder.green_red.setVisibility(View.GONE);
 
         if (path != null)
-            Glide.with(activity).load(path).into(holder.foto);
+            Glide.with(activity).load(path).into(holder.foto_user);
         if (foto_post != null)
             Glide.with(activity).load(foto_post).into(holder.foto_post);
     }
@@ -127,21 +125,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         return false;
     }
 
-    public Post getItem(int position) {
-        return list.get(position);
-    }
-
     static class Holder extends RecyclerView.ViewHolder {
-        ConstraintLayout constraintLayout;
-        ImageView foto;
+        ImageView foto_user;
         ImageViewTouch foto_post;
-        LinearLayout green_red, bom, ruim;
-        TextView texto, data, tipster;
+        LinearLayout green_red;
+        TextView texto, data, tipster, bom, ruim;
 
         Holder(@NonNull View itemView) {
             super(itemView);
-            constraintLayout = itemView.findViewById(R.id.img_constraint);
-            foto = itemView.findViewById(R.id.foto);
+            foto_user = itemView.findViewById(R.id.foto);
             foto_post = itemView.findViewById(R.id.foto_post);
             green_red = itemView.findViewById(R.id.green_red);
             texto = itemView.findViewById(R.id.texto);

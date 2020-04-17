@@ -5,16 +5,20 @@ import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Tipster {
 
     private Usuario dados;
-    private ArrayList<Post> postes;
+    private HashMap<String, Post> postes;
+//    private ArrayList<Post> postes;
+    private ArrayList<String> apostadores;
 
     public Tipster() {
-        postes = new ArrayList<>();
+        apostadores = new ArrayList<>();
+        postes = new HashMap<>();
+//        postes = new ArrayList<>();
         dados = new Usuario();
     }
 
@@ -24,7 +28,7 @@ public class Tipster {
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
                 .child(dados.getId())
-                .child(Constantes.firebase.child.DADOS)
+//                .child(Constantes.firebase.child.DADOS)
                 .setValue(this);
 
         reference
@@ -43,7 +47,15 @@ public class Tipster {
         this.dados = dados;
     }
 
-    public List<Post> getPostes() {
+    public HashMap<String, Post> getPostes() {
+        return postes;
+    }
+
+    public void setPostes(HashMap<String, Post> postes) {
+        this.postes = postes;
+    }
+
+    /*public List<Post> getPostes() {
         if (postes == null)
             postes = new ArrayList<>();
         return postes;
@@ -51,6 +63,17 @@ public class Tipster {
 
     public void setPostes(ArrayList<Post> postes) {
         this.postes = postes;
+    }*/
+
+    public ArrayList<String> getApostadores() {
+        if (apostadores == null)
+            apostadores = new ArrayList<>();
+        return apostadores;
     }
-//endregion
+
+    public void setApostadores(ArrayList<String> apostadores) {
+        this.apostadores = apostadores;
+    }
+
+    //endregion
 }

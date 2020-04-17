@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.PostActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:stretchColumns="0,1">
+
+            <EditText
+                android:id="@+id/titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_stroke_primary_color"
+                android:hint="@string/titulo"
+                android:inputType="textCapWords"
+                android:padding="5dp"
+                android:importantForAutofill="no" />
+
+            <TableRow android:layout_marginTop="5dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/img_constraint"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/foto"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginEnd="5dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@null"
+                        android:maxHeight="200dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_download"
+                        android:background="@color/colorPrimary"
+
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <EditText
+                    android:id="@+id/texto"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:gravity="top"
+                    android:hint="@string/descricao"
+                    android:maxLength="200"
+                    android:maxLines="6"
+                    android:padding="10dp"
+                    android:inputType="none"
+                    android:importantForAutofill="no" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="@string/imagem"/>
+
+                <TextView
+                    android:id="@+id/popup_length"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <EditText
+                    android:id="@+id/odd_max"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:hint="@string/odd_maxima"
+                    android:padding="5dp"
+                    android:inputType="none"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/odd_min"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:hint="@string/odd_minima"
+                    android:padding="5dp"
+                    android:inputType="none"
+                    android:importantForAutofill="no" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="5dp">
+
+                <Spinner
+                    android:id="@+id/esporte"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:padding="3dp" />
+
+                <Spinner
+                    android:id="@+id/mercado"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:padding="3dp" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="5dp">
+
+                <EditText
+                    android:id="@+id/btn_horario_minimo"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:textAlignment="center"
+                    android:text="@string/_00_00"
+                    android:padding="5dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+                <EditText
+                    android:id="@+id/btn_horario_maximo"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/_00_00"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false" />
+
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/horario_minimo"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/horario_maximo"
+                    android:textAlignment="center" />
+
+            </TableRow>
+
+            <TableRow android:visibility="gone">
+
+                <Button
+                    android:id="@+id/cancel_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:text="@string/cancelar" />
+
+                <Button
+                    android:id="@+id/ok_button"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/postar" />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_ok"/>
+
+</RelativeLayout>

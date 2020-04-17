@@ -109,20 +109,22 @@
     </RelativeLayout>
 
     <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="25dp"
+        android:src="@drawable/ic_enter"
+        android:tint="@color/colorAccent"
+        android:contentDescription="@null"/>
+
+    <ImageView
         android:id="@+id/online"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="25dp"
+        android:layout_marginEnd="65dp"
         android:src="@drawable/bg_circulo_verde"
-        android:contentDescription="@null"/>
-
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="60sp"
-        android:src="@drawable/ic_email_nao_lido"
+        android:visibility="gone"
         android:contentDescription="@null" />
 
     <TextView

@@ -36,6 +36,7 @@ public class Constantes {
             public static final String POSTES = "postes";
             public static final String TIPSTERS = "tipsters";
             public static final String APOSTADOR = "apostador";
+            public static final String APOSTADORES = "apostadores";
         }
     }
 
@@ -46,6 +47,7 @@ public class Constantes {
             public static final String EMAIL = "usuario_logado_email";
             public static final String CATEGORIA = "usuario_logado_categoria";
             public static final String FOTO = "usuario_logado_foto";
+            public static final String ULTIMO_EMAIL = "usuario_logado_ultimo_email";
         }
         public static class conversa {
 

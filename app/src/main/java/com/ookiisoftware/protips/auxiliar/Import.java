@@ -1,7 +1,6 @@
 package com.ookiisoftware.protips.auxiliar;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,19 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -37,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.LoginActivity;
+import com.ookiisoftware.protips.modelo.Activites;
 import com.ookiisoftware.protips.modelo.Apostador;
 import com.ookiisoftware.protips.modelo.Conversa;
 import com.ookiisoftware.protips.modelo.Mensagem;
@@ -51,12 +43,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
 
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
 
 public class Import {
     private static final String TAG = "Import";
@@ -144,7 +137,7 @@ public class Import {
     }
 
     public static String getSQLiteDatabaseName(Context context){
-        SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
         return pref.getString(Constantes.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
     }
 
@@ -153,51 +146,6 @@ public class Import {
     }
     public static Typeface getFonteBold(Context context){
         return Typeface.createFromAsset(context.getAssets(), "candara-bold.ttf");
-    }
-
-    public static void Popup1 (final Activity activity, String _titulo) {
-
-        final Dialog dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        dialog.setCanceledOnTouchOutside(false);
-        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.popup_post, null);
-
-        final TextView textLength = layout.findViewById(R.id.popup_length);
-        final EditText editText = layout.findViewById(R.id.texto);
-
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                textLength.setText(editText.getText().length() + "/200");
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
-
-        final Button btn_positivo = layout.findViewById(R.id.popup_btn_positivo);
-        final Button btn_negativo = layout.findViewById(R.id.popup_btn_negativo);
-        btn_positivo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-        btn_negativo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.setContentView(layout);
-        dialog.show();
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -224,6 +172,8 @@ public class Import {
 
     //endregion
 
+    public static Activites activites;
+
     public static class get{
         private static Random random = new Random();
         private static Locale locale = new Locale("pt", "BR");
@@ -244,34 +194,38 @@ public class Import {
             return dateFormat.format(c.getTime());
         }
 
+        public static class myComparator implements Comparator<Post> {
+            public int compare(Post left, Post right) {
+                return left.getData().compareTo(right.getData());
+            }
+        }
+
         public static class tipsters {
-            private static ArrayList<Tipster> meusTipsters = new ArrayList<>();
+            private static ArrayList<Tipster> tipstersAux = new ArrayList<>();
             private static ArrayList<Tipster> tipsters = new ArrayList<>();
             private static ArrayList<Post> postes = new ArrayList<>();
 
-            public static ArrayList<Tipster> meusTipsters () {
-                return meusTipsters;
+            // Esse Auxiliar serve para restaurar a lista principal no momento
+            // de pesquisa onde a lista principal 'tipsters' sofre uma Clear()
+            public static ArrayList<Tipster> getAllAux () {
+                return tipstersAux;
             }
             public static ArrayList<Tipster> getAll() {
                 return tipsters;
             }
 
             public static ArrayList<Post> postes () {
+                Collections.sort(postes, new myComparator());
                 return postes;
             }
 
-            public static Tipster FindMyTipster(String item) {
-                for (Tipster i : meusTipsters())
-                    if (i.getDados().getId().equals(item))
-                        return i;
-                return null;
-            }
             public static Tipster FindTipster(String item) {
                 for (Tipster i : getAll())
                     if (i.getDados().getId().equals(item))
                         return i;
                 return null;
             }
+
             public static Post FindPost(String item) {
                 for (Post i : postes())
                     if (i.getId().equals(item))
@@ -356,7 +310,7 @@ public class Import {
         }
 
         public static void setUser(Context context, Apostador user) {
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
             editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
@@ -370,7 +324,7 @@ public class Import {
             apostador = user;
         }
         public static void setUser(Context context, Tipster user) {
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
             editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
@@ -394,6 +348,16 @@ public class Import {
         public static boolean isTipster() {
             return tipster != null;
         }
+
+        public static String getUltinoEmail(Context context) {
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
+            return pref.getString(Constantes.user.logado.ULTIMO_EMAIL, "");
+        }
+        public static void setUltinoEmail(Context context, String email) {
+            SharedPreferences.Editor editor = context.getSharedPreferences("info", MODE_PRIVATE).edit();
+            editor.putString(Constantes.user.logado.ULTIMO_EMAIL, email);
+            editor.apply();
+        }
     }
 
     public static class getUsuario1 {
@@ -413,7 +377,7 @@ public class Import {
                 usuario.setCategoria(usuarioD.getCategoria());
 //                Usuario.Criptografar(usuario);
 
-                SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+                SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
 //                editor.putString(Constantes.NOME, usuario.getNome());
 //                editor.putString(Constantes.EMAIL, usuario.getEmail());
@@ -447,31 +411,31 @@ public class Import {
             return foto;
         }*/
         public static String getId(Context context){
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             if(id == null)
                 id = pref.getString(Constantes.user.logado.TIPNAME, "");
             return id;
         }
         public static String getNome(Context context){
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             if(nome == null)
                 nome = pref.getString(Constantes.user.logado.NOME, "");
             return Criptografia.descriptografar(nome);
         }
         public static String getEmail(Context context){
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             if(email == null)
                 email = pref.getString(Constantes.user.logado.EMAIL, "");
             return Criptografia.descriptografar(email);
         }
         public static int getCategoria(Context context){
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             if(categoria  < 0)
                 categoria = pref.getInt(Constantes.user.logado.CATEGORIA, 0);
             return categoria;
         }
         public static boolean isPrimeiroLogin(Context context){
-            SharedPreferences pref = context.getSharedPreferences("info", Context.MODE_PRIVATE);
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             return pref.getBoolean(Constantes.PRIMEIRO_LOGIN, true);
         }
     }
