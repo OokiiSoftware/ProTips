@@ -6,5 +6,18 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">30dp</dimen>
     <dimen name="login_item_margin">15dp</dimen>
-    <dimen name="login_table_horizontal">50dp</dimen>
+    <dimen name="login_table_horizontal">70dp</dimen>
+
+    <!-- Textos -->
+    <dimen name="title_size">20sp</dimen>
+    <dimen name="title_medio_size">25sp</dimen>
+    <dimen name="title_max_size">30sp</dimen>
+    <dimen name="subtitle_size">15sp</dimen>
+    <dimen name="text_size">17sp</dimen>
+
+    <dimen name="et_top_bot">12dp</dimen>
+    <dimen name="et_start_end">17dp</dimen>
+    <dimen name="et_novo_tip">5dp</dimen>
+    <dimen name="drawable_paddind">5dp</dimen>
+
 </resources>

@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="false"
     tools:context=".activity.PostActivity">
 
     <include
@@ -23,24 +25,22 @@
             android:stretchColumns="0,1">
 
             <EditText
-                android:id="@+id/titulo"
+                android:id="@+id/tv_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_stroke_primary_color"
                 android:hint="@string/titulo"
-                android:inputType="textCapWords"
-                android:padding="5dp"
-                android:importantForAutofill="no" />
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"
+                style="@style/EditText.NovoTip" />
 
             <TableRow android:layout_marginTop="5dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/img_constraint"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/foto"
+                        android:id="@+id/iv_foto"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginEnd="5dp"
@@ -59,17 +59,16 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <EditText
-                    android:id="@+id/texto"
+                    android:id="@+id/tv_texto"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_stroke_primary_color"
                     android:gravity="top"
                     android:hint="@string/descricao"
                     android:maxLength="200"
                     android:maxLines="6"
-                    android:padding="10dp"
                     android:inputType="none"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.NovoTip" />
 
             </TableRow>
 
@@ -91,109 +90,93 @@
 
             <TableRow>
 
-                <EditText
-                    android:id="@+id/odd_max"
-                    android:layout_width="1dp"
+                <Spinner
+                    android:id="@+id/tv_esporte"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
+                    android:entries="@array/esporte"
                     android:background="@drawable/bg_stroke_primary_color"
-                    android:hint="@string/odd_maxima"
-                    android:padding="5dp"
-                    android:inputType="none"
-                    android:importantForAutofill="no" />
+                    android:padding="3dp" />
+
+                <Spinner
+                    android:id="@+id/tv_mercado"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/mercado"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:padding="3dp" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="5dp">
 
                 <EditText
-                    android:id="@+id/odd_min"
+                    android:id="@+id/tv_odd_min"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_stroke_primary_color"
                     android:hint="@string/odd_minima"
-                    android:padding="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:inputType="numberDecimal"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.NovoTip" />
+
+                <EditText
+                    android:id="@+id/tv_odd_max"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/odd_maxima"
+                    android:inputType="numberDecimal"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.NovoTip" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="5dp">
+
+                <EditText
+                    android:id="@+id/tv_horario_min"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:textAlignment="center"
+                    android:text="@string/_00_00"
+                    android:hint="@string/_00_00"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:importantForAutofill="no"
                     android:inputType="none"
-                    android:importantForAutofill="no" />
-
-            </TableRow>
-
-            <TableRow android:layout_marginTop="5dp">
-
-                <Spinner
-                    android:id="@+id/esporte"
-                    android:layout_width="1dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:padding="3dp" />
-
-                <Spinner
-                    android:id="@+id/mercado"
-                    android:layout_width="1dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:padding="3dp" />
-
-            </TableRow>
-
-            <TableRow android:layout_marginTop="5dp">
+                    style="@style/EditText.NovoTip"/>
 
                 <EditText
-                    android:id="@+id/btn_horario_minimo"
-                    android:layout_width="1dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:textAlignment="center"
-                    android:text="@string/_00_00"
-                    android:padding="5dp"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"/>
-
-                <EditText
-                    android:id="@+id/btn_horario_maximo"
-                    android:layout_width="1dp"
+                    android:id="@+id/tv_horario_max"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/_00_00"
-                    android:background="@drawable/bg_stroke_primary_color"
+                    android:hint="@string/_00_00"
                     android:textAlignment="center"
-                    android:padding="5dp"
                     android:focusable="false"
-                    android:focusableInTouchMode="false" />
+                    android:focusableInTouchMode="false"
+                    android:importantForAutofill="no"
+                    android:inputType="none"
+                    style="@style/EditText.NovoTip" />
 
             </TableRow>
 
             <TableRow>
 
                 <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="@string/horario_minimo"
                     android:textAlignment="center" />
 
                 <TextView
-                    android:layout_width="1dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/horario_maximo"
                     android:textAlignment="center" />
-
-            </TableRow>
-
-            <TableRow android:visibility="gone">
-
-                <Button
-                    android:id="@+id/cancel_button"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="1dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:text="@string/cancelar" />
-
-                <Button
-                    android:id="@+id/ok_button"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    android:layout_width="1dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/postar" />
 
             </TableRow>
 
@@ -208,18 +191,22 @@
         android:layout_below="@+id/toolbar"
         android:visibility="gone"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_marginStart="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin" />
+        android:layout_margin="@dimen/fab_margin"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <TextView
+        android:id="@+id/tv_postar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_margin="@dimen/fab_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_ok"/>
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:gravity="center"
+        android:textColor="@color/brancoDark"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size"
+        android:text="@string/postar_tip"
+        android:background="@drawable/ic_postar"/>
 
 </RelativeLayout>

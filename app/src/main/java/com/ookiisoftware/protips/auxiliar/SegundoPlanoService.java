@@ -1,11 +1,15 @@
 package com.ookiisoftware.protips.auxiliar;
 
+import android.app.ActivityManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,13 +17,23 @@ import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.BatepapoActivity;
 import com.ookiisoftware.protips.activity.ConversaActivity;
-import com.ookiisoftware.protips.modelo.Contato;
-import com.ookiisoftware.protips.modelo.Conversa;
-import com.ookiisoftware.protips.modelo.Mensagem;
+import com.ookiisoftware.protips.activity.MainActivity;
+import com.ookiisoftware.protips.modelo.Esporte;
+import com.ookiisoftware.protips.modelo.Post;
+import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.Usuario;
+
+import java.util.List;
 
 public class SegundoPlanoService extends Service {
 
     private static final String TAG = "SegundoPlanoService";
+    private Context getContext() {
+        return this;
+    }
+
+    //region Overrides
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -28,7 +42,13 @@ public class SegundoPlanoService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        CommandPostes();
+        if (Import.getFirebase.isTipster()) {
+            CommandTipsterPunter();
+            CommandTipsterPunterPendente();
+        } else {
+            CommandPostes();
+            CommandPunterPendenteAceito();
+        }
 //        CommandConversas();
 
         // START_STICKY serve para executar seu serviço até que você pare ele, é reiniciado automaticamente sempre que termina
@@ -38,6 +58,268 @@ public class SegundoPlanoService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    //endregion
+
+    //region Command
+
+    // Aguarda novos Postes
+    private void CommandPostes() {
+        for (String id : Import.getFirebase.getPunter().getTipsters()) {
+            addChildEventList(id);
+        }
+    }
+
+    // Quando o punter solicita para ser punter de um tipster
+    private void CommandTipsterPunterPendente() {
+        final String meu_id = Import.getFirebase.getId();
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(meu_id)
+                .child(Constantes.firebase.child.PUNTERS_PENDENTES);
+
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+
+                Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildAdded", key);
+                Import.getFirebase.getTipster().getPuntersPendentes().add(key);
+
+                DatabaseReference ref =  Import.getFirebase.getReference()
+                        .child(Constantes.firebase.child.USUARIO)
+                        .child(Constantes.firebase.child.PUNTERS)
+                        .child(key);
+
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Punter item = dataSnapshot.getValue(Punter.class);
+                        if (item != null) {
+                            Punter item2 = Import.get.tipsters.findPuntersPendentes(item.getDados().getId());
+                            if (item2 == null) {
+                                Import.get.tipsters.getPuntersPendentes().add(item);
+                            } else {
+                                Import.get.tipsters.getPuntersPendentes().set(Import.get.tipsters.getPuntersPendentes().indexOf(item2), item);
+                            }
+                            try {
+                                notificationPunterPendente(item.getDados());
+                                Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
+//                                Import.activites.getMainActivity().feedFragment.refreshLayout.setRefreshing(false);
+//                                Import.activites.getMainActivity().tipstersFragment.refreshLayout.setRefreshing(false);
+                            } catch (Exception ignored) {}
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+                Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildRemoved", key);
+                Import.getFirebase.getTipster().getPuntersPendentes().remove(key);
+
+                Punter item = Import.get.tipsters.findPuntersPendentes(key);
+                if (item != null) {
+                    Import.get.tipsters.getPuntersPendentes().remove(item);
+                    try {
+                        Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
+//                                Import.activites.getMainActivity().feedFragment.refreshLayout.setRefreshing(false);
+//                                Import.activites.getMainActivity().tipstersFragment.refreshLayout.setRefreshing(false);
+                    } catch (Exception ignored) {}
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    // Quando um Punter é adicionado na lista de 'punters' do Tipster
+    private void CommandTipsterPunter() {
+        final String meu_id = Import.getFirebase.getId();
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(meu_id)
+                .child(Constantes.firebase.child.PUNTERS);
+
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                final String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+
+                DatabaseReference ref =  Import.getFirebase.getReference()
+                        .child(Constantes.firebase.child.USUARIO)
+                        .child(Constantes.firebase.child.PUNTERS)
+                        .child(key);
+
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Punter item = dataSnapshot.getValue(Punter.class);
+                        if (item != null) {
+                            Import.getFirebase.getTipster().getPuntersPendentes().remove(key);
+                            Punter item2 = Import.get.tipsters.findPuntersPendentes(item.getDados().getId());
+                            if (item2 != null) {
+                                Import.get.tipsters.getPuntersPendentes().remove(item2);
+                            }
+
+                            if (!item.getTipsters().contains(meu_id)) {
+                                item.getTipsters().add(meu_id);
+                                item.salvarTipsters();
+                            }
+                            item2 = Import.get.punter.find(item.getDados().getId());
+                            if (item2 == null) {
+                                Import.get.punter.getAll().add(item);
+                                Import.get.punter.getAllAux().add(item);
+                            } else {
+                                Import.get.punter.getAll().set(Import.get.punter.getAll().indexOf(item2), item);
+                                Import.get.punter.getAllAux().set(Import.get.punter.getAllAux().indexOf(item2), item);
+                            }
+
+                            try {
+                                Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
+                                Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
+                            } catch (Exception ignored) {}
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+
+                Punter item = Import.get.punter.find(key);
+                if (item != null) {
+                    Import.get.punter.getAll().remove(item);
+                    Import.get.punter.getAllAux().remove(item);
+
+                    item.getTipsters().remove(meu_id);
+                    item.salvarTipsters();
+                }
+
+                try {
+                    Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
+                } catch (Exception ignored) {}
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    // Quando o tipster aceita a solicitação do punter
+    private void CommandPunterPendenteAceito() {
+        final String meu_id = Import.getFirebase.getId();
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(meu_id)
+                .child(Constantes.firebase.child.TIPSTERS);
+
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                final String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+
+                Import.Alert.msg(TAG, "CommandPunterPendenteAceito", "onChildAdded", key);
+                DatabaseReference ref =  Import.getFirebase.getReference()
+                        .child(Constantes.firebase.child.USUARIO)
+                        .child(Constantes.firebase.child.TIPSTERS)
+                        .child(key);
+
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Tipster item = dataSnapshot.getValue(Tipster.class);
+                        if (item != null) {
+                            Tipster item2 = Import.get.tipsters.findTipster(item.getDados().getId());
+                            if (item2 == null) {
+                                Import.get.tipsters.getAll().add(item);
+                                Import.get.tipsters.getAllAux().add(item);
+                                Import.get.tipsters.postes().addAll(item.getPostes().values());
+                                addChildEventList(item.getDados().getId());
+                                notificationPunterAceito(item.getDados());
+                            } else {
+                                Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item2), item);
+                                Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item2), item);
+                                for (Post p : item.getPostes().values())
+                                    if (Import.get.tipsters.findPost(p.getId()) == null)
+                                        Import.get.tipsters.postes().add(p);
+                            }
+                            try {
+                                Import.activites.getMainActivity().feedFragment.adapterUpdate();
+                            } catch (Exception ignored) {}
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+
+                Import.Alert.msg(TAG, "CommandPunterPendenteAceito", "onChildRemoved", key);
+                Punter item = Import.get.punter.find(key);
+                if (item != null) {
+                    Import.get.punter.getAll().remove(item);
+                    Import.get.punter.getAllAux().remove(item);
+
+                    item.getTipsters().remove(meu_id);
+                    item.salvarTipsters();
+                }
+
+                try {
+                    Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
+                } catch (Exception ignored) {}
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
     }
 
     private void CommandConversas(){
@@ -131,11 +413,39 @@ public class SegundoPlanoService extends Service {
 //        fbRefConversas.addValueEventListener(valueEventListenerConversas);
     }
 
-    private void CommandPostes() {
-        final String usuarioLogadoId = Import.getFirebase.getId();
-        //Na hierarquia = root > postes > id_usuario_logado > conversas
-        final DatabaseReference reference = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.POSTES);
+    //endregion
+
+    //region notifications
+
+    private void notificationPunterPendente(@NonNull Usuario usuario) {
+        String titulo = getResources().getString(R.string.app_name);
+        String texto = getResources().getString(R.string.nova_solicitação_punter) + "\n" + usuario.getNome();
+
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        Import.Notificacao(getContext(), intent, titulo, texto);
+    }
+
+    private void notificationPunterAceito(@NonNull Usuario usuario) {
+        String titulo = getResources().getString(R.string.app_name);
+        String texto = getResources().getString(R.string.punter_aceito) + "\n" + getResources().getString(R.string.tipster) + ": "
+                + usuario.getNome();
+
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        Import.Notificacao(getContext(), intent, titulo, texto);
+    }
+
+    private void notificationNewPost(@NonNull Tipster usuario, @NonNull Post post) {
+        Esporte esporte = usuario.getEsportes().get(post.getEsporte());
+
+        String titulo = getResources().getString(R.string.app_name);
+        String texto = getResources().getString(R.string.novo_poste) + ": " + usuario.getDados().getNome();
+        texto += "\n" + getResources().getString(R.string.esporte) + ": " + esporte.getNome();
+        texto += "\n" + getResources().getString(R.string.mercado) + ": " + esporte.getMercados().get(post.getMercado());
+        texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
+        texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
+
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        Import.Notificacao(getContext(), intent, titulo, texto);
     }
 
     private void CriarNotificacaoDaMensagem(String id_conversa, String titulo, String texto) {
@@ -147,7 +457,7 @@ public class SegundoPlanoService extends Service {
 
         if(tituloAux.length == 1) {
             tituloReal = tituloAux[0];
-            intent = new Intent(this, ConversaActivity.class);
+            intent = new Intent(getApplicationContext(), ConversaActivity.class);
             intent.putExtra(Constantes.CONVERSA_CONTATO_ID, id_conversa);
             intent.putExtra(Constantes.CONVERSA_CONTATO_NOME, tituloReal);
         } else {
@@ -155,6 +465,81 @@ public class SegundoPlanoService extends Service {
             intent = new Intent(getApplicationContext(), BatepapoActivity.class);
         }
 
-        Import.Notificacao(this, intent, R.drawable.ic_icon_notificacao, tituloReal, texto);
+        Import.Notificacao(getContext(), intent, tituloReal, texto);
+    }
+
+    //endregion
+
+    private void addChildEventList(String id_tipster) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(id_tipster)
+                .child(Constantes.firebase.child.POSTES)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Post item = dataSnapshot.getValue(Post.class);
+                        if (item == null)
+                            return;
+
+                        Post item2 = Import.get.tipsters.findPost(item.getId());
+                        if (item2 == null) {
+                            Import.get.tipsters.postes().add(item);
+                            Tipster t = Import.get.tipsters.findTipster(item.getId_tipster());
+                            if (t != null) {
+                                boolean mostrarNotification = true;
+                                try {
+                                    if (Import.activites.getMainActivity().viewPager.getCurrentItem() == 0
+                                        && verifyApplicationRunning(getContext())) {
+                                        mostrarNotification = false;
+                                        Import.activites.getMainActivity().feedFragment.haveNewPostes(true);
+                                    }
+                                }catch (Exception e) {
+                                    Import.Alert.erro(TAG, e);
+                                }
+                                if (mostrarNotification)
+                                    notificationNewPost(t, item);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        Post item = dataSnapshot.getValue(Post.class);
+                        if (item == null)
+                            return;
+                        Post item2 = Import.get.tipsters.findPost(item.getId());
+                        if (item2 != null) {
+                            Import.get.tipsters.postes().remove(item2);
+                            try{
+                                Import.activites.getMainActivity().feedFragment.adapterUpdate();
+                            } catch (Exception ignored) {}
+                        }
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+    }
+    private boolean verifyApplicationRunning(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> procInfos = null;
+        if (activityManager != null) {
+            procInfos = activityManager.getRunningAppProcesses();
+            for (int i = 0; i < procInfos.size(); i++) {
+                if (procInfos.get(i).processName.equals("com.ookiisoftware.protips")) {
+                    onDestroy();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

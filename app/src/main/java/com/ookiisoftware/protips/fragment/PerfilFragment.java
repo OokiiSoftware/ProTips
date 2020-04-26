@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -15,20 +14,25 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.perfilActivity;
+import com.ookiisoftware.protips.activity.PostActivity;
+import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 public class PerfilFragment extends Fragment {
 
+    //region Variáveis
 //    private static final String TAG = "PerfilFragment";
 
     private Activity activity;
+    //endregion
 
     public PerfilFragment(){}
     public PerfilFragment(Activity activity) {
         this.activity = activity;
     }
+
+    //region Overrides
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,17 +41,26 @@ public class PerfilFragment extends Fragment {
         return view;
     }
 
-    private void Init(View view) {
-        // Elementos do layout
-        ImageView img_foto_usuario = view.findViewById(R.id.perfil_usuario_img_foto);
-        TextView txt_tipname = view.findViewById(R.id.perfil_usuario_txt_tipname);
-        TextView txt_nome = view.findViewById(R.id.perfil_usuario_txt_nome);
-        TextView txt_email = view.findViewById(R.id.perfil_usuario_txt_email);
-        LinearLayout btm_edit = view.findViewById(R.id.perfil_btn_edit);
+    //endregion
 
+    //region Métodos
+
+    private void Init(View view) {
+        //region findViewById
+        ImageView img_foto_usuario = view.findViewById(R.id.iv_foto);
+        TextView txt_tipname = view.findViewById(R.id.tv_tipname);
+        TextView txt_nome = view.findViewById(R.id.tv_nome);
+        TextView txt_email = view.findViewById(R.id.tv_email);
+        TextView btm_edit = view.findViewById(R.id.tv_edit);
+
+        ImageView newPost = view.findViewById(R.id.iv_new_post);
+        ImageView newPunter = view.findViewById(R.id.iv_new_punter);
+        //endregion
+
+        boolean isTipster = Import.getFirebase.isTipster();
         FirebaseUser user = Import.getFirebase.getAuth().getCurrentUser();
 
-        // Exibir os dados na tela
+        //region setValues
         String uri = "";
         if (user != null) {
             txt_nome.setText(user.getDisplayName());
@@ -56,18 +69,43 @@ public class PerfilFragment extends Fragment {
                 uri = user.getPhotoUrl().toString();
             }
         }
-        txt_tipname.setText(Import.getFirebase.getId());
+        if (isTipster) {
+            txt_tipname.setText(Import.getFirebase.getTipster().getDados().getTipname());
+        } else {
+            txt_tipname.setText(Import.getFirebase.getPunter().getDados().getTipname());
+        }
+        newPost.setEnabled(isTipster);
 
         Glide.with(activity).load(uri).into(img_foto_usuario);
+        //endregion
 
-        // Ação de click dos botões
+        //region setListener
         btm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, perfilActivity.class);
+                Intent intent = new Intent(activity, PerfilActivity.class);
                 intent.putExtra(Constantes.FRAGMENT, Constantes.FRAGMENT_EDIT);
                 startActivity(intent);
             }
         });
+
+        if (isTipster)
+            newPunter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Import.activites.getMainActivity().viewPager.setCurrentItem(3);
+            }
+        });
+
+        newPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, PostActivity.class);
+                startActivity(intent);
+            }
+        });
+        //endregion
     }
+
+    //endregion
 }

@@ -14,7 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -23,11 +23,15 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.EsporteSpinnerAdapter;
+import com.ookiisoftware.protips.adapter.MercadoSpinnerAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.Post;
+
+import java.util.ArrayList;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -91,18 +95,18 @@ public class PostActivity extends AppCompatActivity {
 
     private void Init () {
         //region findViewById
-        foto = findViewById(R.id.foto);
+        foto = findViewById(R.id.iv_foto);
         progressBar = findViewById(R.id.progressBar);
         final TextView textLength = findViewById(R.id.popup_length);
-        final EditText titulo = findViewById(R.id.titulo);
-        final EditText texto = findViewById(R.id.texto);
-        final EditText odd_max = findViewById(R.id.odd_max);
-        final EditText odd_min = findViewById(R.id.odd_min);
-        final FloatingActionButton fab = findViewById(R.id.fab);
-        final EditText horario_minimo = findViewById(R.id.btn_horario_minimo);
-        final EditText horario_maximo = findViewById(R.id.btn_horario_maximo);
-        final Spinner esporte = findViewById(R.id.esporte);
-        final Spinner mercado = findViewById(R.id.mercado);
+        final EditText titulo = findViewById(R.id.tv_titulo);
+        final EditText texto = findViewById(R.id.tv_texto);
+        final EditText odd_max = findViewById(R.id.tv_odd_max);
+        final EditText odd_min = findViewById(R.id.tv_odd_min);
+        final TextView fab = findViewById(R.id.tv_postar);
+        final EditText horario_minimo = findViewById(R.id.tv_horario_min);
+        final EditText horario_maximo = findViewById(R.id.tv_horario_max);
+        final Spinner esporte = findViewById(R.id.tv_esporte);
+        final Spinner mercado = findViewById(R.id.tv_mercado);
         Toolbar toolbar = findViewById(R.id.toolbar);
         //endregion
 
@@ -113,13 +117,31 @@ public class PostActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        ArrayAdapter mercadoAdapter = ArrayAdapter.createFromResource(activity, R.array.mercado, R.layout.item_spinner);
+        ArrayList<Esporte> esportes = Import.getFirebase.getTipster().getEsportes();
+        final ArrayList<String> mercados = new ArrayList<>();
+
+        final MercadoSpinnerAdapter mercadoAdapter = new MercadoSpinnerAdapter(activity, android.R.layout.simple_spinner_item, mercados);
         mercado.setAdapter(mercadoAdapter);
 
-        ArrayAdapter esporteAdapter = ArrayAdapter.createFromResource(activity, R.array.esporte, R.layout.item_spinner);
-        esporte.setAdapter(esporteAdapter);
+        final EsporteSpinnerAdapter esporteSpinnerAdapter = new EsporteSpinnerAdapter(activity, android.R.layout.simple_spinner_item, esportes);
+        esporte.setAdapter(esporteSpinnerAdapter);
 
         //region setListener
+
+        esporte.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Esporte item = esporteSpinnerAdapter.getItem(position);
+                if (item != null) {
+                    mercados.clear();
+                    mercados.addAll(item.getMercados());
+                    mercadoAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         texto.addTextChangedListener(new TextWatcher() {
             @Override
@@ -217,12 +239,6 @@ public class PostActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
         } else if (post.getOdd_minima() == null || post.getOdd_minima().isEmpty()) {
             Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_odd_minima_obrigatorio));
-            progressBar.setVisibility(View.GONE);
-        } else if (post.getEsporte() == 0) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_esporte_obrigatorio));
-            progressBar.setVisibility(View.GONE);
-        } else if (post.getMercado() == 0) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_mercado_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else {
             post.salvar(activity, progressBar,true);

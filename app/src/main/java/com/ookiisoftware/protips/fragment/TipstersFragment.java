@@ -1,6 +1,7 @@
 package com.ookiisoftware.protips.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.activity.PerfilActivity;
+import com.ookiisoftware.protips.activity.PerfilVisitanteActivity;
+import com.ookiisoftware.protips.adapter.PunterAdapter;
 import com.ookiisoftware.protips.adapter.TipsterAdapter;
+import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.Tipster;
 
 public class TipstersFragment extends Fragment {
 
@@ -23,7 +30,10 @@ public class TipstersFragment extends Fragment {
 
 //    final private ArrayList<Tipster> tipsters;
     private Activity activity;
-    private TipsterAdapter adapter;
+    private TipsterAdapter tipsterAdapter;
+    private PunterAdapter punterAdapter;
+
+
     public SwipeRefreshLayout refreshLayout;
     //endregion
 
@@ -47,11 +57,10 @@ public class TipstersFragment extends Fragment {
         //region findViewById
 //        final SearchView et_pesquisa = view.findViewById(R.id.et_pesquisa);
         LinearLayout btn_filtro = view.findViewById(R.id.btn_filtro);
-        RecyclerView recyclerView = view.findViewById(R.id.recycler);
+        final RecyclerView recyclerView = view.findViewById(R.id.recycler);
         refreshLayout = view.findViewById(R.id.swipe_refresh);
         //endregion
 
-        refreshLayout.setRefreshing(true);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -59,44 +68,35 @@ public class TipstersFragment extends Fragment {
             }
         });
 
-        adapter = new TipsterAdapter(activity, Import.get.tipsters.getAll());
-        recyclerView.setAdapter(adapter);
+        boolean isTipster = Import.getFirebase.isTipster();
 
-        /*final SearchView et_pesquisa = view.findViewById(R.id.et_pesquisa);
-        et_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_pesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+        if (isTipster) {
+            punterAdapter = new PunterAdapter(activity, Import.get.punter.getAll()) {
+                @Override
+                public void onClick(View v) {
+                    int position = recyclerView.getChildAdapterPosition(v);
+                    Punter item = punterAdapter.getItem(position);
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                refreshLayout.setEnabled(newText.isEmpty());
-                Import.activites.getMainActivity().inicioFragment.refreshLayout.setEnabled(newText.isEmpty());
-                adapter.getFilter().filter(newText);
-                return false;
-            }
-        });*/
-        /*et_pesquisa.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String texto = et_pesquisa.getText().toString();
-                tipsters.clear();
-                if (texto.isEmpty()){
-                    tipsters.addAll(Import.get.tipsters.getAll());
-                } else {
-                    tipsters.addAll(pesquisa(texto));
+                    Intent intent = new Intent(activity, PerfilVisitanteActivity.class);
+                    intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                    activity.startActivity(intent);
                 }
-                adapterUpdate();
-            }
+            };
+            recyclerView.setAdapter(punterAdapter);
+        } else {
+            tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
+                @Override
+                public void onClick(View v) {
+                    int position = recyclerView.getChildAdapterPosition(v);
+                    Tipster item = tipsterAdapter.getItem(position);
 
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });*/
+                    Intent intent = new Intent(activity, PerfilVisitanteActivity.class);
+                    intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                    activity.startActivity(intent);
+                }
+            };
+            recyclerView.setAdapter(tipsterAdapter);
+        }
 
         btn_filtro.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,12 +107,17 @@ public class TipstersFragment extends Fragment {
     }
 
     public void adapterUpdate() {
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
+        if (tipsterAdapter != null)
+            tipsterAdapter.notifyDataSetChanged();
+        if (punterAdapter != null)
+            punterAdapter.notifyDataSetChanged();
     }
 
-    public TipsterAdapter getAdapter () {
-        return adapter;
+    public TipsterAdapter getTipsterAdapter() {
+        return tipsterAdapter;
+    }
+    public PunterAdapter getPunterAdapter() {
+        return punterAdapter;
     }
 
     private void popupFiltro() {

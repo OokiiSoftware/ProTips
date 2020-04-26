@@ -3,7 +3,6 @@ package com.ookiisoftware.protips.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -31,7 +30,6 @@ import com.ookiisoftware.protips.modelo.Conversa;
 import com.ookiisoftware.protips.modelo.Mensagem;
 import com.ookiisoftware.protips.modelo.Usuario;
 import com.ookiisoftware.protips.sqlite.SQLiteConversa;
-import com.ookiisoftware.protips.sqlite.SQLiteMensagem;
 
 import java.util.ArrayList;
 
@@ -113,7 +111,7 @@ public class ConversaActivity extends AppCompatActivity {
          */
         {
             toolbar.setTitle(usuarioDestino.getNome());
-            toolbar.setNavigationIcon(R.drawable.ic_seta_esquerda);
+            toolbar.setNavigationIcon(R.drawable.ic_back);
             setSupportActionBar(toolbar);
         }// toolbar
 
@@ -335,7 +333,7 @@ public class ConversaActivity extends AppCompatActivity {
                 paramsData.addRule(RelativeLayout.BELOW, R.id.item_conversa_layout);
 
                 if (Criptografia.criptografar(mensagems.get(position).getId_remetente()).equals(usuarioLogadoId)) {
-                    holder.mensagem.setBackground(getDrawable(R.drawable.bg_circulo_conversa_mensagem_direita));
+                    holder.mensagem.setBackground(getDrawable(R.drawable.bg_retangulo_conversa_mensagem_direita));
                     paramsGeral.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     paramsGeral.addRule(RelativeLayout.END_OF, R.id.item_conversa_layout_geral);
                     paramsData.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -355,7 +353,7 @@ public class ConversaActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    holder.mensagem.setBackground(getDrawable(R.drawable.bg_circulo_conversa_mensagem_esquerda));
+                    holder.mensagem.setBackground(getDrawable(R.drawable.bg_retangulo_conversa_mensagem_esquerda));
                     paramsGeral.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                     paramsGeral.addRule(RelativeLayout.START_OF, R.id.item_conversa_layout_geral);
                     paramsData.addRule(RelativeLayout.ALIGN_PARENT_LEFT);

@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/bg_circulo_conversa_mensagem_esquerda"
+        android:background="@drawable/bg_retangulo_conversa_mensagem_esquerda"
         android:orientation="horizontal">
 
         <EditText
@@ -41,7 +41,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom"
-            android:background="@drawable/bg_circulo_conversa_mensagem_direita"
+            android:background="@drawable/bg_retangulo_conversa_mensagem_direita"
             android:src="@drawable/ic_send"/>
     </LinearLayout>
 

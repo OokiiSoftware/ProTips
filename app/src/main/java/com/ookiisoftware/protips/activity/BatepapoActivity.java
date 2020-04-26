@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,17 +14,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.auxiliar.Criptografia;
-import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Contato;
-import com.ookiisoftware.protips.modelo.Usuario;
-import com.ookiisoftware.protips.sqlite.SQLiteContato;
 
 import java.util.Objects;
 
@@ -61,7 +51,7 @@ public class BatepapoActivity extends AppCompatActivity {
         {
             viewPager.setAdapter(sectionsPagerAdapter);
             tabs.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.colorAccent));
-            tabs.setTabTextColors(ContextCompat.getColor(this, R.color.colorPrimaryLight), ContextCompat.getColor(this, R.color.branco));
+            tabs.setTabTextColors(ContextCompat.getColor(this, R.color.colorPrimaryLight), ContextCompat.getColor(this, R.color.text_dark));
             tabs.setupWithViewPager(viewPager);
         }// Tabs
     }

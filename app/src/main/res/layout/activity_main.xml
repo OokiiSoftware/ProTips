@@ -46,8 +46,8 @@
             android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
             app:labelVisibilityMode="selected"
-            app:itemTextColor="@color/branco"
-            app:itemIconTint="@color/branco"
+            app:itemTextColor="@color/text_dark"
+            app:itemIconTint="@color/text_dark"
             app:menu="@menu/nav_menu_principal" />
 
     </LinearLayout>

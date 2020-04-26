@@ -1,24 +1,36 @@
 package com.ookiisoftware.protips.modelo;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Tipster {
 
     private Usuario dados;
     private HashMap<String, Post> postes;
-//    private ArrayList<Post> postes;
-    private ArrayList<String> apostadores;
+    private ArrayList<Esporte> esportes;
+    private ArrayList<String> punters;
+    private ArrayList<String> puntersPendentes;
+
+    public enum Status {
+        Pendente, Seguindo, Nao_Seguindo
+    }
+    public enum Acao {
+        Seguir, Desseguir, Remover_Pendente, Aceitar
+    }
 
     public Tipster() {
-        apostadores = new ArrayList<>();
+        punters = new ArrayList<>();
+        esportes = new ArrayList<>();
         postes = new HashMap<>();
-//        postes = new ArrayList<>();
         dados = new Usuario();
     }
 
@@ -28,13 +40,79 @@ public class Tipster {
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
                 .child(dados.getId())
-//                .child(Constantes.firebase.child.DADOS)
                 .setValue(this);
 
         reference
                 .child(Constantes.firebase.child.IDENTIFICADOR)
                 .child(dados.getTipname())
                 .setValue(dados.getId());
+    }
+
+    public void solicitar(final Punter punter, final Acao acao) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() == null)
+                            return;
+                        Tipster item = dataSnapshot.getValue(Tipster.class);
+                        if (item == null)
+                            return;
+
+                        String id_punter = punter.getDados().getId();
+                        switch (acao) {
+                            case Seguir: {
+                                    if (!item.getPunters().contains(id_punter) && !item.getPuntersPendentes().contains(id_punter))
+                                        item.getPuntersPendentes().add(id_punter);
+                                    dataSnapshot.getRef()
+                                            .child(Constantes.firebase.child.PUNTERS_PENDENTES)
+                                            .setValue(item.getPuntersPendentes());
+                                    break;
+                                }
+                            case Desseguir: {
+                                    item.getPunters().remove(id_punter);
+                                    dataSnapshot.getRef()
+                                            .child(Constantes.firebase.child.PUNTERS)
+                                            .setValue(item.getPunters());
+                                    break;
+                                }
+                            case Remover_Pendente: {
+                                    item.getPuntersPendentes().remove(id_punter);
+                                    dataSnapshot.getRef()
+                                            .child(Constantes.firebase.child.PUNTERS_PENDENTES)
+                                            .setValue(item.getPuntersPendentes());
+                                    break;
+                                }
+                            case Aceitar: {
+                                if (!item.getPunters().contains(id_punter)) {
+                                    item.getPunters().add(id_punter);
+                                    dataSnapshot.getRef()
+                                            .child(Constantes.firebase.child.PUNTERS)
+                                            .setValue(item.getPunters());
+                                    solicitar(punter, Acao.Remover_Pendente);
+
+//                                    Import.getFirebase.getTipster().getPunters().add(id_punter);
+//                                    Import.get.punter.getAll().add(punter);
+//
+//                                    Import.getFirebase.getTipster().getPuntersPendentes().remove(id_punter);
+//                                    Import.get.tipsters.getPuntersPendentes().remove(punter);
+//                                    Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
+//                                    Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
+                                }
+                                break;
+                            }
+                        }
+
+                        dataSnapshot.getRef().setValue(item);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+
     }
 
     //region gets sets
@@ -55,24 +133,34 @@ public class Tipster {
         this.postes = postes;
     }
 
-    /*public List<Post> getPostes() {
-        if (postes == null)
-            postes = new ArrayList<>();
-        return postes;
+    public ArrayList<Esporte> getEsportes() {
+        if (esportes == null)
+            esportes = new ArrayList<>();
+        return esportes;
     }
 
-    public void setPostes(ArrayList<Post> postes) {
-        this.postes = postes;
-    }*/
-
-    public ArrayList<String> getApostadores() {
-        if (apostadores == null)
-            apostadores = new ArrayList<>();
-        return apostadores;
+    public void setEsportes(ArrayList<Esporte> esportes) {
+        this.esportes = esportes;
     }
 
-    public void setApostadores(ArrayList<String> apostadores) {
-        this.apostadores = apostadores;
+    public ArrayList<String> getPunters() {
+        if (punters == null)
+            punters = new ArrayList<>();
+        return punters;
+    }
+
+    public void setPunters(ArrayList<String> punters) {
+        this.punters = punters;
+    }
+
+    public ArrayList<String> getPuntersPendentes() {
+        if (puntersPendentes == null)
+            puntersPendentes = new ArrayList<>();
+        return puntersPendentes;
+    }
+
+    public void setPuntersPendentes(ArrayList<String> puntersPendentes) {
+        this.puntersPendentes = puntersPendentes;
     }
 
     //endregion

@@ -1,43 +1,55 @@
 package com.ookiisoftware.protips.modelo;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.auxiliar.Import;
 
 public class Usuario {
 
     private String info;
-    private String id, nome, email, tipname, senha, foto;
-    private int categoria;
+    private String id;
+    private String nome;
+    private String email;
+    private String tipname;
+    private String senha;
+    private String foto;
+    private String telefone;
+    private Endereco endereco;
+    private Data nascimento;
+    private boolean privado;
+
+    public Usuario() {
+        endereco = new Endereco();
+    }
 
     public enum Categoria {
         Apostador, Tipster
     }
 
-    public Apostador toApostador() {
-        Apostador item = new Apostador();
-        if (getId() != null) item.getDados().setId(getId());
-        if (getTipname() != null) item.getDados().setTipname(getTipname());
-        if (getEmail() != null) item.getDados().setEmail(getEmail());
-        if (getFoto() != null) item.getDados().setFoto(getFoto());
-        if (getInfo() != null) item.getDados().setInfo(getInfo());
-        if (getNome() != null) item.getDados().setNome(getNome());
-        if (getSenha() != null) item.getDados().setSenha(getSenha());
-        item.getDados().setCategoria(getCategoria());
+    public Punter toApostador() {
+        Punter item = new Punter();
+        item.setDados(this);
+//        if (getId() != null) item.getDados().setId(getId());
+//        if (getTipname() != null) item.getDados().setTipname(getTipname());
+//        if (getEmail() != null) item.getDados().setEmail(getEmail());
+//        if (getFoto() != null) item.getDados().setFoto(getFoto());
+//        if (getInfo() != null) item.getDados().setInfo(getInfo());
+//        if (getNome() != null) item.getDados().setNome(getNome());
+//        if (getTelefone() != null) item.getDados().setTelefone(getTelefone());
+//        if (getSenha() != null) item.getDados().setSenha(getSenha());
+//        item.getDados().setCategoria(getCategoria());
         return item;
     }
 
     public Tipster toTipster() {
         Tipster item = new Tipster();
-        if (getId() != null) item.getDados().setId(getId());
-        if (getTipname() != null) item.getDados().setTipname(getTipname());
-        if (getEmail() != null) item.getDados().setEmail(getEmail());
-        if (getFoto() != null) item.getDados().setFoto(getFoto());
-        if (getInfo() != null) item.getDados().setInfo(getInfo());
-        if (getNome() != null) item.getDados().setNome(getNome());
-        if (getSenha() != null) item.getDados().setSenha(getSenha());
-        item.getDados().setCategoria(getCategoria());
+        item.setDados(this);
+//        if (getId() != null) item.getDados().setId(getId());
+//        if (getTipname() != null) item.getDados().setTipname(getTipname());
+//        if (getEmail() != null) item.getDados().setEmail(getEmail());
+//        if (getFoto() != null) item.getDados().setFoto(getFoto());
+//        if (getInfo() != null) item.getDados().setInfo(getInfo());
+//        if (getNome() != null) item.getDados().setNome(getNome());
+//        if (getSenha() != null) item.getDados().setSenha(getSenha());
+//        item.getDados().setCategoria(getCategoria());
         return item;
     }
 
@@ -68,7 +80,7 @@ public class Usuario {
     }
 
     public String getInfo() {
-        return info;
+        return info == null ? "" : info;
     }
 
     public void setInfo(String info) {
@@ -100,12 +112,36 @@ public class Usuario {
         this.foto = foto;
     }
 
-    public int getCategoria() {
-        return categoria;
+    public boolean isPrivado() {
+        return privado;
     }
 
-    public void setCategoria(int categoria) {
-        this.categoria = categoria;
+    public void setPrivado(boolean privado) {
+        this.privado = privado;
+    }
+
+    public Data getNascimento() {
+        return nascimento;
+    }
+
+    public void setNascimento(Data nascimento) {
+        this.nascimento = nascimento;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
     }
 
     //endregion

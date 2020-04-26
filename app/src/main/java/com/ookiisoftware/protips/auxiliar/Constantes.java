@@ -2,6 +2,8 @@ package com.ookiisoftware.protips.auxiliar;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.view.View;
 
@@ -11,7 +13,6 @@ import com.ookiisoftware.protips.activity.BatepapoActivity;
 import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
-    public static final String PRIMEIRO_LOGIN = "primeiroLogin";
 
     //===================== Conversas
     public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
@@ -23,7 +24,6 @@ public class Constantes {
     public static final int CONVERSA_MENSAGEM_ENVIADA = 1;
     public static final int CONVERSA_MENSAGEM_NAO_ENVIADA = 0;
 
-    //===================== Firebase Database
     public static class firebase {
         public static class child {
             public static final String IDENTIFICADOR = "identificadores";
@@ -35,8 +35,8 @@ public class Constantes {
             public static final String PERFIL = "perfil";
             public static final String POSTES = "postes";
             public static final String TIPSTERS = "tipsters";
-            public static final String APOSTADOR = "apostador";
-            public static final String APOSTADORES = "apostadores";
+            public static final String PUNTERS = "punters";
+            public static final String PUNTERS_PENDENTES = "puntersPendentes";
         }
     }
 
@@ -52,6 +52,11 @@ public class Constantes {
         public static class conversa {
 
         }
+    }
+
+    public static class intent {
+        public static final String PRIMEIRO_LOGIN = "primeiroLogin";
+        public static final String USER_ID = "user_id";
     }
 
     //============================== SQLite
@@ -84,10 +89,17 @@ public class Constantes {
     public static final String FRAGMENT_EDIT = "EditarPerfil";
     public static final String FRAGMENT_PREFERENCIAS = "Preferencias";
 
-    //================================================ Dados do usupario logado
+    public static class notification {
+        public static AudioAttributes audioAttributes = new AudioAttributes
+                .Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
 
+        public static final long[] VIBRATION = {0L, 500L};
+        public static final Uri SOUND_CUSTON = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
+                + BuildConfig.APPLICATION_ID +  "/" + R.raw.notification_sound);
+        public static final Uri SOUND_DEFAULT = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    }
     //=======================================
-    public static final long[] NOTIFICACAO_VIBRACAO = {0L, 500L};
-    public static final Uri NOTIFICACAO_SOUND_PATH = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://"
-            + BuildConfig.APPLICATION_ID +  "/" + R.raw.notification_sound);
 }

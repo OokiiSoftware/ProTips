@@ -1,115 +1,69 @@
 package com.ookiisoftware.protips.fragment;
 
-
-import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.OnSwipeListener;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.activity.PerfilVisitanteActivity;
+import com.ookiisoftware.protips.adapter.PunterAdapter;
+import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.modelo.Punter;
 
 import java.util.ArrayList;
 
 public class NotificationsFragment extends Fragment {
 
-    private static final String TAG = "NotificationsFragment";
-
-    private ImageButton btn_pesquisar;
-    private EditText txt_pesquisar;
-    private LinearLayout btn_1, btn_2;
-    private RelativeLayout btn_ordenar_por_nome, btn_ordenar_por_status;
     private RecyclerView recyclerView;
 
-    private SingleItemNotificacaoAdapter adapter;
-//    private final Usuario usuarioLogado;
-    private ArrayList<Usuario> aaaa = new ArrayList<>();
-
-    private OnSwipeListener onSwipeListener = new OnSwipeListener(){
-        @Override
-        public void onSwipeRight() {
-            super.onSwipeRight();
-        }
-
-        @Override
-        public void onDoubleTouch() {
-            super.onDoubleTouch();
-        }
-
-        @Override
-        public void onSwipeBottom() {
-            super.onSwipeBottom();
-        }
-
-        @Override
-        public void onLongTouch() {
-            super.onLongTouch();
-        }
-
-        @Override
-        public void onSingleTouch() {
-            super.onSingleTouch();
-        }
-
-        @Override
-        public void onSwipeLeft() {
-            super.onSwipeLeft();
-        }
-
-        @Override
-        public void onSwipeTop() {
-            super.onSwipeTop();
-        }
-    };
+    private Activity activity;
+    private PunterAdapter adapter;
+    private ArrayList<Punter> punters;
 
     public NotificationsFragment() {}
+    public NotificationsFragment(Activity activity) {
+        this.activity = activity;
+    }
 
-
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
         Init(view);
-        ProgramarElementos();
         ConfigurarSwippeDoRecyclerView();
         return view;
     }
 
-
     private void Init(View view) {
-        btn_pesquisar = view.findViewById(R.id.notificacoes_btn_pesquisar);
-        txt_pesquisar = view.findViewById(R.id.notificacoes_txt_pesquisar);
-        btn_1 = view.findViewById(R.id.notificacoes_btn_1);
-        btn_2 = view.findViewById(R.id.notificacoes_btn_2);
-        btn_ordenar_por_nome = view.findViewById(R.id.notificacoes_btn_ordenar_por_nome);
-        btn_ordenar_por_status = view.findViewById(R.id.notificacoes_btn_ordenar_por_status);
-        recyclerView = view.findViewById(R.id.notificacoes_recycler_view);
+        recyclerView = view.findViewById(R.id.recycler);
+
+        punters = Import.get.tipsters.getPuntersPendentes();
+
+        adapter = new PunterAdapter(activity, punters) {
+            @Override
+            public void onClick(View v) {
+                int position = recyclerView.getChildAdapterPosition(v);
+                Punter item = adapter.getItem(position);
+                Intent intent = new Intent(activity, PerfilVisitanteActivity.class);
+                intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                activity.startActivity(intent);
+            }
+        };
+        recyclerView.setAdapter(adapter);
     }
 
-    private void ProgramarElementos() {
-        // Configurando o gerenciador de layout para ser uma lista.
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new SingleItemNotificacaoAdapter(aaaa);
-        recyclerView.setAdapter(adapter);
-        // Configurando um dividr entre linhas, para uma melhor visualização.
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+    public void adapterUpdate() {
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     private void ConfigurarSwippeDoRecyclerView() {
@@ -122,7 +76,7 @@ public class NotificationsFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                aaaa.remove(viewHolder.getAdapterPosition());
+                punters.remove(viewHolder.getAdapterPosition());
                 adapter.notifyDataSetChanged();
             }
         };
@@ -130,12 +84,7 @@ public class NotificationsFragment extends Fragment {
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
     }
 
-
-
-
-
-
-    public class SingleItemNotificacaoAdapter extends RecyclerView.Adapter<ViewHolder> {
+    /*public class SingleItemNotificacaoAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         ArrayList<Usuario> aaaa;
 
@@ -178,20 +127,7 @@ public class NotificationsFragment extends Fragment {
             return aaaa != null ? aaaa.size() : 0;
         }
     }
-    /*
-     *
-     * *
-     * *
-     * *
-     * *
-     * *
-     * *
-     * *
-     * *
-     * *
-     * *
-     *
-     */
+
     private class ViewHolder extends RecyclerView.ViewHolder {
         Button btn_click;
         ImageView img_remetente, icone_nao_lido, email;
@@ -209,5 +145,5 @@ public class NotificationsFragment extends Fragment {
             email = itemView.findViewById(R.id.item_batepapo_ic_email);
         }
 
-    }
+    }*/
 }

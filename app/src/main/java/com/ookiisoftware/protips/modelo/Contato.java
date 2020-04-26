@@ -19,7 +19,7 @@ public class Contato {
         usuario.setId(contato.getId());
         usuario.setNome(contato.getNome());
         usuario.setEmail(contato.getEmail());
-        usuario.setCategoria(contato.getCategoria());
+//        usuario.setCategoria(contato.getCategoria());
         contato.setImage_uri(usuario.getFoto());
         return usuario;
     }

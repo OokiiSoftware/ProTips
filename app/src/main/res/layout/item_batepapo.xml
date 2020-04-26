@@ -27,7 +27,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_circulo_azul_light">
+                    android:background="@drawable/bg_circulo_colorPrimaryLight">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:contentDescription="@string/perfil_usuario_nome"
-                            android:src="@drawable/ic_user_blanc"/>
+                            android:src="@drawable/ic_person_dark"/>
 
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -55,7 +55,7 @@
                 android:layout_marginTop="15dp"
                 android:maxLines="1"
                 android:text="Nome do Remetente"
-                android:textColor="@color/preto"
+                android:textColor="@color/text_light"
                 android:textSize="17sp" />
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_toEndOf="@+id/item_batepapo_card_view"
                 android:maxLines="1"
                 android:text="Exemplo de mensagem recebida"
-                android:textColor="@color/preto"
+                android:textColor="@color/text_light"
                 android:textSize="15sp" />
         </RelativeLayout>
     </RelativeLayout>

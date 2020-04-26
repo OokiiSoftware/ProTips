@@ -19,8 +19,8 @@
 
     <!--Titulos de cada activity e fragmento-->
     <string name="titulo_inicio">FEED</string>
-    <string name="titulo_pesquisa">ENCONTRE TIPSTERS</string>
-    <string name="titulo_notificacoes">MEUS TIPSTERS</string>
+    <string name="titulo_tipsters">ENCONTRE TIPSTERS</string>
+    <string name="titulo_notificacoes">SOLICITAÇÕES</string>
     <string name="titulo_perfil">MEU PERFIL</string>
 
     <string name="titulo_conversas">CONVERSAS</string>
@@ -67,15 +67,20 @@
     <string name="conta">CONTA</string>
     <string name="bem_vindo_ao">Bem vindo ao</string>
     <string name="protips">PROTIPS</string>
-    <string name="erro_de_autencicacao">Erro de autencicação</string>
-    <string name="login_cancelado">Login Cancelado</string>
+
     <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
+    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
+    <string name="erro_foto_salvar">Ocorreu um erro ao salvar esta foto</string>
+    <string name="erro_foto_carregar">Erro ao carregar a foto</string>
+    <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
+    <string name="erro_de_autencicacao">Erro de autencicação</string>
+    <string name="erro_generico">Ocorreu um erro</string>
+
+    <string name="login_cancelado">Login Cancelado</string>
     <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
     <string name="submenu">Submenu Drawer</string>
     <string name="menu_settings">Configurações</string>
-    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
     <string name="faca_sua_postagem">Faça sua postagem</string>
-    <string name="erro_foto_salvar">Ocorreu um erro ao salvar esta foto</string>
     <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
     <string name="carregando_a_imagem">Carregando a imagem</string>
     <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
@@ -85,14 +90,12 @@
     <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatoria</string>
     <string name="selecione_uma_categoria">Sou um: seleciona uma opção</string>
     <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
-    <string name="erro_foto_carregar">Erro ao carregar a foto</string>
     <string name="campo_obrigatório">Campo obrigatório</string>
     <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
     <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
     <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
     <string name="cadastro_email_invalido">Este email não é inválido</string>
     <string name="cadastro_email_repetido">Este email já está cadastrado</string>
-    <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
     <string name="usuario_salvo">Dados Salvos com sucesso</string>
     <string name="nome_do_tipster">Nome do Tipster</string>
     <string name="texto_aqui">Texto aqui</string>
@@ -126,19 +129,107 @@
     <string name="login">LOGIN</string>
     <string name="pass_hint">***********</string>
     <string name="usuario">Usuário</string>
+    <string name="verifique_seu_email">Por favor verifique seu email</string>
+    <string name="enviar_email">Enviar novo email</string>
+    <string name="email_enviado">Email enviado</string>
+    <string name="email_enviado_erro">Não foi possivel enviar um email de verificação</string>
+    <string name="telefone">Telefone</string>
+    <string name="_99_99999_9999">(__) _____–____</string>
+    <string name="nascimento">Nascimento</string>
+    <string name="_01_01_2000">__/__/____</string>
+    <string name="estado">Estado</string>
+    <string name="dados_pessoais">Dados pessoais</string>
+    <string name="dados_outros">Outros dados</string>
+    <string name="esportes">Esportes</string>
+    <string name="esporte">Esporte</string>
+    <string name="mercados">Mercados</string>
+    <string name="esportes_">Esportes +</string>
+    <string name="mercados_">Mercados +</string>
+    <string name="ok">OK</string>
+    <string name="_mais">+</string>
+    <string name="_menos">-</string>
+    <string name="remover_item">Remover este item?</string>
+    <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
+    <string name="idade_minima">A idade mínima é 18 anos</string>
+    <string name="odd">Odd</string>
+    <string name="horario">Horario</string>
+    <string name="categoria">Categoria</string>
+    <string name="minimo">Minimo</string>
+    <string name="maximo">Máximo</string>
+    <string name="titulo_punters">MEUS PUNTERS</string>
+    <string name="seguir">Seguir</string>
+    <string name="privacidade">Privacidade</string>
+    <string name="_exclamação">!</string>
 
-    <string-array name="usuario_sou_um">
+    <string name="privacidade_info">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
+    <string name="pendente">Pendente</string>
+    <string name="remover">Remover</string>
+    <string name="informacao">Informação</string>
+    <string name="aceitar">Aceitar</string>
+    <string name="recusar">Recusar</string>
+    <string name="nova_solicitação_punter">Nova solicitação de Punter</string>
+    <string name="punter_aceito">Sua solicitação foi aceita</string>
+    <string name="tipster">Tipster</string>
+    <string name="novo_poste">Novo Tip</string>
+    <string name="novos_postes">Novos Tips</string>
+    <string name="seu_nome">Seu nome</string>
+    <string name="seu_email">Seu email</string>
+    <string name="sua_senha">Sua senha</string>
+    <string name="postar_tip">POSTAR TIP</string>
+    <string name="protips_gmail_com">protips@gmail.com</string>
+
+    <string-array name="categoria">
         <item>Apostador</item>
         <item>Tipster</item>
+    </string-array>
+    <string-array name="privacidade">
+        <item>Público</item>
+        <item>Privado</item>
+    </string-array>
+
+    <string-array name="estado">
+        <item>Acre</item>
+        <item>Amapá</item>
+        <item>Amazonas</item>
+        <item>Bahia</item>
+        <item>Ceará</item>
+        <item>Distrito Federal</item>
+        <item>Espírito Santo</item>
+        <item>Goiás</item>
+        <item>Maranhão</item>
+        <item>Mato Grosso</item>
+        <item>Mato Grosso do Sul</item>
+        <item>Minas Gerais</item>
+        <item>Pará</item>
+        <item>Paraíba</item>
+        <item>Paraná</item>
+        <item>Pernambuco</item>
+        <item>Piauí</item>
+        <item>Rio de Janeiro</item>
+        <item>Rio Grande do Norte</item>
+        <item>Rio Grande do Sul</item>
+        <item>Rondônia</item>
+        <item>Roraima</item>
+        <item>Santa Catarina</item>
+        <item>São Paulo</item>
+        <item>Sergipe</item>
+        <item>Tocantins</item>
     </string-array>
 
     <string-array name="mercado">
         <item>Mercado</item>
-        <item>testeM</item>
+        <item>Escanteios</item>
+        <item>ML</item>
+        <item>Empates</item>
+        <item>Live</item>
     </string-array>
+
     <string-array name="esporte">
         <item>Esporte</item>
-        <item>testeE</item>
+        <item>Futebol</item>
+        <item>Voley</item>
+        <item>Boxe</item>
+        <item>Galgos</item>
     </string-array>
 
 </resources>

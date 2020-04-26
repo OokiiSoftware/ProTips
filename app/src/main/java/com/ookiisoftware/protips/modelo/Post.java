@@ -27,13 +27,6 @@ import java.util.List;
 
 public class Post {
 
-    public enum Esporte {
-        esporte, testeE
-    }
-    public enum Mercado {
-        mercado, testeM
-    }
-
     //region Variáveis
     private String id;
     private String id_tipster;
@@ -47,6 +40,7 @@ public class Post {
     private String data;
     private int esporte;
     private int mercado;
+    private boolean publico;
 
     private List<String> bom, ruim;
     //endregion
@@ -74,7 +68,8 @@ public class Post {
                                             salvar();
                                             activity.finish();
                                             Import.get.tipsters.postes().add(Post.this);
-                                            Import.activites.getMainActivity().inicioFragment.adapterUpdate();
+                                            Import.getFirebase.getTipster().getPostes().put(getId(), Post.this);
+                                            Import.activites.getMainActivity().feedFragment.adapterUpdate();
                                         }
                                     }
                                 });
@@ -253,6 +248,14 @@ public class Post {
 
     public void setMercado(int mercado) {
         this.mercado = mercado;
+    }
+
+    public boolean isPublico() {
+        return publico;
+    }
+
+    public void setPublico(boolean publico) {
+        this.publico = publico;
     }
 
     //endregion

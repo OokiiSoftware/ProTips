@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -40,7 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.modelo.Apostador;
+import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 import com.ookiisoftware.protips.modelo.Usuario;
 import com.ookiisoftware.protips.auxiliar.Import;
@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText et_senha;
     private ProgressBar progressBar;
     private LinearLayout splashScreen;
+    TextView enviar_email;
     //=====================================
 
     private GoogleSignInClient mGoogleSignInClient;
@@ -75,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        activity = this;
         Init();
     }
 
@@ -91,9 +93,16 @@ public class LoginActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             splashScreen.setVisibility(View.VISIBLE);
             Import.Alert.msg(TAG, "onStart", "auto login");
-            VerificarLoginApostador();
-//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//            startIntent(intent);
+            if (user.isEmailVerified())
+                VerificarLoginApostador();
+            else {
+                et_email.setEnabled(true);
+                et_senha.setEnabled(true);
+                splashScreen.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
+                emailNaoVerificado(user);
+                Import.Alert.msg(TAG, "onStart", "email não verificado");
+            }
         }
     }
 
@@ -125,18 +134,17 @@ public class LoginActivity extends AppCompatActivity {
 
     private void Init() {
         //region findViewById
-        LoginButton btn_login_facebook = findViewById(R.id.login_btn_facebook);
-        ImageView btn_login_twitter = findViewById(R.id.login_btn_twitter);
-        ImageView btn_login_google = findViewById(R.id.login_btn_google);
-        TextView btn_cadastrar = findViewById(R.id.login_txt_cadastrar);
-        TextView btn_login = findViewById(R.id.login_btn_login);
+        LoginButton btn_login_facebook = findViewById(R.id.lb_facebook);
+        ImageView btn_login_twitter = findViewById(R.id.iv_twitter);
+        ImageView btn_login_google = findViewById(R.id.iv_google);
+        TextView btn_cadastrar = findViewById(R.id.tv_cadastrar);
+        TextView btn_login = findViewById(R.id.tv_login);
         splashScreen = findViewById(R.id.splash_screen);
         progressBar = findViewById(R.id.progressBar);
-        et_senha = findViewById(R.id.login_et_senha);
-        et_email = findViewById(R.id.login_et_usuario);
+        et_senha = findViewById(R.id.et_senha);
+        et_email = findViewById(R.id.et_usuario);
+        enviar_email = findViewById(R.id.enviar_email_verificacao);
         //endregion
-
-        activity = this;
 
         et_email.setText(Import.getFirebase.getUltinoEmail(this));
 
@@ -265,9 +273,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         try {
-                            if (task.isSuccessful())
-                                VerificarLoginApostador();
-                            else {
+                            if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
+                                FirebaseUser user = task.getResult().getUser();
+                                if (user.isEmailVerified())
+                                    VerificarLoginApostador();
+                                else
+                                    emailNaoVerificado(user);
+                            } else {
                                 progressBar.setVisibility(View.INVISIBLE);
                                 throw Objects.requireNonNull(task.getException());
                             }
@@ -288,27 +300,61 @@ public class LoginActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
+    private void emailNaoVerificado(final FirebaseUser user) {
+        if (hasWindowFocus()) {
+            Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.verifique_seu_email), getResources().getString(R.string.enviar_email), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    enviarNovoEmail(user);
+                }
+            });
+        } else {
+            enviar_email.setVisibility(View.VISIBLE);
+            enviar_email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    enviarNovoEmail(user);
+                }
+            });
+            Import.Alert.toast(activity, getResources().getString(R.string.verifique_seu_email));
+        }
+    }
+    private void enviarNovoEmail(final FirebaseUser user) {
+        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful())
+                    Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.email_enviado));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Import.Alert.erro(TAG, e);
+                Import.Alert.toast(activity, getResources().getString(R.string.email_enviado_erro));
+            }
+        });
+    }
+
     public void VerificarLoginApostador() {
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.APOSTADOR)
+                .child(Constantes.firebase.child.PUNTERS)
                 .child(Import.getFirebase.getId())
-//                .child(Constantes.firebase.child.DADOS)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         try {
                             if (dataSnapshot.getValue() == null)
                                 throw new Exception();
-                            Apostador item = dataSnapshot.getValue(Apostador.class);
+                            Punter item = dataSnapshot.getValue(Punter.class);
                             if (item == null)
                                 throw new Exception();
 
                             Import.getFirebase.setUser(activity, item);
                             startIntent(intent);
                         } catch (Exception ex){
-                            VerificarLoginTipster();;
+                            VerificarLoginTipster();
                         }
                     }
 
@@ -322,7 +368,6 @@ public class LoginActivity extends AppCompatActivity {
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
                 .child(Import.getFirebase.getId())
-//                .child(Constantes.firebase.child.DADOS)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -335,7 +380,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Import.getFirebase.setUser(activity, item);
                         } catch (Exception ex){
-                            intent.putExtra(Constantes.PRIMEIRO_LOGIN, true);
+                            intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
                         } finally {
                             startIntent(intent);
                         }

@@ -15,7 +15,7 @@
             android:id="@+id/item_conversa_mensagem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_circulo_conversa_mensagem_esquerda"
+            android:background="@drawable/bg_retangulo_conversa_mensagem_esquerda"
             android:padding="10dp"
             android:textSize="17sp" />
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,143 +8,132 @@
     android:background="@color/colorPrimary"
     tools:context=".activity.CadastroActivity">
 
-    <TableLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/login_item_margin"
-        android:paddingStart="@dimen/login_table_horizontal"
-        android:paddingEnd="@dimen/login_table_horizontal">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:cardCornerRadius="50dp">
-
-                <ImageView
-                    android:id="@+id/foto"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ic_user_blanc"
-                    android:padding="2dp"
-                    android:background="@drawable/bg_circulo_amarelo"
-                    android:contentDescription="@null" />
-
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_item_margin"
-            android:orientation="vertical"
-            android:gravity="center">
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/login_table_horizontal"
+            android:paddingStart="@dimen/login_table_horizontal"
+            android:paddingEnd="@dimen/login_table_horizontal">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:gravity="center_horizontal">
 
-                <TextView
-                    android:id="@+id/edit_text0"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/criar"
-                    android:textColor="@color/branco"
-                    android:textSize="30sp" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/conta"
-                    android:textColor="@color/branco"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/iv_foto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:padding="2dp"
+                        android:src="@drawable/ic_person_dark"
+                        android:background="@drawable/bg_circulo_amarelo"
+                        android:contentDescription="@null" />
+
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
-            <View
-                android:layout_width="200dp"
-                android:layout_height="1dp"
-                android:background="@color/branco"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fab_margin"
+                android:orientation="vertical"
+                android:gravity="center">
 
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/cadastro_et_nome"
-            android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/criar"
+                        android:textColor="@color/text_dark"
+                        android:textSize="@dimen/title_max_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/conta"
+                        android:textColor="@color/text_dark"
+                        android:textSize="@dimen/title_max_size"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="3dp"
+                    android:layout_marginTop="@dimen/login_item_margin"
+                    android:background="@color/text_dark"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_nome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/seu_nome"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"
+                style="@style/EditText.Login" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/seu_email"
+                android:inputType="textEmailAddress"
+                android:importantForAutofill="no"
+                style="@style/EditText.Login" />
+
+            <EditText
+                android:id="@+id/et_senha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/sua_senha"
+                android:inputType="textPassword"
+                android:importantForAutofill="no"
+                style="@style/EditText.Login" />
+
+            <EditText
+                android:id="@+id/et_confirmar_senha"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/confirmar_senha"
+                android:inputType="textPassword"
+                android:importantForAutofill="no"
+                style="@style/EditText.Login"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/cadastro_btn_cadastrar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_seta_direita"/>
+
+        </TableLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_item_margin"
-            android:background="@drawable/bg_stroke_edittext_login"
-            android:padding="10dp"
-            android:hint="@string/nome"
-            android:inputType="textPersonName"
-            android:textColor="@color/branco"
-            android:textColorHint="@color/branco"
-            android:importantForAutofill="no" />
+            android:layout_margin="30dp"
+            android:layout_alignParentEnd="true"/>
 
-        <EditText
-            android:id="@+id/cadastro_et_email"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_item_margin"
-            android:background="@drawable/bg_stroke_edittext_login"
-            android:padding="10dp"
-            android:hint="@string/e_mail"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/branco"
-            android:textColorHint="@color/branco"
-            android:importantForAutofill="no" />
+    </RelativeLayout>
 
-        <EditText
-            android:id="@+id/cadastro_et_senha"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_item_margin"
-            android:background="@drawable/bg_stroke_edittext_login"
-            android:padding="10dp"
-            android:hint="@string/senha"
-            android:inputType="textPassword"
-            android:textColor="@color/branco"
-            android:textColorHint="@color/branco"
-            android:importantForAutofill="no" />
-
-        <EditText
-            android:id="@+id/cadastro_et_confirmar_senha"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/login_item_margin"
-            android:background="@drawable/bg_stroke_edittext_login"
-            android:padding="10dp"
-            android:hint="@string/confirmar_senha"
-            android:inputType="textPassword"
-            android:textColor="@color/branco"
-            android:textColorHint="@color/branco"
-            android:importantForAutofill="no" />
-
-    </TableLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cadastro_btn_cadastrar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_seta_direita"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:layout_alignParentEnd="true"/>
-
-</RelativeLayout>
+</ScrollView>

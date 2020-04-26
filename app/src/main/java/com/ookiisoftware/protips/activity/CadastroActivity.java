@@ -3,6 +3,7 @@ package com.ookiisoftware.protips.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
@@ -34,6 +36,7 @@ public class CadastroActivity extends AppCompatActivity {
 
 //    private final String TAG = "CadastroActivity";
     private Random random = new Random();
+    private Activity activity;
 
     private EditText et_nome, et_email, et_senha, et_confirmar_senha;
     private ProgressBar progressBar;
@@ -47,6 +50,7 @@ public class CadastroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
+        activity = this;
         Init();
     }
 
@@ -63,17 +67,17 @@ public class CadastroActivity extends AppCompatActivity {
     private void Init() {
         //region findViewById
         progressBar = findViewById(R.id.progressBar);
-        et_nome = findViewById(R.id.cadastro_et_nome);
-        et_email = findViewById(R.id.cadastro_et_email);
-        et_senha = findViewById(R.id.cadastro_et_senha);
-        foto = findViewById(R.id.foto);
-        et_confirmar_senha = findViewById(R.id.cadastro_et_confirmar_senha);
+        et_nome = findViewById(R.id.et_nome);
+        et_email = findViewById(R.id.et_email);
+        et_senha = findViewById(R.id.et_senha);
+        foto = findViewById(R.id.iv_foto);
+        et_confirmar_senha = findViewById(R.id.et_confirmar_senha);
         FloatingActionButton btn_cadastrar = findViewById(R.id.cadastro_btn_cadastrar);
         //endregion
 
         progressBar.setVisibility(View.INVISIBLE);
 
-        //region Clicks
+        //region setListener
         btn_cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,10 +96,7 @@ public class CadastroActivity extends AppCompatActivity {
                         et_confirmar_senha.setError(getResources().getString(R.string.campo_obrigatório));
                     else if(!senha.equals(senha_2))
                         et_confirmar_senha.setError(getResources().getString(R.string.aviso_cadastro_senhas_diferentes));
-                        /*else if(image_uri == null){
-                            img_foto_bg.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
-                            Toast.makeText(CadastroActivity.this, "A foto é obrigatória", Toast.LENGTH_LONG).show();
-                        }*/ else {
+                    else {
                         progressBar.setVisibility(View.VISIBLE);
                         OrganizarDados(nome, usuario, senha);
                     }
@@ -114,16 +115,16 @@ public class CadastroActivity extends AppCompatActivity {
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
                         break;
                     case 2:
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_azul_light));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_colorPrimaryLight));
                         break;
                     case 3:
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_azul_light2));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_primary_light_2));
                         break;
                     case 4:
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_verde));
                         break;
                     case 5:
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_color_primary));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_branco));
                         break;
                 }
             }
@@ -141,25 +142,38 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     private void SalvarDadosNoFirebase(final Usuario usuario) {
-        FirebaseAuth firebaseAuth = Import.getFirebase.getAuth();
+        final FirebaseAuth firebaseAuth = Import.getFirebase.getAuth();
         firebaseAuth.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null){
+                if(task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
                     final FirebaseUser user = task.getResult().getUser();
-                    UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder().setDisplayName(usuario.getNome()).build();
-                    user.updateProfile(changeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    final UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(usuario.getNome())
+                            .build();
+                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            SharedPreferences pref = getSharedPreferences("info", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = pref.edit();
-                            editor.putString(Constantes.user.logado.EMAIL, usuario.getEmail());
+                            if (task.isSuccessful()) {
+                                user.updateProfile(changeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        SharedPreferences pref = getSharedPreferences("info", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = pref.edit();
+                                        editor.putString(Constantes.user.logado.EMAIL, usuario.getEmail());
 
-                            Import.Alert.toast(CadastroActivity.this, getResources().getString(R.string.cadastro_realizado));
-
-                            editor.apply();
-                            finish();
+                                        Import.Alert.toast(activity, getResources().getString(R.string.cadastro_realizado));
+                                        editor.apply();
+                                        finish();
+                                    }
+                                });
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Import.Alert.toast(activity, getResources().getString(R.string.email_enviado_erro));
                         }
                     });
                 } else{
