@@ -6,14 +6,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/toolbarHeight"
         android:background="@color/brancoDark"
-        android:orientation="horizontal"
-        android:paddingStart="7dp"
-        android:paddingEnd="7dp"
-        android:gravity="center_vertical">
+        app:menu="@menu/menu_post">
 
         <androidx.cardview.widget.CardView
             android:layout_width="40dp"
@@ -32,22 +30,14 @@
 
         <TextView
             android:id="@+id/tv_tipster"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="7dp"
+            android:maxLines="1"
             android:text="@string/nome_do_tipster"
             android:textSize="@dimen/title_medio_size"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_00_00_01_jan"
-            android:textSize="@dimen/subtitle_size" />
-
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
@@ -64,13 +54,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_titulo"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="@dimen/title_size"
-            android:text="@string/titulo"/>
+            android:paddingHorizontal="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_titulo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="@dimen/title_size"
+                android:text="@string/titulo"/>
+
+            <TextView
+                android:id="@+id/tv_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:text="@string/_00_00_01_jan"
+                android:textSize="@dimen/subtitle_size" />
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/img_constraint"

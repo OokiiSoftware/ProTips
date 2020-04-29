@@ -1,6 +1,8 @@
 package com.ookiisoftware.protips.modelo;
 
 import com.google.firebase.database.Exclude;
+import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Import;
 
 public class Usuario {
 
@@ -15,42 +17,59 @@ public class Usuario {
     private Endereco endereco;
     private Data nascimento;
     private boolean privado;
+    private boolean bloqueado;
 
     public Usuario() {
         endereco = new Endereco();
+        nascimento = new Data();
+    }
+
+    public void atualizarNumero(String numero, boolean isTipster) {
+        String child = isTipster ? Constantes.firebase.child.TIPSTERS : Constantes.firebase.child.PUNTERS;
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(child)
+                .child(getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.TELEFONE)
+                .setValue(numero);
+        setTelefone(numero);
     }
 
     public enum Categoria {
         Apostador, Tipster
     }
 
-    public Punter toApostador() {
+    public Punter toPunter() {
         Punter item = new Punter();
         item.setDados(this);
-//        if (getId() != null) item.getDados().setId(getId());
-//        if (getTipname() != null) item.getDados().setTipname(getTipname());
-//        if (getEmail() != null) item.getDados().setEmail(getEmail());
-//        if (getFoto() != null) item.getDados().setFoto(getFoto());
-//        if (getInfo() != null) item.getDados().setInfo(getInfo());
-//        if (getNome() != null) item.getDados().setNome(getNome());
-//        if (getTelefone() != null) item.getDados().setTelefone(getTelefone());
-//        if (getSenha() != null) item.getDados().setSenha(getSenha());
-//        item.getDados().setCategoria(getCategoria());
         return item;
     }
 
     public Tipster toTipster() {
         Tipster item = new Tipster();
         item.setDados(this);
-//        if (getId() != null) item.getDados().setId(getId());
-//        if (getTipname() != null) item.getDados().setTipname(getTipname());
-//        if (getEmail() != null) item.getDados().setEmail(getEmail());
-//        if (getFoto() != null) item.getDados().setFoto(getFoto());
-//        if (getInfo() != null) item.getDados().setInfo(getInfo());
-//        if (getNome() != null) item.getDados().setNome(getNome());
-//        if (getSenha() != null) item.getDados().setSenha(getSenha());
-//        item.getDados().setCategoria(getCategoria());
         return item;
+    }
+
+    public void bloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(true);
+    }
+
+    public void desbloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(false);
     }
 
     //region gets sets
@@ -142,6 +161,14 @@ public class Usuario {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public boolean isBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
     }
 
     //endregion

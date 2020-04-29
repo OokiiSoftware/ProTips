@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawer"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,7 +32,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.ookiisoftware.protips.adapter.CustomViewPager
-            android:id="@+id/view_pager_main_activity"
+            android:id="@+id/viewPager"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -40,7 +40,7 @@
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             tools:context=".MainActivity"
-            android:id="@+id/nav_view_main_activity"
+            android:id="@+id/bottonNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -53,7 +53,7 @@
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/menu_lateral"
+        android:id="@+id/nv_menu_lateral"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

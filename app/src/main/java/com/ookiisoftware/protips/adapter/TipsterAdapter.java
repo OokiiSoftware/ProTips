@@ -51,9 +51,7 @@ public class TipsterAdapter extends RecyclerView.Adapter<TipsterAdapter.Holder> 
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         final Tipster item = data.get(position);
         Uri path = Uri.parse(item.getDados().getFoto());
-        String post_quant = item.getPostes().size() + " poste";
-        if (item.getPostes().size() > 1)
-            post_quant += "s";
+        String post_quant = item.getPostes().size() + "";
 
         int bom = 0;
         int ruim = 0;

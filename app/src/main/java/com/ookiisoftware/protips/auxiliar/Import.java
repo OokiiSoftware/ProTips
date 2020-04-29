@@ -11,6 +11,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -32,12 +36,9 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.LoginActivity;
 import com.ookiisoftware.protips.modelo.Activites;
 import com.ookiisoftware.protips.modelo.Punter;
-import com.ookiisoftware.protips.modelo.Conversa;
-import com.ookiisoftware.protips.modelo.Mensagem;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.Tipster;
-import com.ookiisoftware.protips.sqlite.SQLiteConversa;
-import com.ookiisoftware.protips.sqlite.SQLiteMensagem;
+import com.ookiisoftware.protips.modelo.Usuario;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -78,7 +79,7 @@ public class Import {
         return reborn;
     }
 
-    static void Notificacao(Context context, Intent intent, String titulo, String texto) {
+    static void notificacao(Context context, Intent intent, String titulo, String texto) {
         Import.Alert.msg(TAG, "Notificacao", titulo, texto);
         String CHANNEL_ID = "tips";
 
@@ -110,34 +111,31 @@ public class Import {
             if (manager == null)
                 return;
             manager.createNotificationChannel(channel);
-
-        } {
-            Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_notification_icon_dark)
-                    .setCustomContentView(notificacaoSimples)
-                    .setCustomBigContentView(notificacaoExpandida)
-                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                    .setContentIntent(pendingIntent)
-                    .setSound(Constantes.notification.SOUND_DEFAULT)
-                    .setVibrate(Constantes.notification.VIBRATION)
-                    .setAutoCancel(true)
-                    .build();
-
-            manager.notify(1, notification);
         }
+        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification_icon_dark)
+                .setCustomContentView(notificacaoSimples)
+                .setCustomBigContentView(notificacaoExpandida)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setContentIntent(pendingIntent)
+                .setSound(Constantes.notification.SOUND_DEFAULT)
+                .setVibrate(Constantes.notification.VIBRATION)
+                .setAutoCancel(true)
+                .build();
 
+        manager.notify(1, notification);
     }
 
-    public static boolean SalvarMensagemNoDispositivo(Context context, Mensagem mensagem) {
+    /*public static boolean SalvarMensagemNoDispositivo(Context context, Mensagem mensagem) {
         try {
-            SQLiteMensagem db = new SQLiteMensagem(context);
+//            SQLiteMensagem db = new SQLiteMensagem(context);
 //            db.update(mensagem);
             return true;
         } catch (Exception e){
             return false;
         }
-    }
-    public static boolean SalvarConversaNoDispositivo(Context context, Conversa conversa) {
+    }*/
+    /*public static boolean SalvarConversaNoDispositivo(Context context, Conversa conversa) {
         try {
             SQLiteConversa db = new SQLiteConversa(context);
 //            db.update(context, conversa);
@@ -145,13 +143,13 @@ public class Import {
         } catch (Exception e){
             return false;
         }
-    }
+    }*/
 
-    static void RemoverMensagemDoFirebase(DatabaseReference reference, Mensagem mensagem) {
+    /*static void RemoverMensagemDoFirebase(DatabaseReference reference, Mensagem mensagem) {
         DatabaseReference refTemp = reference;
         refTemp = refTemp.child(mensagem.getData_de_envio());
         refTemp.removeValue();
-    }
+    }*/
 
     public static String getSQLiteDatabaseName(Context context){
         SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
@@ -159,10 +157,10 @@ public class Import {
     }
 
     public static Typeface getFonteNormal(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "candara.ttf");
+        return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
     }
     public static Typeface getFonteBold(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "candara-bold.ttf");
+        return Typeface.createFromAsset(context.getAssets(), "bebasneue_bold.otf");
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
@@ -176,15 +174,31 @@ public class Import {
         return true;
     }
 
-    public static void LogOut(Activity activity) {
+    public static void logOut(Activity activity) {
+        limparDados();
         getFirebase.getAuth().signOut();
-        IrProLogin(activity);
+        irProLogin(activity);
     }
 
-    public static void IrProLogin(Activity activity) {
+    public static void irProLogin(Activity activity) {
         Intent intent = new Intent(activity, LoginActivity.class);
         activity.startActivity(intent);
         activity.finish();
+    }
+
+    public static void reiniciarApp(Activity activity) {
+        limparDados();
+        activity.finishAffinity();
+        irProLogin(activity);
+    }
+
+    private static void limparDados() {
+        get.tipsters.setPostes(new ArrayList<Post>());
+        get.tipsters.setPuntersPendentes(new ArrayList<Punter>());
+        get.tipsters.setTipsters(new ArrayList<Tipster>());
+        get.tipsters.setTipstersAux(new ArrayList<Tipster>());
+        get.punter.setPunters(new ArrayList<Punter>());
+        get.punter.setPuntersAux(new ArrayList<Punter>());
     }
 
     //endregion
@@ -211,6 +225,27 @@ public class Import {
             return dateFormat.format(c.getTime());
         }
 
+        public static boolean hasConection(Activity activity) {
+            final ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm != null) {
+                if (Build.VERSION.SDK_INT < 23) {
+                    final NetworkInfo ni = cm.getActiveNetworkInfo();
+                    if (ni != null) {
+                        return (ni.isConnected() && (ni.getType() == ConnectivityManager.TYPE_WIFI || ni.getType() == ConnectivityManager.TYPE_MOBILE));
+                    }
+                } else {
+                    final Network n = cm.getActiveNetwork();
+                    if (n != null) {
+                        final NetworkCapabilities nc = cm.getNetworkCapabilities(n);
+                        if (nc != null) {
+                            return (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI));
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public static class calendar {
             static Calendar calendario() {
                 return Calendar.getInstance();
@@ -228,15 +263,15 @@ public class Import {
 
         public static class myComparator implements Comparator<Post> {
             public int compare(Post left, Post right) {
-                return left.getData().compareTo(right.getData());
+                return right.getData().compareTo(left.getData());
             }
         }
 
         public static class tipsters {
-            private final static ArrayList<Punter> puntersPendentes = new ArrayList<>();
-            private final static ArrayList<Tipster> tipstersAux = new ArrayList<>();
-            private final static ArrayList<Tipster> tipsters = new ArrayList<>();
-            private final static ArrayList<Post> postes = new ArrayList<>();
+            private static ArrayList<Punter> puntersPendentes = new ArrayList<>();
+            private static ArrayList<Tipster> tipstersAux = new ArrayList<>();
+            private static ArrayList<Tipster> tipsters = new ArrayList<>();
+            private static ArrayList<Post> postes = new ArrayList<>();
 
             // Esse Auxiliar serve para restaurar a lista principal no momento
             // de pesquisa onde a lista principal 'tipsters' sofre uma Clear()
@@ -248,6 +283,22 @@ public class Import {
             }
             public static ArrayList<Tipster> getAll() {
                 return tipsters;
+            }
+
+            static void setPuntersPendentes(ArrayList<Punter> value) {
+                puntersPendentes = value;
+            }
+
+            static void setTipstersAux(ArrayList<Tipster> value) {
+                tipstersAux = value;
+            }
+
+            public static void setTipsters(ArrayList<Tipster> value) {
+                tipsters = value;
+            }
+
+            static void setPostes(ArrayList<Post> value) {
+                postes = value;
             }
 
             public static ArrayList<Post> postes () {
@@ -278,14 +329,21 @@ public class Import {
         }
 
         public static class punter {
-            private final static ArrayList<Punter> punters = new ArrayList<>();
-            private final static ArrayList<Punter> puntersAux = new ArrayList<>();
+            private static ArrayList<Punter> punters = new ArrayList<>();
+            private static ArrayList<Punter> puntersAux = new ArrayList<>();
 
             public static ArrayList<Punter> getAllAux () {
                 return puntersAux;
             }
             public static ArrayList<Punter> getAll() {
                 return punters;
+            }
+
+            public static void setPunters(ArrayList<Punter> value) {
+                punters = value;
+            }
+            static void setPuntersAux(ArrayList<Punter> value) {
+                puntersAux = value;
             }
 
             public static Punter find(String value) {
@@ -306,8 +364,16 @@ public class Import {
         public static void snakeBar(View view, String texto, String buttonText, View.OnClickListener clickListener) {
             Snackbar.make(view, texto, Snackbar.LENGTH_INDEFINITE).setAction(buttonText, clickListener).show();
         }
-        public static void snakeBar(View view, String texto) {
-            Snackbar.make(view, texto, Snackbar.LENGTH_LONG).setAction("Fechar", null).show();
+        public static void snakeBar(Activity activity, String texto) {
+            try {
+                if (activity.getCurrentFocus() == null)
+                    throw new Exception();
+
+                Snackbar.make(activity.getCurrentFocus(), texto, Snackbar.LENGTH_LONG)
+                        .setAction(activity.getResources().getString(R.string.fechar), null).show();
+            } catch (Exception ignored) {
+                toast(activity, texto);
+            }
         }
 
         public static void msg(String tag, String titulo, String texto) {
@@ -374,30 +440,32 @@ public class Import {
         }
 
         public static void setUser(Context context, Punter user) {
-            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
-            editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
-            editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
-            editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
-//            editor.putInt(Constantes.user.logado.CATEGORIA, user.getDados().getCategoria());
+            if (user != null) {
+                SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
+                editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
+                editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
+                editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
 
-            editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
-            editor.apply();
+                editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
+                editor.apply();
+            }
 
             punter = user;
         }
         public static void setUser(Context context, Tipster user) {
-            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
-            editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
-            editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
-            editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
-//            editor.putInt(Constantes.user.logado.CATEGORIA, user.getDados().getCategoria());
+            if (user != null) {
+                SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
+                editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
+                editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
+                editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
 
-            editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
-            editor.apply();
+                editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
+                editor.apply();
+            }
 
             tipster = user;
         }
@@ -407,6 +475,13 @@ public class Import {
         }
         public static Tipster getTipster() {
             return tipster;
+        }
+
+        public static Usuario getUsuario() {
+            if (isTipster())
+                return getTipster().getDados();
+            else
+            return getPunter().getDados();
         }
 
         public static boolean isTipster() {

@@ -7,8 +7,11 @@
     <color name="colorPrimaryDark">#006a8e</color>
     <color name="colorAccent">#ffc909</color>
 
-
     <color name="text_dark">#FFFFFF</color>
+    <color name="text_dark_disabled">#AAA</color>
+    <color name="text_light">#000000</color>
+    <color name="text_light_disabled">#555</color>
+
     <color name="brancoDark">#f1f3f2</color>
     <color name="transparente">#00000000</color>
     <color name="amarelo">#ffc809</color>
@@ -17,7 +20,6 @@
     <color name="vermelhoDark">#cc1318</color>
     <color name="verde">#8bca3b</color>
     <color name="verdeDark">#136d09</color>
-    <color name="text_light">#000000</color>
     <color name="pretoLight">#333</color>
     <color name="notification_light_color">#5100FF</color>
 </resources>

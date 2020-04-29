@@ -16,16 +16,15 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="10dp"
-            app:cardCornerRadius="25dp">
+            android:backgroundTint="@color/colorPrimaryLight"
+            app:cardCornerRadius="27dp">
 
             <ImageView
                 android:id="@+id/iv_foto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/perfil_usuario_nome"
-                android:src="@drawable/ic_person_light"
-                android:padding="2dp"
-                android:background="@drawable/bg_stroke_edittext_login"/>
+                android:contentDescription="@string/nome"
+                android:src="@drawable/ic_person_light"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -73,6 +72,7 @@
                 android:id="@+id/post_quant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:drawableStart="@drawable/ic_notification_icon_light"
                 android:drawablePadding="@dimen/drawable_paddind"
                 android:text="@string/_0"/>

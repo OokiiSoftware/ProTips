@@ -15,10 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.BatepapoActivity;
-import com.ookiisoftware.protips.activity.ConversaActivity;
 import com.ookiisoftware.protips.activity.MainActivity;
-import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
@@ -42,14 +39,17 @@ public class SegundoPlanoService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (Import.getFirebase.isTipster()) {
-            CommandTipsterPunter();
-            CommandTipsterPunterPendente();
-        } else {
-            CommandPostes();
-            CommandPunterPendenteAceito();
+        try {
+            if (Import.getFirebase.isTipster()) {
+                CommandTipsterPunter();
+                CommandTipsterPunterPendente();
+            } else {
+                CommandPostes();
+                CommandPunterPendenteAceito();
+            }
+        } catch (Exception e) {
+            Import.Alert.erro(TAG, e);
         }
-//        CommandConversas();
 
         // START_STICKY serve para executar seu serviço até que você pare ele, é reiniciado automaticamente sempre que termina
         return START_STICKY;
@@ -66,8 +66,8 @@ public class SegundoPlanoService extends Service {
 
     // Aguarda novos Postes
     private void CommandPostes() {
-        for (String id : Import.getFirebase.getPunter().getTipsters()) {
-            addChildEventList(id);
+        for (String id : Import.getFirebase.getPunter().getTipsters().values()) {
+            postAddChildEventList(id);
         }
     }
 
@@ -88,7 +88,7 @@ public class SegundoPlanoService extends Service {
                     return;
 
                 Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildAdded", key);
-                Import.getFirebase.getTipster().getPuntersPendentes().add(key);
+                Import.getFirebase.getTipster().getPuntersPendentes().put(key, key);
 
                 DatabaseReference ref =  Import.getFirebase.getReference()
                         .child(Constantes.firebase.child.USUARIO)
@@ -109,8 +109,7 @@ public class SegundoPlanoService extends Service {
                             try {
                                 notificationPunterPendente(item.getDados());
                                 Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
-//                                Import.activites.getMainActivity().feedFragment.refreshLayout.setRefreshing(false);
-//                                Import.activites.getMainActivity().tipstersFragment.refreshLayout.setRefreshing(false);
+                                Import.activites.getMainActivity().perfilFragment.updateNotificacao();
                             } catch (Exception ignored) {}
                         }
                     }
@@ -136,8 +135,6 @@ public class SegundoPlanoService extends Service {
                     Import.get.tipsters.getPuntersPendentes().remove(item);
                     try {
                         Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
-//                                Import.activites.getMainActivity().feedFragment.refreshLayout.setRefreshing(false);
-//                                Import.activites.getMainActivity().tipstersFragment.refreshLayout.setRefreshing(false);
                     } catch (Exception ignored) {}
                 }
             }
@@ -176,16 +173,16 @@ public class SegundoPlanoService extends Service {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Punter item = dataSnapshot.getValue(Punter.class);
                         if (item != null) {
+                            if (item.getDados().isBloqueado())
+                                return;
+
                             Import.getFirebase.getTipster().getPuntersPendentes().remove(key);
                             Punter item2 = Import.get.tipsters.findPuntersPendentes(item.getDados().getId());
                             if (item2 != null) {
                                 Import.get.tipsters.getPuntersPendentes().remove(item2);
                             }
 
-                            if (!item.getTipsters().contains(meu_id)) {
-                                item.getTipsters().add(meu_id);
-                                item.salvarTipsters();
-                            }
+                            item.addTipster(meu_id);
                             item2 = Import.get.punter.find(item.getDados().getId());
                             if (item2 == null) {
                                 Import.get.punter.getAll().add(item);
@@ -198,6 +195,7 @@ public class SegundoPlanoService extends Service {
                             try {
                                 Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
                                 Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
+                                Import.activites.getMainActivity().perfilFragment.updateNotificacao();
                             } catch (Exception ignored) {}
                         }
                     }
@@ -221,8 +219,7 @@ public class SegundoPlanoService extends Service {
                     Import.get.punter.getAll().remove(item);
                     Import.get.punter.getAllAux().remove(item);
 
-                    item.getTipsters().remove(meu_id);
-                    item.salvarTipsters();
+                    item.removerTipster(meu_id);
                 }
 
                 try {
@@ -254,7 +251,6 @@ public class SegundoPlanoService extends Service {
                 if (key == null)
                     return;
 
-                Import.Alert.msg(TAG, "CommandPunterPendenteAceito", "onChildAdded", key);
                 DatabaseReference ref =  Import.getFirebase.getReference()
                         .child(Constantes.firebase.child.USUARIO)
                         .child(Constantes.firebase.child.TIPSTERS)
@@ -270,7 +266,7 @@ public class SegundoPlanoService extends Service {
                                 Import.get.tipsters.getAll().add(item);
                                 Import.get.tipsters.getAllAux().add(item);
                                 Import.get.tipsters.postes().addAll(item.getPostes().values());
-                                addChildEventList(item.getDados().getId());
+                                postAddChildEventList(item.getDados().getId());
                                 notificationPunterAceito(item.getDados());
                             } else {
                                 Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item2), item);
@@ -299,14 +295,12 @@ public class SegundoPlanoService extends Service {
                 if (key == null)
                     return;
 
-                Import.Alert.msg(TAG, "CommandPunterPendenteAceito", "onChildRemoved", key);
                 Punter item = Import.get.punter.find(key);
                 if (item != null) {
                     Import.get.punter.getAll().remove(item);
                     Import.get.punter.getAllAux().remove(item);
 
-                    item.getTipsters().remove(meu_id);
-                    item.salvarTipsters();
+                    item.removerTipster(meu_id);
                 }
 
                 try {
@@ -322,14 +316,14 @@ public class SegundoPlanoService extends Service {
         });
     }
 
-    private void CommandConversas(){
+    /*private void CommandConversas(){
         final String usuarioLogadoId = Import.getFirebase.getId();
         final DatabaseReference fbRefConversas = Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(usuarioLogadoId)
                 .child(Constantes.firebase.child.CONVERSAS);
 
-        /*ValueEventListener valueEventListenerConversas = new ValueEventListener() {
+        ValueEventListener valueEventListenerConversas = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final StringBuilder textoNotificacao = new StringBuilder();
@@ -409,9 +403,9 @@ public class SegundoPlanoService extends Service {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };*/
-//        fbRefConversas.addValueEventListener(valueEventListenerConversas);
-    }
+        };
+        fbRefConversas.addValueEventListener(valueEventListenerConversas);
+    }*/
 
     //endregion
 
@@ -422,7 +416,8 @@ public class SegundoPlanoService extends Service {
         String texto = getResources().getString(R.string.nova_solicitação_punter) + "\n" + usuario.getNome();
 
         Intent intent = new Intent(getContext(), MainActivity.class);
-        Import.Notificacao(getContext(), intent, titulo, texto);
+        intent.putExtra(Constantes.intent.PAGE_SELECT, 3);
+        Import.notificacao(getContext(), intent, titulo, texto);
     }
 
     private void notificationPunterAceito(@NonNull Usuario usuario) {
@@ -431,24 +426,22 @@ public class SegundoPlanoService extends Service {
                 + usuario.getNome();
 
         Intent intent = new Intent(getContext(), MainActivity.class);
-        Import.Notificacao(getContext(), intent, titulo, texto);
+        Import.notificacao(getContext(), intent, titulo, texto);
     }
 
     private void notificationNewPost(@NonNull Tipster usuario, @NonNull Post post) {
-        Esporte esporte = usuario.getEsportes().get(post.getEsporte());
-
         String titulo = getResources().getString(R.string.app_name);
         String texto = getResources().getString(R.string.novo_poste) + ": " + usuario.getDados().getNome();
-        texto += "\n" + getResources().getString(R.string.esporte) + ": " + esporte.getNome();
-        texto += "\n" + getResources().getString(R.string.mercado) + ": " + esporte.getMercados().get(post.getMercado());
+        texto += "\n" + getResources().getString(R.string.esporte) + ": " + post.getEsporte();
+        texto += "\n" + getResources().getString(R.string.mercado) + ": " + post.getMercado();
         texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
         texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
 
         Intent intent = new Intent(getContext(), MainActivity.class);
-        Import.Notificacao(getContext(), intent, titulo, texto);
+        Import.notificacao(getContext(), intent, titulo, texto);
     }
 
-    private void CriarNotificacaoDaMensagem(String id_conversa, String titulo, String texto) {
+    /*private void CriarNotificacaoDaMensagem(String id_conversa, String titulo, String texto) {
         id_conversa = Criptografia.descriptografar(id_conversa);
 
         Intent intent;
@@ -466,11 +459,11 @@ public class SegundoPlanoService extends Service {
         }
 
         Import.Notificacao(getContext(), intent, tituloReal, texto);
-    }
+    }*/
 
     //endregion
 
-    private void addChildEventList(String id_tipster) {
+    private void postAddChildEventList(String id_tipster) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
@@ -491,7 +484,8 @@ public class SegundoPlanoService extends Service {
                                 boolean mostrarNotification = true;
                                 try {
                                     if (Import.activites.getMainActivity().viewPager.getCurrentItem() == 0
-                                        && verifyApplicationRunning(getContext())) {
+                                        && verifyApplicationRunning(getContext())
+                                    && Import.activites.getMainActivity().isInPrimeiroPlano()) {
                                         mostrarNotification = false;
                                         Import.activites.getMainActivity().feedFragment.haveNewPostes(true);
                                     }
@@ -528,9 +522,10 @@ public class SegundoPlanoService extends Service {
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
     }
+
     private boolean verifyApplicationRunning(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> procInfos = null;
+        List<ActivityManager.RunningAppProcessInfo> procInfos;
         if (activityManager != null) {
             procInfos = activityManager.getRunningAppProcesses();
             for (int i = 0; i < procInfos.size(); i++) {
@@ -542,4 +537,5 @@ public class SegundoPlanoService extends Service {
         }
         return false;
     }
+
 }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.PerfilVisitanteActivity;
 import com.ookiisoftware.protips.adapter.PunterAdapter;
 import com.ookiisoftware.protips.adapter.TipsterAdapter;
@@ -37,9 +35,7 @@ public class TipstersFragment extends Fragment {
     public SwipeRefreshLayout refreshLayout;
     //endregion
 
-    public TipstersFragment(){
-
-    }
+    public TipstersFragment(){}
     public TipstersFragment(Activity activity) {
         this.activity = activity;
 //        tipsters = Import.get.tipsters.getAll();
@@ -55,10 +51,8 @@ public class TipstersFragment extends Fragment {
 
     private void Init(View view) {
         //region findViewById
-//        final SearchView et_pesquisa = view.findViewById(R.id.et_pesquisa);
-        LinearLayout btn_filtro = view.findViewById(R.id.btn_filtro);
         final RecyclerView recyclerView = view.findViewById(R.id.recycler);
-        refreshLayout = view.findViewById(R.id.swipe_refresh);
+        refreshLayout = view.findViewById(R.id.swipeRefresh);
         //endregion
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -97,13 +91,6 @@ public class TipstersFragment extends Fragment {
             };
             recyclerView.setAdapter(tipsterAdapter);
         }
-
-        btn_filtro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupFiltro();
-            }
-        });
     }
 
     public void adapterUpdate() {
@@ -118,10 +105,6 @@ public class TipstersFragment extends Fragment {
     }
     public PunterAdapter getPunterAdapter() {
         return punterAdapter;
-    }
-
-    private void popupFiltro() {
-
     }
 
     //endregion

@@ -72,13 +72,13 @@ public class CadastroActivity extends AppCompatActivity {
         et_senha = findViewById(R.id.et_senha);
         foto = findViewById(R.id.iv_foto);
         et_confirmar_senha = findViewById(R.id.et_confirmar_senha);
-        FloatingActionButton btn_cadastrar = findViewById(R.id.cadastro_btn_cadastrar);
+        FloatingActionButton cadastrar = findViewById(R.id.fab_cadastrar);
         //endregion
 
         progressBar.setVisibility(View.INVISIBLE);
 
         //region setListener
-        btn_cadastrar.setOnClickListener(new View.OnClickListener() {
+        cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 {
@@ -115,7 +115,7 @@ public class CadastroActivity extends AppCompatActivity {
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
                         break;
                     case 2:
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_colorPrimaryLight));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_primary_light));
                         break;
                     case 3:
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_primary_light_2));
@@ -173,7 +173,7 @@ public class CadastroActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Import.Alert.toast(activity, getResources().getString(R.string.email_enviado_erro));
+                            Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
                         }
                     });
                 } else{
@@ -185,7 +185,7 @@ public class CadastroActivity extends AppCompatActivity {
                         erro = getResources().getString(R.string.cadastro_senha_fraca);
                         et_senha.setError(erro);
                     } catch (FirebaseAuthInvalidCredentialsException e){
-                        erro = getResources().getString(R.string.cadastro_email_invalido);
+                        erro = getResources().getString(R.string.email_invalido);
                         et_email.setError(erro);
                     } catch (FirebaseAuthUserCollisionException e){
                         erro = getResources().getString(R.string.cadastro_email_repetido);

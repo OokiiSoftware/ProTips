@@ -54,8 +54,9 @@ import com.ookiisoftware.protips.modelo.Usuario;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class PerfilActivity extends AppCompatActivity {
 
@@ -63,12 +64,15 @@ public class PerfilActivity extends AppCompatActivity {
     private static final String TAG = "EditFragment";
 
     // Elementos do layout
-    private Button queroSerTipster;
+    private Spinner privacidade;
     private Spinner mercado;
     private Spinner esporte;
+    private Spinner estado;
     private ImageView foto;
     private EditText nome, email;
     private EditText tipName;
+    private EditText telefone;
+    private EditText info;
     private EditText nascimento;
     private TextView esportes_add;
     private TextView mercados_add;
@@ -78,13 +82,15 @@ public class PerfilActivity extends AppCompatActivity {
     private TextAdapter esportesAdapter;
     private TextAdapter mercadosAdapter;
 
-//    private Esporte currentEsporte;
-    private ArrayList<String> mercados;
-    private ArrayList<Esporte> esportes;
+    private Esporte currentEsporte;
+//    private ArrayList<String> mercados;
+    private HashMap<String, Esporte> esportes;
 
     public boolean isPrimeiroLogin;
     private boolean fotoUserIsLocal;
     private boolean isTipster;
+    private boolean bloquearUser;
+    private boolean solicitarSerTipster;
     private Activity activity;
     private FirebaseUser user;
     private String foto_uri = "";
@@ -142,7 +148,7 @@ public class PerfilActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(isPrimeiroLogin) {
             Import.Alert.toast(activity, getResources().getString(R.string.aviso_salvar_dados));
-            Import.LogOut(activity);
+            Import.logOut(activity);
         }
         super.onBackPressed();
     }
@@ -154,26 +160,27 @@ public class PerfilActivity extends AppCompatActivity {
     private void Init() {
         //region findViewById
         progressBar = findViewById(R.id.progressBar);
-        queroSerTipster = findViewById(R.id.quero_ser_tipster);
         foto = findViewById(R.id.iv_foto);
-        nome = findViewById(R.id.nome);
+        nome = findViewById(R.id.et_nome);
         email = findViewById(R.id.et_email);
-        nascimento = findViewById(R.id.tv_data);
-        tipName = findViewById(R.id.tipname);
-        esporte = findViewById(R.id.tv_esporte);
-        mercado = findViewById(R.id.tv_mercado);
-        esportes_add = findViewById(R.id.esportes_add);
-        mercados_add = findViewById(R.id.mercados_add);
-        esportesRecycler = findViewById(R.id.esportes);
-        mercadosRecycler = findViewById(R.id.mercados);
-        final EditText telefone = findViewById(R.id.telefone);
-        final Spinner categoria = findViewById(R.id.categoria);
-        final Spinner estado = findViewById(R.id.estado);
-        final Spinner privacidade = findViewById(R.id.privacidade);
-        final TextView privacidade_info = findViewById(R.id.privacidade_info);
-        LinearLayout tipster_container = findViewById(R.id.tipster_container);
-        Button btn_cancelar = findViewById(R.id.cancelar);
-        Button btn_salvar = findViewById(R.id.salvar);
+        info = findViewById(R.id.et_info);
+        nascimento = findViewById(R.id.et_data);
+        tipName = findViewById(R.id.et_tipname);
+        esporte = findViewById(R.id.sp_esporte);
+        mercado = findViewById(R.id.sp_mercado);
+        esportes_add = findViewById(R.id.tv_esportes_add);
+        mercados_add = findViewById(R.id.tv_mercados_add);
+        esportesRecycler = findViewById(R.id.rv_esportes);
+        mercadosRecycler = findViewById(R.id.rv_mercados);
+        telefone = findViewById(R.id.et_telefone);
+        estado = findViewById(R.id.sp_estado);
+        privacidade = findViewById(R.id.sp_privacidade);
+        final Spinner categoria = findViewById(R.id.sp_categoria);
+        final TextView privacidade_info = findViewById(R.id.tv_info_privacidade);
+        final LinearLayout tipster_container = findViewById(R.id.ll_tipster_container);
+        final Button queroSerTipster = findViewById(R.id.quero_ser_tipster);
+        final Button btn_voltar = findViewById(R.id.cancelar);
+        final Button btn_salvar = findViewById(R.id.salvar);
         //endregion
 
         //region Bundle
@@ -185,36 +192,36 @@ public class PerfilActivity extends AppCompatActivity {
 
         //region setValues
 
-        mercados = new ArrayList<>();
-        esportes = new ArrayList<>();
+        esportes = new HashMap<>();
         email.setEnabled(false);
+        telefone.setFocusable(false);
 
         isTipster = Import.getFirebase.isTipster();
         if (!isPrimeiroLogin) {
             Usuario usuario;
             if (isTipster) {
-                esportes.addAll(Import.getFirebase.getTipster().getEsportes());
+                esportes.putAll(Import.getFirebase.getTipster().getEsportes());
                 usuario = Import.getFirebase.getTipster().getDados();
                 categoria.setSelection(1);
-                tipster_container.setVisibility(View.VISIBLE);
-                mercadosAdapter = new TextAdapter(activity, mercados, false) {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        int itemPosition = mercadosRecycler.getChildAdapterPosition(v);
-                        confirmExlusao(mercados.get(itemPosition), null);
-                        return super.onLongClick(v);
-                    }
-                };
+
                 mercadosRecycler.setAdapter(mercadosAdapter);
                 esportesAdapter = new TextAdapter(activity, esportes) {
                     @Override
                     public void onClick(View v) {
                         int itemPosition = esportesRecycler.getChildAdapterPosition(v);
-                        Esporte currentEsporte = esportes.get(itemPosition);
-                        mercados.clear();
-                        mercados.addAll(currentEsporte.getMercados());
+                        currentEsporte = esportesAdapter.getEsporte(itemPosition);
+                        mercadosAdapter = new TextAdapter(activity, currentEsporte != null ? currentEsporte.getMercados() : null, false) {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                int itemPosition = mercadosRecycler.getChildAdapterPosition(v);
+                                String nome = mercadosAdapter.getMercado(itemPosition);
+                                confirmExlusao(currentEsporte.getMercados().get(nome), null);
+                                return super.onLongClick(v);
+                            }
+                        };
+                        mercadosRecycler.setAdapter(mercadosAdapter);
                         mercadosAdapter.notifyDataSetChanged();
-                        if (mercados.contains(mercado.getSelectedItem().toString()))
+                        if (currentEsporte.getMercados().containsValue(mercado.getSelectedItem().toString()))
                             mercados_add.setText(getResources().getString(R.string._menos));
                         else
                             mercados_add.setText(getResources().getString(R.string._mais));
@@ -223,19 +230,27 @@ public class PerfilActivity extends AppCompatActivity {
                     @Override
                     public boolean onLongClick(View v) {
                         int itemPosition = esportesRecycler.getChildAdapterPosition(v);
-                        Esporte e =  esportes.get(itemPosition);
+                        Esporte e =  esportesAdapter.getEsporte(itemPosition);
                         confirmExlusao(e.getNome(), e);
                         return super.onLongClick(v);
                     }
                 };
                 esportesRecycler.setAdapter(esportesAdapter);
-                queroSerTipster.setVisibility(View.GONE);
+                queroSerTipster.setText(getResources().getString(R.string.quero_ser_um_punter));
+                queroSerTipster.setVisibility(View.VISIBLE);
+                tipster_container.setVisibility(View.VISIBLE);
             } else {
                 usuario = Import.getFirebase.getPunter().getDados();
                 categoria.setSelection(0);
                 tipster_container.setVisibility(View.GONE);
             }
             if (usuario != null) {
+                if (usuario.isBloqueado()) {
+                    tipster_container.setVisibility(View.GONE);
+                    queroSerTipster.setVisibility(View.VISIBLE);
+                    queroSerTipster.setText(getResources().getString(R.string.em_analize));
+                }
+                info.setText(usuario.getInfo());
                 tipName.setText(usuario.getTipname());
                 estado.setSelection(usuario.getEndereco().getEstado());
                 nascimento.setText(usuario.getNascimento().toString());
@@ -245,22 +260,26 @@ public class PerfilActivity extends AppCompatActivity {
         tipName.setEnabled(isPrimeiroLogin);
         categoria.setEnabled(!isTipster);
 
-        //region Firebase
         user = Import.getFirebase.getUser();
         nome.setText(user.getDisplayName());
         email.setText(user.getEmail());
 
+        boolean telefoneNull = false;
         if (user.getPhotoUrl() != null)
             foto_uri = user.getPhotoUrl().toString();
-        if (user.getPhoneNumber() != null)
+        if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty())
             telefone.setText(user.getPhoneNumber());
+        else {
+            telefoneNull = true;
+            telefone.setHint(getResources().getString(R.string.registrar_numero));
+        }
 
         Glide.with(activity).load(foto_uri).into(foto);
-        //endregion
 
         //endregion
 
         //region setListener
+
         foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -273,7 +292,7 @@ public class PerfilActivity extends AppCompatActivity {
                             foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
                             Import.Alert.toast(activity, getResources().getString(R.string.carregando_a_imagem));
                         } else {
-                            foto.setBackground(getDrawable(R.drawable.bg_circulo_colorPrimaryLight));
+                            foto.setBackground(getDrawable(R.drawable.bg_circulo_primary_light));
                             AbrirCropView();
                         }
                     }
@@ -291,10 +310,11 @@ public class PerfilActivity extends AppCompatActivity {
                     if (e == null) {
                         e = new Esporte();
                         e.setNome(name);
-                        esportes.add(e);
+                        esportes.put(e.getNome(), e);
                         esportesAdapter.notifyDataSetChanged();
-                        mercados.clear();
-                        mercadosAdapter.notifyDataSetChanged();
+                        currentEsporte = e;
+                        if (mercadosAdapter != null)
+                            mercadosAdapter.notifyDataSetChanged();
                         esportes_add.setText(getResources().getString(R.string._menos));
                         mercados_add.setText(getResources().getString(R.string._mais));
                     } else {
@@ -306,13 +326,14 @@ public class PerfilActivity extends AppCompatActivity {
         mercados_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mercado.getSelectedItemPosition() != 0) {
+                if (mercado.getSelectedItemPosition() != 0 && mercadosAdapter != null) {
                     String item = mercado.getSelectedItem().toString();
 
-                    if (mercados.contains(item)) {
+                    if (currentEsporte != null)
+                    if (currentEsporte.getMercados().containsValue(item)) {
                         confirmExlusao(item, null);
                     } else {
-                        mercados.add(item);
+                        currentEsporte.getMercados().put(item, item);
                         mercadosAdapter.notifyDataSetChanged();
                         mercados_add.setText(getResources().getString(R.string._menos));
                     }
@@ -351,8 +372,12 @@ public class PerfilActivity extends AppCompatActivity {
                         dialog.setView(calendarView);
                         calendarView.setMaxDate(maxDate.getTimeInMillis());
 
-                        calendar.set(dataNascimento.getAno(), dataNascimento.getMes(), dataNascimento.getDia());
-                        calendarView.setDate(calendar.getTimeInMillis());
+                        try {
+                            calendar.set(dataNascimento.getAno(), dataNascimento.getMes(), dataNascimento.getDia());
+                            calendarView.setDate(calendar.getTimeInMillis());
+                        } catch (Exception e) {
+                            Import.Alert.erro(TAG, e);
+                        }
                         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
                             @Override
                             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
@@ -380,27 +405,10 @@ public class PerfilActivity extends AppCompatActivity {
         btn_salvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                {
-                    if (uploadTask != null && uploadTask.isInProgress()) {
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
-                        Import.Alert.toast(activity, getResources().getString(R.string.carregando_a_imagem));
-                    } else {
-                        Usuario usuario = new Usuario();
-                        usuario.setId(user.getUid());
-                        usuario.setTipname(tipName.getText().toString());
-                        usuario.setNome(nome.getText().toString());
-                        usuario.setEmail(email.getText().toString());
-                        usuario.setFoto(foto_uri);
-                        usuario.setNascimento(dataNascimento);
-                        usuario.setTelefone(telefone.getText().toString());
-                        usuario.getEndereco().setEstado(estado.getSelectedItemPosition());
-                        usuario.setPrivado(privacidade.getSelectedItemPosition() == 1);
-                        VerificarDadosAntesDeSalvar(usuario);
-                    }
-                }
+                CriarUsuario();
             }
         });
-        btn_cancelar.setOnClickListener(new View.OnClickListener() {
+        btn_voltar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!isPrimeiroLogin) {
@@ -417,21 +425,31 @@ public class PerfilActivity extends AppCompatActivity {
                 {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                     dialog.setTitle(R.string.informacao);
-                    dialog.setMessage(R.string.privacidade_info);
+                    dialog.setMessage(R.string.info_privacidade);
                     dialog.setPositiveButton(getResources().getString(R.string.ok), null);
                     dialog.show();
                 }
+            }
+        });
+        queroSerTipster.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Objects.equals(queroSerTipster.getText().toString(), getResources().getString(R.string.quero_ser_um_punter)))
+                    QueroSerPunter();
+                else
+                    QueroSerTipster(!Import.getFirebase.getUsuario().isBloqueado());
             }
         });
 
         esporte.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (esportes != null && position < esportes.size())
-                    if (findEsporte(esportes.get(position).getNome()) == null)
-                        esportes_add.setText(getResources().getString(R.string._mais));
-                    else
-                        esportes_add.setText(getResources().getString(R.string._menos));
+                String nome = ((String) esporte.getSelectedItem());
+                Esporte e = esportes.get(nome);
+                if (e != null && findEsporte(e.getNome()) == null)
+                    esportes_add.setText(getResources().getString(R.string._mais));
+                else
+                    esportes_add.setText(getResources().getString(R.string._menos));
             }
 
             @Override
@@ -440,7 +458,7 @@ public class PerfilActivity extends AppCompatActivity {
         mercado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (mercados.contains(mercado.getItemAtPosition(position).toString()))
+                if (currentEsporte != null && currentEsporte.getMercados().containsValue(mercado.getItemAtPosition(position).toString()))
                     mercados_add.setText(getResources().getString(R.string._menos));
                 else
                     mercados_add.setText(getResources().getString(R.string._mais));
@@ -456,6 +474,8 @@ public class PerfilActivity extends AppCompatActivity {
                 isTipster = position == Usuario.Categoria.Tipster.ordinal();
                 if (position == 0) {
                     queroSerTipster.setVisibility(View.GONE);
+                    bloquearUser = false;
+                    solicitarSerTipster = false;
                 } else
                     queroSerTipster.setVisibility(View.VISIBLE);
             }
@@ -464,7 +484,37 @@ public class PerfilActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        if (telefoneNull)
+            telefone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(activity, RegistrarNumeroCelActivity.class);
+                    startActivity(intent);
+                }
+            });
+
         //endregion
+    }
+
+    private void CriarUsuario() {
+        if (uploadTask != null && uploadTask.isInProgress()) {
+            foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
+            Import.Alert.toast(activity, getResources().getString(R.string.carregando_a_imagem));
+        } else {
+            Usuario usuario = new Usuario();
+            usuario.setId(user.getUid());
+            usuario.setTipname(tipName.getText().toString());
+            usuario.setNome(nome.getText().toString());
+            usuario.setEmail(email.getText().toString());
+            usuario.setFoto(foto_uri);
+            usuario.setNascimento(dataNascimento);
+            usuario.setTelefone(telefone.getText().toString());
+            usuario.getEndereco().setEstado(estado.getSelectedItemPosition());
+            usuario.setPrivado(privacidade.getSelectedItemPosition() == 1);
+            usuario.setBloqueado(bloquearUser);
+            usuario.setInfo(info.getText().toString());
+            VerificarDadosAntesDeSalvar(usuario);
+        }
     }
 
     private void AbrirCropView() {
@@ -487,12 +537,10 @@ public class PerfilActivity extends AppCompatActivity {
         } else {
             if (!usuario.getNome().equals(user.getDisplayName()))
                 AlterarNome(usuario.getNome());
-            if (!usuario.getTelefone().equals(user.getPhoneNumber()))
-                AlterarTelefone(usuario.getNome());
 
             if (tipName.isEnabled()) {
                 // Se estiver desabilitado não precisa verificar
-                // Verifica se este id já existe no banco de dados
+                // Verifica se este tipName já existe no banco de dados
                 DatabaseReference refTemp = Import.getFirebase.getReference()
                         .child(Constantes.firebase.child.IDENTIFICADOR)
                         .child(usuario.getTipname());
@@ -515,13 +563,75 @@ public class PerfilActivity extends AppCompatActivity {
         }
     }
 
-    private void AlterarTelefone(String nome) {
-//        user.updatePhoneNumber().addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//
-//            }
-//        });
+    private void QueroSerTipster(final boolean teste) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle(getResources().getString(R.string.solicitacao_tipster));
+
+        String msg = getResources().getString(R.string.entre_em_contato_com);
+        msg += "\n" + getResources().getString(R.string.e_mail) + ": ";
+        msg += getResources().getString(R.string.company_email);
+        msg += "\n" + getResources().getString(R.string.whats_app) + ": ";
+        msg += getResources().getString(R.string.company_whats_app);
+
+        dialog.setMessage(msg);
+
+        if (teste) {
+            dialog.setNeutralButton(getResources().getString(R.string.cancelar), null);
+            dialog.setPositiveButton(getResources().getString(R.string.solicitar), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    bloquearUser = true;
+                    solicitarSerTipster = true;
+                    CriarUsuario();
+                    Import.reiniciarApp(activity);
+                }
+            });
+        } else {
+            dialog.setPositiveButton(getResources().getString(R.string.ok), null);
+            dialog.setNeutralButton(getResources().getString(R.string.cancelar_solicitacao), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    bloquearUser = false;
+                    solicitarSerTipster = false;
+                    isTipster = false;
+                    CriarUsuario();
+                    if (Import.getFirebase.getTipster() != null) {
+                        Import.getFirebase.getTipster().solicitarSerTipsterCancelar();
+                        Import.getFirebase.getTipster().excluir();
+                        Import.getFirebase.setUser(activity, (Tipster) null);
+                    }
+                    Import.reiniciarApp(activity);
+                }
+            });
+        }
+
+        dialog.show();
+    }
+
+    private void QueroSerPunter() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle(getResources().getString(R.string.solicitacao_tipster));
+
+        String msg = getResources().getString(R.string.aviso_exluir_conta);
+        msg += "\n" + getResources().getString(R.string.aviso_recriar_conta_punter);
+
+        dialog.setMessage(msg);
+        dialog.setNeutralButton(getResources().getString(R.string.cancelar), null);
+        dialog.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                bloquearUser = false;
+                solicitarSerTipster = false;
+                isTipster = false;
+                CriarUsuario();
+                if (Import.getFirebase.getTipster() != null) {
+                    Import.getFirebase.getTipster().excluir();
+                    Import.getFirebase.setUser(activity, (Tipster) null);
+                }
+                Import.reiniciarApp(activity);
+            }
+        });
+        dialog.show();
     }
 
     private void AlterarNome(final String nome) {
@@ -544,35 +654,6 @@ public class PerfilActivity extends AppCompatActivity {
         });
     }
 
-    private void Salvar(Punter usuario) {
-        if (Import.getFirebase.getPunter() != null)
-            usuario.setTipsters(Import.getFirebase.getPunter().getTipsters());
-        // Salva no firebase
-        usuario.salvar();
-        Import.getFirebase.setUser(activity, usuario);
-        Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
-
-        SalvarComum();
-    }
-    private void Salvar(Tipster usuario) {
-        usuario.setEsportes(esportes);
-        if (Import.getFirebase.getTipster() != null) {
-            usuario.setPostes(Import.getFirebase.getTipster().getPostes());
-            usuario.setPunters(Import.getFirebase.getTipster().getPunters());
-        }
-        // Salva no firebase
-        usuario.salvar();
-        Import.getFirebase.setUser(activity, usuario);
-        Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
-
-        SalvarComum();
-    }
-    private void SalvarComum() {
-        tipName.setEnabled(false);
-        isPrimeiroLogin = false;
-        Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.usuario_salvo));
-    }
-
     private void confirmExlusao(final String itemName, final Esporte esporte) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
         dialog.setTitle(itemName);
@@ -581,16 +662,15 @@ public class PerfilActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (esporte == null) {
-//                    currentEsporte.getMercados().remove(itemName);
-                    mercados.remove(itemName);
-                    mercadosAdapter.notifyDataSetChanged();
+                    currentEsporte.getMercados().remove(itemName);
+                    if (mercadosAdapter != null)
+                        mercadosAdapter.notifyDataSetChanged();
                     mercados_add.setText(getResources().getString(R.string._mais));
                 } else {
-                    esportes.remove(esporte);
+                    esportes.remove(esporte.getNome());
                     esportesAdapter.notifyDataSetChanged();
-//                    currentEsporte = null;
-                    mercados.clear();
-                    mercadosAdapter.notifyDataSetChanged();
+                    if (mercadosAdapter != null)
+                        mercadosAdapter.notifyDataSetChanged();
                     esportes_add.setText(getResources().getString(R.string._mais));
                     mercados_add.setText(getResources().getString(R.string._mais));
                 }
@@ -601,7 +681,7 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private Esporte findEsporte(String name) {
-        for (Esporte e : esportes)
+        for (Esporte e : esportes.values())
             if (e.getNome().equals(name))
                 return e;
         return null;
@@ -612,7 +692,7 @@ public class PerfilActivity extends AppCompatActivity {
             if (isTipster)
                 Salvar(usuario.toTipster());
             else
-                Salvar(usuario.toApostador());
+                Salvar(usuario.toPunter());
         }
         else {
             Uri uri = Uri.parse(usuario.getFoto());
@@ -641,7 +721,7 @@ public class PerfilActivity extends AppCompatActivity {
                                             if (isTipster)
                                                 Salvar(usuario.toTipster());
                                             else
-                                                Salvar(usuario.toApostador());
+                                                Salvar(usuario.toPunter());
                                         }
                                     }
                                 });
@@ -660,6 +740,42 @@ public class PerfilActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void Salvar(Punter usuario) {
+        if (Import.getFirebase.getPunter() != null)
+            usuario.setTipsters(Import.getFirebase.getPunter().getTipsters());
+        // Salva no firebase
+        usuario.salvar();
+        Import.getFirebase.setUser(activity, usuario);
+        Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
+
+        SalvarComum();
+    }
+
+    private void Salvar(Tipster usuario) {
+        usuario.setEsportes(esportes);
+        if (Import.getFirebase.getTipster() != null) {
+            usuario.setPostes(Import.getFirebase.getTipster().getPostes());
+            usuario.setPunters(Import.getFirebase.getTipster().getPunters());
+        }
+        // Salva no firebase
+        usuario.salvar();
+        Import.getFirebase.setUser(activity, usuario);
+        Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
+
+        if (solicitarSerTipster) {
+            if (Import.getFirebase.getPunter() != null)
+                Import.getFirebase.getPunter().getDados().bloquear();
+            usuario.solicitarSerTipster();
+        }
+        SalvarComum();
+    }
+
+    private void SalvarComum() {
+        tipName.setEnabled(false);
+        isPrimeiroLogin = false;
+        Import.Alert.snakeBar(activity, getResources().getString(R.string.usuario_salvo));
     }
 
     //endregion

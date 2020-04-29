@@ -230,7 +230,8 @@ public class ConversaActivity extends AppCompatActivity {
         mensagem.setStatus(Constantes.CONVERSA_MENSAGEM_NAO_ENVIADA);
         mensagem.setArquivo(0);
 
-        if (Import.SalvarMensagemNoDispositivo(this, mensagem)) {// aqui salva a msg
+//        if (Import.SalvarMensagemNoDispositivo(this, mensagem))
+        {// aqui salva a msg
 
             mensagems.add(mensagem);
 //            adapter.notifyDataSetChanged();

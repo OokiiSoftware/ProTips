@@ -1,37 +1,44 @@
 package com.ookiisoftware.protips.modelo;
 
-import androidx.annotation.NonNull;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Tipster {
 
     private Usuario dados;
     private HashMap<String, Post> postes;
-    private ArrayList<Esporte> esportes;
-    private ArrayList<String> punters;
-    private ArrayList<String> puntersPendentes;
+    private HashMap<String, Esporte> esportes;
+    private HashMap<String, String> punters;
+    private HashMap<String,String> puntersPendentes;
 
-    public enum Status {
-        Pendente, Seguindo, Nao_Seguindo
-    }
     public enum Acao {
         Seguir, Desseguir, Remover_Pendente, Aceitar
+
     }
 
     public Tipster() {
-        punters = new ArrayList<>();
-        esportes = new ArrayList<>();
+        punters = new HashMap<>();
+        esportes = new HashMap<>();
         postes = new HashMap<>();
         dados = new Usuario();
+    }
+
+    public void solicitarSerTipster() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
+                .child(dados.getId())
+                .setValue(getDados().getTipname());
+    }
+
+    public void solicitarSerTipsterCancelar() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
+                .child(dados.getId())
+                .removeValue();
+        getDados().toPunter().getDados().desbloquear();
     }
 
     public void salvar() {
@@ -48,7 +55,7 @@ public class Tipster {
                 .setValue(dados.getId());
     }
 
-    public void solicitar(final Punter punter, final Acao acao) {
+    /*public void solicitar1(final Punter punter, final Acao acao) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
@@ -65,8 +72,8 @@ public class Tipster {
                         String id_punter = punter.getDados().getId();
                         switch (acao) {
                             case Seguir: {
-                                    if (!item.getPunters().contains(id_punter) && !item.getPuntersPendentes().contains(id_punter))
-                                        item.getPuntersPendentes().add(id_punter);
+                                    if (!item.getPunters().contains(id_punter) && !item.getPuntersPendentes().values().contains(id_punter))
+                                        item.getPuntersPendentes().values().add(id_punter);
                                     dataSnapshot.getRef()
                                             .child(Constantes.firebase.child.PUNTERS_PENDENTES)
                                             .setValue(item.getPuntersPendentes());
@@ -92,7 +99,10 @@ public class Tipster {
                                     dataSnapshot.getRef()
                                             .child(Constantes.firebase.child.PUNTERS)
                                             .setValue(item.getPunters());
-                                    solicitar(punter, Acao.Remover_Pendente);
+
+                                    String meuId = Import.getFirebase.getId();
+                                    punter.addTipster(meuId);
+                                    solicitar1(punter, Acao.Remover_Pendente);
 
 //                                    Import.getFirebase.getTipster().getPunters().add(id_punter);
 //                                    Import.get.punter.getAll().add(punter);
@@ -112,7 +122,114 @@ public class Tipster {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
+    }*/
 
+    public void addSolicitacao(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.PUNTERS_PENDENTES)
+                .child(id)
+                .setValue(id);
+    }
+
+    public void removerSolicitacao(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.PUNTERS_PENDENTES)
+                .child(id)
+                .removeValue();
+    }
+
+    public void addPunter(Punter punter) {
+        String id = punter.getDados().getId();
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(id)
+                .setValue(id);
+
+        punter.addTipster(Import.getFirebase.getId());
+        removerSolicitacao(id);
+    }
+
+    public void removerPunter(Punter punter) {
+        String id = punter.getDados().getId();
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(id)
+                .removeValue();
+        punter.removerTipster(id);
+    }
+
+    public void addEsporte(Esporte esporte) {
+        String nome = esporte.getNome();
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.ESPORTES)
+                .child(nome)
+                .setValue(esporte);
+        getEsportes().put(nome, esporte);
+    }
+
+    public void removerEsporte(Esporte esporte) {
+        String nome = esporte.getNome();
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.ESPORTES)
+                .child(nome)
+                .removeValue();
+        getEsportes().remove(nome);
+    }
+
+    public void addMercado(String esporte, String mercado) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.ESPORTES)
+                .child(esporte)
+                .child(mercado)
+                .setValue(mercado);
+
+        Esporte e = getEsportes().get(esporte);
+        if (e != null)
+            e.getMercados().put(mercado, mercado);
+    }
+
+    public void removerMercado(String esporte, String mercado) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.ESPORTES)
+                .child(esporte)
+                .child(mercado)
+                .removeValue();
+
+        Esporte e = getEsportes().get(esporte);
+        if (e != null)
+            e.getMercados().remove(mercado);
+    }
+
+    public void excluir() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(dados.getId())
+                .removeValue();
     }
 
     //region gets sets
@@ -133,35 +250,36 @@ public class Tipster {
         this.postes = postes;
     }
 
-    public ArrayList<Esporte> getEsportes() {
+    public HashMap<String, Esporte> getEsportes() {
         if (esportes == null)
-            esportes = new ArrayList<>();
+            esportes = new HashMap<>();
         return esportes;
     }
 
-    public void setEsportes(ArrayList<Esporte> esportes) {
+    public void setEsportes(HashMap<String, Esporte> esportes) {
         this.esportes = esportes;
     }
 
-    public ArrayList<String> getPunters() {
+    public HashMap<String, String> getPunters() {
         if (punters == null)
-            punters = new ArrayList<>();
+            punters = new HashMap<>();
         return punters;
     }
 
-    public void setPunters(ArrayList<String> punters) {
+    public void setPunters(HashMap<String, String> punters) {
         this.punters = punters;
     }
 
-    public ArrayList<String> getPuntersPendentes() {
+    public HashMap<String,String> getPuntersPendentes() {
         if (puntersPendentes == null)
-            puntersPendentes = new ArrayList<>();
+            puntersPendentes = new HashMap<>();
         return puntersPendentes;
     }
 
-    public void setPuntersPendentes(ArrayList<String> puntersPendentes) {
+    public void setPuntersPendentes(HashMap<String,String> puntersPendentes) {
         this.puntersPendentes = puntersPendentes;
     }
 
     //endregion
+
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryLight"
+    tools:context=".activity.RegistrarNumeroCelActivity">
+
+    <include layout="@layout/toolbar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/login_table_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_texto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/login_item_margin"
+            android:textSize="@dimen/text_size"
+            android:textColor="@color/text_dark"
+            android:text="@string/info_registrar_telefone"/>
+
+        <EditText
+            android:id="@+id/et_telefone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/_00_00000_0000"
+            android:inputType="phone"
+            android:importantForAutofill="no"
+            style="@style/EditText.Login"/>
+
+        <EditText
+            android:id="@+id/et_codigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ex_123456"
+            android:inputType="number"
+            android:visibility="gone"
+            android:importantForAutofill="no"
+            style="@style/EditText.Login"/>
+
+        <TextView
+            android:id="@+id/tv_enviar_codigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_circulo_branco"
+            android:layout_marginTop="@dimen/login_item_margin"
+            android:text="@string/enviar_codigo"
+            android:textAlignment="center"
+            android:textSize="@dimen/title_max_size"
+            android:textColor="@color/colorPrimaryLight"/>
+
+    </LinearLayout>
+
+</LinearLayout>

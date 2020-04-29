@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:focusable="false"
-    android:background="@color/colorPrimaryLight_2"
+    android:background="@color/colorPrimaryLight"
     tools:context=".activity.PerfilActivity">
 
     <RelativeLayout
@@ -50,19 +50,18 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="150dp"
-        android:layout_height="150sp"
+        android:layout_height="150dp"
         android:layout_below="@+id/rl_1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-75dp"
-        app:cardCornerRadius="74dp">
+        android:backgroundTint="@color/colorPrimaryLight"
+        app:cardCornerRadius="75dp">
 
         <ImageView
             android:id="@+id/iv_foto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_circulo_colorPrimaryLight"
-            android:contentDescription="@string/perfil_usuario_nome"
-            android:padding="2dp"
+            android:contentDescription="@string/nome"
             android:src="@drawable/ic_person_dark" />
 
     </androidx.cardview.widget.CardView>
@@ -97,17 +96,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_nome"
+                    android:text="@string/nome"
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/nome"
+                    android:id="@+id/et_nome"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_nome"
+                    android:hint="@string/seu_nome"
                     android:inputType="textPersonName"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -128,17 +127,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_tipname"
+                    android:text="@string/tipname"
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/tipname"
+                    android:id="@+id/et_tipname"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_tipname"
+                    android:hint="@string/seu_tipname"
                     android:inputType="textPersonName"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -163,13 +162,13 @@
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/telefone"
+                    android:id="@+id/et_telefone"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/_99_99999_9999"
+                    android:hint="@string/_00_00000_0000"
                     android:inputType="phone"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -190,7 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_email"
+                    android:text="@string/email"
                     android:textSize="20sp" />
 
                 <EditText
@@ -200,7 +199,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_email"
+                    android:hint="@string/seu_email"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -225,7 +224,7 @@
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/tv_data"
+                    android:id="@+id/et_data"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -258,14 +257,13 @@
                     android:textSize="20sp" />
 
                 <Spinner
-                    android:id="@+id/estado"
+                    android:id="@+id/sp_estado"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:entries="@array/estado"
-                    android:popupBackground="@color/colorPrimaryDark"
-                    android:background="@drawable/bg_circulo_branco"
+                    android:popupBackground="@color/colorPrimaryLight_3"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
             </LinearLayout>
@@ -287,18 +285,17 @@
                     android:textSize="20sp" />
 
                 <Spinner
-                    android:id="@+id/privacidade"
+                    android:id="@+id/sp_privacidade"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:entries="@array/privacidade"
-                    android:popupBackground="@color/colorPrimaryDark"
-                    android:background="@drawable/bg_circulo_branco"
+                    android:popupBackground="@color/colorPrimaryLight_3"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
                 <TextView
-                    android:id="@+id/privacidade_info"
+                    android:id="@+id/tv_info_privacidade"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="7dp"
@@ -313,6 +310,21 @@
                 android:layout_marginTop="@dimen/login_item_margin"
                 android:textColor="@color/colorPrimaryDark"
                 android:text="@string/dados_outros"/>
+
+            <EditText
+                android:id="@+id/et_info"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_circulo_branco"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:hint="@string/descricao"
+                android:padding="15dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimary"
+                android:importantForAutofill="no"  />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -332,14 +344,13 @@
                     android:textSize="20sp" />
 
                 <Spinner
-                    android:id="@+id/categoria"
+                    android:id="@+id/sp_categoria"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:entries="@array/categoria"
-                    android:popupBackground="@color/colorPrimaryDark"
-                    android:background="@drawable/bg_circulo_branco"
+                    android:popupBackground="@color/colorPrimaryLight_3"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
             </LinearLayout>
@@ -355,7 +366,7 @@
                 android:background="@drawable/bg_circulo_branco"/>
 
             <LinearLayout
-                android:id="@+id/tipster_container"
+                android:id="@+id/ll_tipster_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -374,7 +385,7 @@
                     android:orientation="horizontal">
 
                     <Spinner
-                        android:id="@+id/tv_esporte"
+                        android:id="@+id/sp_esporte"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="10dp"
@@ -382,22 +393,23 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:entries="@array/esporte"
-                        android:popupBackground="@color/colorPrimaryDark"
+                        android:popupBackground="@color/colorPrimaryLight_3"
                         android:background="@color/text_dark"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
                     <TextView
-                        android:id="@+id/esportes_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_esportes_add"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
                         android:background="@color/text_dark"
-                        android:padding="7dp"
+                        android:gravity="center"
+                        android:textSize="@dimen/title_medio_size"
                         android:text="@string/_mais"/>
 
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/esportes"
+                    android:id="@+id/rv_esportes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -419,7 +431,7 @@
                     android:orientation="horizontal">
 
                     <Spinner
-                        android:id="@+id/tv_mercado"
+                        android:id="@+id/sp_mercado"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="10dp"
@@ -427,22 +439,23 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:entries="@array/mercado"
-                        android:popupBackground="@color/colorPrimaryDark"
+                        android:popupBackground="@color/colorPrimaryLight_3"
                         android:background="@color/text_dark"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
                     <TextView
-                        android:id="@+id/mercados_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/tv_mercados_add"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
                         android:background="@color/text_dark"
-                        android:padding="7dp"
+                        android:gravity="center"
+                        android:textSize="@dimen/title_medio_size"
                         android:text="@string/_mais"/>
 
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mercados"
+                    android:id="@+id/rv_mercados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

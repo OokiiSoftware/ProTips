@@ -68,10 +68,10 @@ public class FeedFragment extends Fragment {
 
     private void Init(View view) {
         recyclerView = view.findViewById(R.id.recycler);
-        refreshLayout = view.findViewById(R.id.swipe_refresh);
-        novos_postes = view.findViewById(R.id.novos_postes);
+        refreshLayout = view.findViewById(R.id.swipeRefresh);
+        novos_postes = view.findViewById(R.id.tv_novos_postes);
 
-        boolean isTipster = Import.getFirebase.isTipster();
+        final boolean isTipster = Import.getFirebase.isTipster();
 
         if (isTipster) {
             for (Post item : Import.getFirebase.getTipster().getPostes().values())
@@ -104,7 +104,7 @@ public class FeedFragment extends Fragment {
                         }
                         case MotionEvent.ACTION_UP: {
                             recyclerView.suppressLayout(false);
-                            refreshLayout.setEnabled(true);
+                            refreshLayout.setEnabled(!isTipster);
                             Import.activites.getMainActivity().viewPager.setPagingEnabled(true);
                             break;
                         }
@@ -120,7 +120,7 @@ public class FeedFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    scrollInTop = getCurrentItem() > adapter.getItemCount() -3;
+                    scrollInTop = getCurrentItem() <= 3;
                 }
             }
         });
@@ -145,7 +145,6 @@ public class FeedFragment extends Fragment {
     public void adapterUpdate() {
         if (adapter != null) {
             adapter.notifyDataSetChanged();
-            recyclerView.scrollToPosition(adapter.getItemCount()-1);
         }
     }
 
@@ -156,8 +155,7 @@ public class FeedFragment extends Fragment {
     }
 
     public void rollToTop() {
-        if (adapter.getItemCount() > 0)
-            recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+        recyclerView.smoothScrollToPosition(0);
     }
 
     public void haveNewPostes(boolean sim) {

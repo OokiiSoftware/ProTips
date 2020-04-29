@@ -25,7 +25,7 @@
             android:stretchColumns="0,1">
 
             <EditText
-                android:id="@+id/tv_titulo"
+                android:id="@+id/et_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/titulo"
@@ -33,7 +33,7 @@
                 android:importantForAutofill="no"
                 style="@style/EditText.NovoTip" />
 
-            <TableRow android:layout_marginTop="5dp">
+            <TableRow android:layout_marginTop="@dimen/item_table_margin">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
@@ -43,7 +43,7 @@
                         android:id="@+id/iv_foto"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginEnd="@dimen/item_table_margin"
                         android:adjustViewBounds="true"
                         android:contentDescription="@null"
                         android:maxHeight="200dp"
@@ -59,7 +59,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <EditText
-                    android:id="@+id/tv_texto"
+                    android:id="@+id/et_texto"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:gravity="top"
@@ -81,7 +81,7 @@
                     android:text="@string/imagem"/>
 
                 <TextView
-                    android:id="@+id/popup_length"
+                    android:id="@+id/tv_popup_length"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:textAlignment="center" />
@@ -90,17 +90,37 @@
 
             <TableRow>
 
+                <CheckBox
+                    android:id="@+id/cb_tip_publico"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/item_table_margin"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:text="@string/tip_publico"/>
+
+                <TextView
+                    android:id="@+id/tv_ajuda"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:background="@drawable/bg_stroke_primary_color"
+                    android:text="@string/ajuda"/>
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="@dimen/item_table_margin">
+
                 <Spinner
-                    android:id="@+id/tv_esporte"
+                    android:id="@+id/sp_esporte"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/item_table_margin"
                     android:entries="@array/esporte"
                     android:background="@drawable/bg_stroke_primary_color"
                     android:padding="3dp" />
 
                 <Spinner
-                    android:id="@+id/tv_mercado"
+                    android:id="@+id/sp_mercado"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:entries="@array/mercado"
@@ -109,20 +129,20 @@
 
             </TableRow>
 
-            <TableRow android:layout_marginTop="5dp">
+            <TableRow android:layout_marginTop="@dimen/item_table_margin">
 
                 <EditText
-                    android:id="@+id/tv_odd_min"
+                    android:id="@+id/et_odd_min"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/odd_minima"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/item_table_margin"
                     android:inputType="numberDecimal"
                     android:importantForAutofill="no"
                     style="@style/EditText.NovoTip" />
 
                 <EditText
-                    android:id="@+id/tv_odd_max"
+                    android:id="@+id/et_odd_max"
                     android:layout_width="1dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/odd_maxima"
@@ -132,13 +152,13 @@
 
             </TableRow>
 
-            <TableRow android:layout_marginTop="5dp">
+            <TableRow android:layout_marginTop="@dimen/item_table_margin">
 
                 <EditText
-                    android:id="@+id/tv_horario_min"
+                    android:id="@+id/et_horario_min"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginEnd="@dimen/item_table_margin"
                     android:textAlignment="center"
                     android:text="@string/_00_00"
                     android:hint="@string/_00_00"
@@ -149,7 +169,7 @@
                     style="@style/EditText.NovoTip"/>
 
                 <EditText
-                    android:id="@+id/tv_horario_max"
+                    android:id="@+id/et_horario_max"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/_00_00"
@@ -195,8 +215,8 @@
 
     <TextView
         android:id="@+id/tv_postar"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_margin="@dimen/fab_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"

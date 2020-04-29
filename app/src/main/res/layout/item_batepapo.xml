@@ -27,7 +27,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_circulo_colorPrimaryLight">
+                    android:background="@drawable/bg_circulo_primary_light">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                             android:id="@+id/item_batepapo_foto"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@string/perfil_usuario_nome"
+                            android:contentDescription="@string/nome"
                             android:src="@drawable/ic_person_dark"/>
 
                     </androidx.cardview.widget.CardView>

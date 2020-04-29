@@ -13,19 +13,20 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.modelo.Esporte;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class TextAdapter extends RecyclerView.Adapter<TextAdapter.Holder> implements View.OnClickListener, View.OnLongClickListener {
 
-    private ArrayList<String> mercados;
-    private ArrayList<Esporte> esportes;
+    private HashMap<String, String> mercados;
+    private HashMap<String, Esporte> esportes;
     private Activity activity;
 
-    public TextAdapter(Activity activity, ArrayList<String> mercados, boolean b) {
+    public TextAdapter(Activity activity, HashMap<String, String> mercados, boolean b) {
         this.activity = activity;
         this.mercados = mercados;
     }
-    protected TextAdapter(Activity activity, ArrayList<Esporte> esportes) {
+    protected TextAdapter(Activity activity, HashMap<String, Esporte> esportes) {
         this.activity = activity;
         this.esportes = esportes;
     }
@@ -41,10 +42,15 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.Holder> implem
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        if (mercados != null)
-            holder.texto.setText(mercados.get(position));
-        if (esportes != null)
-            holder.texto.setText(esportes.get(position).getNome());
+        if (mercados != null) {
+            String s = (new ArrayList<>(mercados.values())).get(position);
+            holder.texto.setText(s);
+        }
+        if (esportes != null) {
+            Esporte e = (new ArrayList<>(esportes.values())).get(position);
+            holder.texto.setText(e.getNome());
+        }
+
     }
 
     @Override
@@ -62,6 +68,18 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.Holder> implem
     @Override
     public boolean onLongClick(View v) {
         return false;
+    }
+
+    public Esporte getEsporte(int position) {
+        if (esportes != null)
+            return (new ArrayList<>(esportes.values())).get(position);
+        return null;
+    }
+
+    public String getMercado(int position) {
+        if (mercados != null)
+            return (new ArrayList<>(mercados.values())).get(position);
+        return "";
     }
 
     static class Holder extends RecyclerView.ViewHolder {

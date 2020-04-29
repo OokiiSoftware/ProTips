@@ -25,8 +25,8 @@ import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.modelo.Activites;
-import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Post;
+import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 
 import androidx.annotation.NonNull;
@@ -57,10 +57,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private BottomNavigationView navView;
 
     // Itens do Menu
-    MenuItem menu_pesquisa;
+    private MenuItem menu_pesquisa;
 
     private SectionsPagerAdapter sectionsPagerAdapter;
-    private int NavCurrentItem = 0;
+    private static final int FRAGMENT_FEED = 0;
+    private static final int FRAGMENT_TIPSTER = 1;
+    private static final int FRAGMENT_PERFIL = 2;
+    private boolean inPrimeiroPlano;
 
     private DatabaseReference refAllTipsters;
     private ChildEventListener eventAllTipsters;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private AppCompatTextView action_bar_titulo_1, action_bar_titulo_2;
 
     public FeedFragment feedFragment;
+    public PerfilFragment perfilFragment;
     public TipstersFragment tipstersFragment;
     public NotificationsFragment notificationsFragment;
 
@@ -86,24 +90,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Import.Alert.msg(TAG, "Timezone1", TimeZone.getDefault().getID());
         Import.Alert.msg(TAG, "Timezone2", TimeZone.getDefault().getDisplayName());
 
-        try {
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                Intent intent = new Intent(activity, PerfilActivity.class);
-                intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
-                startActivity(intent);
-            }
-            Init();
-        } catch (Exception ex) {
-            Import.Alert.erro(TAG, ex);
-            Import.Alert.toast(activity, getResources().getString(R.string.erro_init_main_activity));
-            Import.IrProLogin(activity);
-        }
+        Init();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        inPrimeiroPlano = true;
         if (isTipster)
             getMyPunters();
         else
@@ -113,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onStop() {
         super.onStop();
+        inPrimeiroPlano = false;
         if (!isTipster)
             refAllTipsters.removeEventListener(eventAllTipsters);
     }
@@ -158,17 +152,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.nav_menu_inicio:
-                NavCurrentItem = 0;
+            case R.id.nav_menu_feed:
+                viewPager.setCurrentItem(FRAGMENT_FEED);
                 break;
-            case R.id.nav_menu_dashboard:
-                NavCurrentItem = 1;
+            case R.id.nav_menu_tipster:
+                viewPager.setCurrentItem(FRAGMENT_TIPSTER);
                 break;
             case R.id.nav_menu_perfil:
-                NavCurrentItem = 2;
-                break;
-            case R.id.nav_menu_notifications:
-                NavCurrentItem = 3;
+                viewPager.setCurrentItem(FRAGMENT_PERFIL);
                 break;
             case R.id.menu_lateral_batepapo: {
                 Intent intent = new Intent(activity, BatepapoActivity.class);
@@ -177,11 +168,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             }
             case R.id.menu_lateral_logout: {
-                Import.LogOut(activity);
+                Import.logOut(activity);
                 break;
             }
         }
-        viewPager.setCurrentItem(NavCurrentItem);
 
         return true;
     }
@@ -204,16 +194,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         switch (position) {
             case 0:
-                navView.setSelectedItemId(R.id.nav_menu_inicio);
+                navView.setSelectedItemId(R.id.nav_menu_feed);
                 break;
             case 1:
-                navView.setSelectedItemId(R.id.nav_menu_dashboard);
+                navView.setSelectedItemId(R.id.nav_menu_tipster);
                 break;
             case 2:
                 navView.setSelectedItemId(R.id.nav_menu_perfil);
-                break;
-            case 3:
-                navView.setSelectedItemId(R.id.nav_menu_notifications);
                 break;
         }
         SwithMenu(position);
@@ -224,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onBackPressed() {
-        if(viewPager.getCurrentItem() != 0)
-            viewPager.setCurrentItem(0);
+        if(viewPager.getCurrentItem() != FRAGMENT_FEED)
+            viewPager.setCurrentItem(FRAGMENT_FEED);
         else {
             if (feedFragment.scrollInTop())
                 super.onBackPressed();
@@ -241,20 +228,40 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void Init() {
         //region findViewById
         Toolbar toolbar = findViewById(R.id.toolbar);
-        NavigationView navigationView = findViewById(R.id.menu_lateral);
-        viewPager = findViewById(R.id.view_pager_main_activity);
-        navView = findViewById(R.id.nav_view_main_activity);
-        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nv_menu_lateral);
+        viewPager = findViewById(R.id.viewPager);
+        navView = findViewById(R.id.bottonNavigationView);
+        drawer = findViewById(R.id.drawer);
         //endregion
 
-        feedFragment = new FeedFragment(activity);
-        tipstersFragment = new TipstersFragment(activity);
-        notificationsFragment = new NotificationsFragment(activity);
-        PerfilFragment perfilFragment = new PerfilFragment(activity);
+        int pageSelect = 0;
+        try {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                boolean primeiroLogin = bundle.getBoolean(Constantes.intent.PRIMEIRO_LOGIN);
+                pageSelect = bundle.getInt(Constantes.intent.PAGE_SELECT);
+                if (primeiroLogin) {
+                    Intent intent = new Intent(activity, PerfilActivity.class);
+                    intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
+                    startActivity(intent);
+                }
+            }
 
-        isTipster = Import.getFirebase.isTipster();
-        Import.activites = new Activites();
-        Import.activites.setMainActivity(this);
+            feedFragment = new FeedFragment(activity);
+            tipstersFragment = new TipstersFragment(activity);
+            notificationsFragment = new NotificationsFragment(activity);
+            perfilFragment = new PerfilFragment(activity);
+
+            isTipster = Import.getFirebase.isTipster();
+            Import.activites = new Activites();
+            Import.activites.setMainActivity(this);
+
+
+        } catch (Exception ex) {
+            Import.Alert.erro(TAG, ex);
+            Import.Alert.toast(activity, getResources().getString(R.string.erro_init_main_activity));
+            Import.irProLogin(activity);
+        }
 
         //region Toolbar
         setSupportActionBar(toolbar);
@@ -282,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.addOnPageChangeListener(this);
+        viewPager.setCurrentItem(pageSelect);
         //endregion
 
         if (!isTipster)
@@ -290,16 +298,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void SwithMenu(int position) {
         /*switch (position) {
-            case 0: {
-                break;
-            }
+            case 0:
             case 1:
             case 2:
             case 3:
                 break;
         }*/
-//        menu_new_feed.setVisible(position == 0 && Import.getFirebase.isTipster());
-        menu_pesquisa.setVisible(position == 1);
+        if (menu_pesquisa != null)
+            menu_pesquisa.setVisible(position == 1);
     }
 
     private void getAllTipsters() {
@@ -313,6 +319,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 try {
                     Tipster item = dataSnapshot.getValue(Tipster.class);
                     if (item != null) {
+                        if (item.getDados().isBloqueado())
+                            return;
                         Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
                         if (item_2 == null) {
                             Import.get.tipsters.getAll().add(item);
@@ -321,11 +329,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
                             Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
                         }
-                        if (Import.getFirebase.getPunter().getTipsters().contains(item.getDados().getId())) {
+                        if (Import.getFirebase.getPunter().getTipsters().containsValue(item.getDados().getId())) {
                             for (Post post : item.getPostes().values()) {
                                 if (Import.get.tipsters.findPost(post.getId()) == null)
                                     Import.get.tipsters.postes().add(post);
                             }
+                        } else {
+                            for (Post post : item.getPostes().values())
+                                if (post.isPublico() && Import.get.tipsters.findPost(post.getId()) == null)
+                                    Import.get.tipsters.postes().add(post);
                         }
                         tipstersFragment.adapterUpdate();
                         feedFragment.adapterUpdate();
@@ -361,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void getMyPunters() {
-        /*for (String s : Import.getFirebase.getTipster().getPunters()) {
+        for (String s : Import.getFirebase.getTipster().getPunters().values()) {
             DatabaseReference ref =  Import.getFirebase.getReference()
                     .child(Constantes.firebase.child.USUARIO)
                     .child(Constantes.firebase.child.PUNTERS)
@@ -381,29 +393,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             Import.get.punter.getAllAux().set(Import.get.punter.getAllAux().indexOf(item2), item);
                         }
                     }
-                    feedFragment.refreshLayout.setRefreshing(false);
-                    tipstersFragment.refreshLayout.setRefreshing(false);
+                    try {
+                        tipstersFragment.adapterUpdate();
+                        tipstersFragment.refreshLayout.setRefreshing(false);
+                    } catch (Exception e) {
+                        Import.Alert.erro(TAG, e);
+                    }
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    feedFragment.refreshLayout.setRefreshing(false);
-                    tipstersFragment.refreshLayout.setRefreshing(false);
-                }
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
-        }*/
-
-        /*for (String s : Import.getFirebase.getTipster().getPuntersPendentes()) {
-            DatabaseReference ref =  Import.getFirebase.getReference()
-                    .child(Constantes.firebase.child.USUARIO)
-                    .child(Constantes.firebase.child.PUNTERS)
-                    .child(s);
-        }*/
+        }
     }
 
     public void feedUpdate() {
         onStop();
         onStart();
+    }
+
+    public boolean isInPrimeiroPlano() {
+        return inPrimeiroPlano;
     }
 
     //endregion

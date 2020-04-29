@@ -21,7 +21,7 @@ import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 import com.ookiisoftware.protips.modelo.Usuario;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PerfilVisitanteActivity extends AppCompatActivity {
 
@@ -30,9 +30,10 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
 
     private RecyclerView esportesRecycler;
     private TextAdapter mercadosAdapter;
+    private TextAdapter esportesAdapter;
 
-    private ArrayList<String> mercados;
-    private ArrayList<Esporte> esportes;
+    private HashMap<String, String> mercados;
+    private HashMap<String, Esporte> esportes;
 
     private Activity activity;
     private Tipster tipster;
@@ -58,19 +59,20 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
 
     private void Init() {
         //region findViewById
-        esportesRecycler = findViewById(R.id.esportes);
-        ImageView foto = findViewById(R.id.iv_foto);
-        EditText nome = findViewById(R.id.nome);
-        EditText email = findViewById(R.id.et_email);
-        EditText tipName = findViewById(R.id.tipname);
-        RecyclerView mercadosRecycler = findViewById(R.id.mercados);
-        LinearLayout email_container = findViewById(R.id.email_container);
-        LinearLayout tipster_container = findViewById(R.id.tipster_container);
-        LinearLayout telefone_container = findViewById(R.id.telefone_container);
-        Button btn_voltar = findViewById(R.id.cancelar);
-        final Button btn_2 = findViewById(R.id.btn_2);
+        esportesRecycler = findViewById(R.id.rv_esportes);
+        final ImageView foto = findViewById(R.id.iv_foto);
+        final EditText nome = findViewById(R.id.et_nome);
+        final EditText email = findViewById(R.id.et_email);
+        final EditText tipName = findViewById(R.id.et_tipname);
+        final EditText telefone = findViewById(R.id.et_telefone);
+        final EditText info = findViewById(R.id.et_info);
+        final RecyclerView mercadosRecycler = findViewById(R.id.rv_mercados);
+        final LinearLayout email_container = findViewById(R.id.ll_email_container);
+        final LinearLayout tipster_container = findViewById(R.id.ll_tipster_container);
+        final LinearLayout telefone_container = findViewById(R.id.ll_telefone_container);
+        final Button btn_voltar = findViewById(R.id.cancelar);
         final Button btn_seguir = findViewById(R.id.salvar);
-        final EditText telefone = findViewById(R.id.telefone);
+        final Button btn_2 = findViewById(R.id.btn_2);
         //endregion
 
         //region Bundle
@@ -107,24 +109,25 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
 
         //region setValues
 
-        mercados = new ArrayList<>();
-        esportes = new ArrayList<>();
+        mercados = new HashMap<>();
+        esportes = new HashMap<>();
+        info.setEnabled(false);
         nome.setEnabled(false);
         email.setEnabled(false);
         tipName.setEnabled(false);
         telefone.setEnabled(false);
 
         if (userIsTipster) {
-            esportes.addAll(tipster.getEsportes());
+            esportes.putAll(tipster.getEsportes());
             mercadosAdapter = new TextAdapter(activity, mercados, false);
             mercadosRecycler.setAdapter(mercadosAdapter);
-            TextAdapter esportesAdapter = new TextAdapter(activity, esportes) {
+            esportesAdapter = new TextAdapter(activity, esportes) {
                 @Override
                 public void onClick(View v) {
                     int itemPosition = esportesRecycler.getChildAdapterPosition(v);
-                    Esporte currentEsporte = esportes.get(itemPosition);
+                    Esporte currentEsporte = esportesAdapter.getEsporte(itemPosition);
                     mercados.clear();
-                    mercados.addAll(currentEsporte.getMercados());
+                    mercados.putAll(currentEsporte.getMercados());
                     mercadosAdapter.notifyDataSetChanged();
                 }
             };
@@ -134,10 +137,10 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
                 btn_seguir.setVisibility(View.GONE);
             else
                 btn_seguir.setVisibility(View.VISIBLE);
-            if (tipster.getPuntersPendentes().contains(Import.getFirebase.getId())) {
+            if (tipster.getPuntersPendentes().containsValue(Import.getFirebase.getId())) {
                 btn_seguir.setText(getResources().getString(R.string.pendente));
                 acao = Tipster.Acao.Remover_Pendente;
-            } else if (tipster.getPunters().contains(Import.getFirebase.getId())) {
+            } else if (tipster.getPunters().containsKey(Import.getFirebase.getId())) {
                 btn_seguir.setText(getResources().getString(R.string.remover));
                 acao = Tipster.Acao.Desseguir;
             } else {
@@ -148,13 +151,13 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
             tipster_container.setVisibility(View.GONE);
             if (Import.getFirebase.isTipster() && punter != null) {
                 Tipster eu = Import.getFirebase.getTipster();
-                if (eu.getPuntersPendentes().contains(usuario.getId())) {
+                if (eu.getPuntersPendentes().containsValue(usuario.getId())) {
                     btn_seguir.setVisibility(View.VISIBLE);
                     btn_2.setVisibility(View.VISIBLE);
                     btn_seguir.setText(getResources().getString(R.string.aceitar));
                     btn_2.setText(getResources().getString(R.string.recusar));
                     acao = Tipster.Acao.Aceitar;
-                } else if (eu.getPunters().contains(usuario.getId())) {
+                } else if (eu.getPunters().containsKey(usuario.getId())) {
                     btn_seguir.setVisibility(View.VISIBLE);
                     btn_seguir.setText(getResources().getString(R.string.remover));
                     acao = Tipster.Acao.Desseguir;
@@ -163,18 +166,26 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
                 }
             }
         }
+        if (usuario.getInfo() == null || usuario.getInfo().isEmpty())
+            info.setVisibility(View.GONE);
+        else
+            info.setText(usuario.getInfo());
 
         tipName.setText(usuario.getTipname());
         nome.setText(usuario.getNome());
         email.setText(usuario.getEmail());
         telefone.setText(usuario.getTelefone());
+
         Glide.with(activity).load(usuario.getFoto()).into(foto);
         if (usuario.isPrivado()) {
             email_container.setVisibility(View.GONE);
             telefone_container.setVisibility(View.GONE);
         } else {
             email_container.setVisibility(View.VISIBLE);
-            telefone_container.setVisibility(View.VISIBLE);
+            if (usuario.getTelefone() == null || usuario.getTelefone().isEmpty())
+                telefone_container.setVisibility(View.GONE);
+            else
+                telefone_container.setVisibility(View.VISIBLE);
         }
 
         //endregion
@@ -184,7 +195,7 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
         btn_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Import.getFirebase.getTipster().solicitar(punter, Tipster.Acao.Remover_Pendente);
+                Import.getFirebase.getTipster().removerSolicitacao(punter.getDados().getId());
                 Import.get.tipsters.getPuntersPendentes().remove(punter);
                 btn_seguir.setVisibility(View.GONE);
                 btn_2.setVisibility(View.GONE);
@@ -195,7 +206,7 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
             public void onClick(View view) {
                 {
                     if (userIsTipster) {
-                        tipster.solicitar(Import.getFirebase.getPunter(), acao);
+                        tipster.addSolicitacao(Import.getFirebase.getId());
                         switch (acao) {
                             case Seguir:
                                 acao = Tipster.Acao.Remover_Pendente;
@@ -208,14 +219,16 @@ public class PerfilVisitanteActivity extends AppCompatActivity {
                                 break;
                         }
                     } else {
-                        Import.getFirebase.getTipster().solicitar(punter, acao);
+                        Tipster t = Import.getFirebase.getTipster();//.solicitar(punter, acao);
                         switch (acao) {
                             case Aceitar:
+                                t.addPunter(punter);
                                 btn_seguir.setText(getResources().getString(R.string.remover));
                                 acao = Tipster.Acao.Desseguir;
                                 btn_2.setVisibility(View.GONE);
                                 break;
                             case Desseguir:
+                                t.removerPunter(punter);
                                 btn_seguir.setVisibility(View.GONE);
                                 btn_2.setVisibility(View.GONE);
                                 break;

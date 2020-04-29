@@ -4,15 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -26,15 +27,16 @@ import java.util.Objects;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implements View.OnClickListener, View.OnTouchListener {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder>
+        implements View.OnClickListener, View.OnTouchListener {
 
 //    private final static String TAG = "PostAdapter";
     private Activity activity;
-    private ArrayList<Post> list;
+    private ArrayList<Post> data;
 
-    protected PostAdapter(Activity activity, ArrayList<Post> list) {
+    protected PostAdapter(Activity activity, ArrayList<Post> data) {
         this.activity = activity;
-        this.list = list;
+        this.data = data;
     }
 
     @NonNull
@@ -48,58 +50,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public void onBindViewHolder(@NonNull final Holder holder, final int position) {
-        final Post item = list.get(position);
+        final Post item = data.get(position);
         final String myId = Import.getFirebase.getId();
-        String data = Import.reorder(item.getData());
-        holder.data.setText(data);
+        final MenuItem menuItem = holder.toolbar.getMenu().findItem(R.id.menu_excluir);
+        String _data = Import.reorder(item.getData());
+        holder.data.setText(_data);
         holder.texto.setText(item.getTexto());
 
-        ArrayAdapter mercadoAdapter = ArrayAdapter.createFromResource(activity, R.array.mercado, R.layout.item_text);
-        ArrayAdapter esporteAdapter = ArrayAdapter.createFromResource(activity, R.array.esporte, R.layout.item_text);
-
-        Object esp = esporteAdapter.getItem(item.getEsporte()+1);
-        Object mer = mercadoAdapter.getItem(item.getMercado()+1);
-
-        if (esp != null)
-            holder.esporte.setText(esp.toString());
-        if (mer != null)
-            holder.mercado.setText(mer.toString());
+        holder.esporte.setText(item.getEsporte());
+        holder.mercado.setText(item.getMercado());
         holder.titulo.setText(item.getTitulo());
         holder.odd_min.setText(item.getOdd_minima());
         holder.odd_max.setText(item.getOdd_maxima());
         holder.horario_min.setText(item.getHorario_minimo());
         holder.horario_max.setText(item.getHorario_maximo());
 
-        holder.bom.setEnabled(!item.getBom().contains(myId));
-        holder.ruim.setEnabled(!item.getRuim().contains(myId));
-
-        //region setListener
-        holder.bom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!item.getBom().contains(myId)) {
-                    item.getBom().add(myId);
-                    item.getRuim().remove(myId);
-                    item.atualizar();
-                    notifyItemChanged(position);
-                    Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.tip_voto_bom));
-                }
-            }
-        });
-        holder.ruim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!item.getRuim().contains(myId)) {
-                    item.getRuim().add(myId);
-                    item.getBom().remove(myId);
-                    item.atualizar();
-                    notifyItemChanged(position);
-                    Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.tip_voto_ruim));
-                }
-            }
-        });
-        holder.foto_post.setOnTouchListener(this);
-        //endregion
+        if (item.getBom().containsValue(myId))
+            holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light));
+        else
+            holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light_disabled));
+        if (item.getRuim().containsValue(myId))
+            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
+        else
+            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light_disabled));
 
         //region path foto
         String id_Tipster = item.getId_tipster();
@@ -117,20 +90,67 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         }
         //endregion
 
-        if (Import.getFirebase.isTipster())
+        if (Import.getFirebase.isTipster()) {
             holder.green_red.setVisibility(View.VISIBLE);
-        else
+            menuItem.setVisible(true);
+        } else {
+            menuItem.setVisible(false);
             holder.green_red.setVisibility(View.GONE);
+        }
 
         if (path != null)
             Glide.with(activity).load(path).into(holder.foto_user);
         if (foto_post != null)
             Glide.with(activity).load(foto_post).into(holder.foto_post);
+
+        //region setListener
+        holder.bom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    if (item.getBom().containsValue(myId)) {
+                        item.removeBom(myId);
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+                    } else {
+                        item.addBom(myId);
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_bom));
+                    }
+                    notifyItemChanged(position);
+                }
+            }
+        });
+        holder.ruim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    if (item.getRuim().containsValue(myId)) {
+                        item.removeRuim(myId);
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+                    } else {
+                        item.addRuim(myId);
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_ruim));
+                    }
+                    notifyItemChanged(position);
+                }
+            }
+        });
+
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem _item) {
+                item.excluir(PostAdapter.this);
+                holder.tipster.setText(activity.getResources().getString(R.string.excluindo));
+                return false;
+            }
+        });
+        holder.foto_post.setOnTouchListener(this);
+        //endregion
+
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return data.size();
     }
 
     @Override
@@ -146,6 +166,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         ImageView foto_user;
         ImageViewTouch foto_post;
         LinearLayout green_red;
+        Toolbar toolbar;
         TextView titulo;
         TextView esporte;
         TextView mercado;
@@ -157,6 +178,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
 
         Holder(@NonNull View itemView) {
             super(itemView);
+            toolbar = itemView.findViewById(R.id.toolbar);
             titulo = itemView.findViewById(R.id.tv_titulo);
             esporte = itemView.findViewById(R.id.tv_esporte);
             mercado = itemView.findViewById(R.id.tv_mercado);

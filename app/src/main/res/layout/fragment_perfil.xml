@@ -6,30 +6,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimaryLight_3"
+    android:background="?attr/backgroundColor"
     tools:context=".fragment.PerfilFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="25dp"
-        android:paddingVertical="40dp"
         android:background="@color/colorPrimaryLight"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="20dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_marginEnd="15dp"
             android:backgroundTint="@color/colorPrimaryLight"
-            app:cardCornerRadius="60dp">
+            app:cardCornerRadius="70dp">
 
             <ImageView
                 android:id="@+id/iv_foto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/perfil_usuario_nome"
+                android:contentDescription="@string/nome"
                 android:src="@drawable/ic_person_dark" />
 
         </androidx.cardview.widget.CardView>
@@ -43,171 +43,164 @@
                 android:id="@+id/tv_nome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLength="18"
-                android:maxLines="1"
-                android:text="@string/perfil_usuario_nome"
-                android:gravity="center"
                 android:drawableStart="@drawable/ic_person"
                 android:drawablePadding="@dimen/drawable_paddind"
-                android:textColor="@color/colorPrimaryLight_2" />
+                android:gravity="center"
+                android:maxLength="18"
+                android:maxLines="1"
+                android:text="@string/nome"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:maxLength="18"
-                android:maxLines="1"
                 android:drawableStart="@drawable/ic_email"
                 android:drawablePadding="@dimen/drawable_paddind"
-                android:text="@string/perfil_usuario_email"
-                android:textColor="@color/colorPrimaryLight_2" />
+                android:maxLength="18"
+                android:maxLines="1"
+                android:text="@string/email"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/tv_tipname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
-                android:maxLength="18"
-                android:maxLines="1"
                 android:drawableStart="@drawable/ic_website"
                 android:drawablePadding="@dimen/drawable_paddind"
-                android:text="@string/perfil_usuario_tipname"
-                android:textColor="@color/colorPrimaryLight_2" />
+                android:maxLength="18"
+                android:maxLines="1"
+                android:text="@string/tipname"
+                android:textColor="?attr/textColor" />
 
             <TextView
                 android:id="@+id/tv_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 android:layout_gravity="end"
-                android:maxLines="1"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:drawableStart="@drawable/ic_edit"
-                android:text="@string/perfil_usuario_editar"
+                android:maxLines="1"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="7dp"
+                android:text="@string/editar"
                 android:textSize="12sp"
-                style="@style/EditText.Login"/>
+                style="@style/EditText.Login" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <TableLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:stretchColumns="0,1,2">
+        android:layout_height="match_parent">
 
-        <TableRow>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimaryDark">
+            <TableRow>
 
-                <ImageView
-                    android:id="@+id/iv_new_punter"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_notification"
-                    android:padding="10dp"
-                    android:contentDescription="@null"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark">
 
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/iv_new_punter"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_sms"
+                        android:scaleType="fitXY"
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimaryDark">
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:contentDescription="@null"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark">
 
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/iv_planilha"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_planilha"
+                        android:scaleType="fitXY"
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimaryDark">
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:contentDescription="@null"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark">
 
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/btn_3_perfil_fragment"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_cash"
+                        android:scaleType="fitXY"
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-        </TableRow>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TableRow>
+            </TableRow>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimaryDark">
+            <TableRow>
 
-                <ImageView
-                    android:id="@+id/iv_new_post"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_edit"
-                    android:padding="10dp"
-                    android:contentDescription="@null"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark">
 
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/iv_new_post"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:padding="15dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_lamp"
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimaryDark">
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:scaleType="fitXY"
-                    android:contentDescription="@null"
+            </TableRow>
 
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        </TableLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </TableRow>
-
-    </TableLayout>
+    </ScrollView>
 
 </LinearLayout>

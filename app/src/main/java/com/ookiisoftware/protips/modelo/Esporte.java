@@ -1,22 +1,15 @@
 package com.ookiisoftware.protips.modelo;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Esporte {
 
-    public enum Esporte1 {
-        Esporte, Futebol, Volei, Boxe, Galgos
-    }
-    public enum Mercado {
-        Mercado, Escanteios , ML, Empates, Live
-    }
-
     private String nome;
-    private ArrayList<String> mercados;
+    private HashMap<String,String> mercados;
 
 
     public Esporte() {
-        mercados = new ArrayList<>();
+        mercados = new HashMap<>();
     }
 
 
@@ -29,13 +22,14 @@ public class Esporte {
         this.nome = nome;
     }
 
-    public ArrayList<String> getMercados() {
+    public HashMap<String,String> getMercados() {
         if (mercados == null)
-            mercados = new ArrayList<>();
+            mercados = new HashMap<>();
         return mercados;
     }
 
-    public void setMercados(ArrayList<String> mercados) {
+    public void setMercados(HashMap<String,String> mercados) {
         this.mercados = mercados;
     }
+
 }

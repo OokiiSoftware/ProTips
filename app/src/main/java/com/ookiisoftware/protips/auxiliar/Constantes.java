@@ -37,6 +37,14 @@ public class Constantes {
             public static final String TIPSTERS = "tipsters";
             public static final String PUNTERS = "punters";
             public static final String PUNTERS_PENDENTES = "puntersPendentes";
+            public static final String TELEFONE = "telefone";
+
+            public static final String SOLICITACAO_NOVO_TIPSTER = "solicitacao_novo_tipster";
+            public static final String BOM = "bom";
+            public static final String RUIM = "ruim";
+            public static final String ESPORTES = "esportes";
+            public static final String MERCADOS = "mercados";
+            public static final String BLOQUEADO = "bloqueado";
         }
     }
 
@@ -57,6 +65,8 @@ public class Constantes {
     public static class intent {
         public static final String PRIMEIRO_LOGIN = "primeiroLogin";
         public static final String USER_ID = "user_id";
+        public static final String PAGE_SELECT = "page_select";
+        public static final String EMAIL = "email";
     }
 
     //============================== SQLite

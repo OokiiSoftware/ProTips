@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -97,17 +99,22 @@ public class PostActivity extends AppCompatActivity {
         //region findViewById
         foto = findViewById(R.id.iv_foto);
         progressBar = findViewById(R.id.progressBar);
-        final TextView textLength = findViewById(R.id.popup_length);
-        final EditText titulo = findViewById(R.id.tv_titulo);
-        final EditText texto = findViewById(R.id.tv_texto);
-        final EditText odd_max = findViewById(R.id.tv_odd_max);
-        final EditText odd_min = findViewById(R.id.tv_odd_min);
-        final TextView fab = findViewById(R.id.tv_postar);
-        final EditText horario_minimo = findViewById(R.id.tv_horario_min);
-        final EditText horario_maximo = findViewById(R.id.tv_horario_max);
-        final Spinner esporte = findViewById(R.id.tv_esporte);
-        final Spinner mercado = findViewById(R.id.tv_mercado);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final CheckBox tipPublico = findViewById(R.id.cb_tip_publico);
+
+        final EditText titulo = findViewById(R.id.et_titulo);
+        final EditText texto = findViewById(R.id.et_texto);
+        final EditText odd_max = findViewById(R.id.et_odd_max);
+        final EditText odd_min = findViewById(R.id.et_odd_min);
+        final EditText horario_minimo = findViewById(R.id.et_horario_min);
+        final EditText horario_maximo = findViewById(R.id.et_horario_max);
+
+        final TextView textLength = findViewById(R.id.tv_popup_length);
+        final TextView postar = findViewById(R.id.tv_postar);
+        final TextView ajuda = findViewById(R.id.tv_ajuda);
+
+        final Spinner esporte = findViewById(R.id.sp_esporte);
+        final Spinner mercado = findViewById(R.id.sp_mercado);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         //endregion
 
         setSupportActionBar(toolbar);
@@ -117,7 +124,7 @@ public class PostActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        ArrayList<Esporte> esportes = Import.getFirebase.getTipster().getEsportes();
+        final ArrayList<Esporte> esportes = new ArrayList<>(Import.getFirebase.getTipster().getEsportes().values());
         final ArrayList<String> mercados = new ArrayList<>();
 
         final MercadoSpinnerAdapter mercadoAdapter = new MercadoSpinnerAdapter(activity, android.R.layout.simple_spinner_item, mercados);
@@ -134,7 +141,7 @@ public class PostActivity extends AppCompatActivity {
                 Esporte item = esporteSpinnerAdapter.getItem(position);
                 if (item != null) {
                     mercados.clear();
-                    mercados.addAll(item.getMercados());
+                    mercados.addAll(item.getMercados().values());
                     mercadoAdapter.notifyDataSetChanged();
                 }
             }
@@ -198,25 +205,46 @@ public class PostActivity extends AppCompatActivity {
 
         });
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        ajuda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                    dialog.setTitle(getResources().getString(R.string.informacao));
+                    dialog.setMessage(getResources().getString(R.string.info_tip_publico));
+                    dialog.setPositiveButton(getResources().getString(R.string.ok), null);
+
+                    dialog.show();
+                }
+            }
+        });
+
+        postar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 {
-                    progressBar.setVisibility(View.VISIBLE);
-                    Post post = new Post();
-                    post.setTitulo(titulo.getText().toString());
-                    post.setTexto(texto.getText().toString());
-                    post.setOdd_maxima(odd_max.getText().toString());
-                    post.setOdd_minima(odd_min.getText().toString());
-                    post.setHorario_maximo(horario_maximo.getText().toString());
-                    post.setHorario_minimo(horario_minimo.getText().toString());
-                    post.setFoto(foto_path);
-                    post.setEsporte(esporte.getSelectedItemPosition());
-                    post.setMercado(mercado.getSelectedItemPosition());
-                    post.setId_tipster(Import.getFirebase.getId());
-                    post.setId(Import.get.randomString());
-                    post.setData(Import.get.Data());
-                    verificar(post);
+                    if (esportes.size() == 0) {
+                        Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_esporte_registrado));
+                    } else if (mercados.size() == 0) {
+                        Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_mercado_registrado));
+                    } else {
+                        progressBar.setVisibility(View.VISIBLE);
+                        Post post = new Post();
+                        post.setHorario_maximo(horario_maximo.getText().toString());
+                        post.setHorario_minimo(horario_minimo.getText().toString());
+                        post.setMercado(mercado.getSelectedItem().toString());
+                        post.setEsporte(((Esporte)esporte.getSelectedItem()).getNome());
+                        post.setOdd_maxima(odd_max.getText().toString());
+                        post.setOdd_minima(odd_min.getText().toString());
+                        post.setId_tipster(Import.getFirebase.getId());
+                        post.setTitulo(titulo.getText().toString());
+                        post.setTexto(texto.getText().toString());
+                        post.setPublico(tipPublico.isChecked());
+                        post.setId(Import.get.randomString());
+                        post.setData(Import.get.Data());
+                        post.setFoto(foto_path);
+                        verificar(post);
+                    }
                 }
             }
         });
@@ -226,19 +254,19 @@ public class PostActivity extends AppCompatActivity {
 
     private void verificar(Post post) {
         if (post.getTitulo() == null || post.getTitulo().isEmpty()) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_titulo_obrigatorio));
+            Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_titulo_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else if (post.getTexto() == null || post.getTexto().isEmpty()) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_texto_obrigatorio));
+            Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_texto_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else if (post.getFoto() == null || post.getFoto().isEmpty()) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_foto_obrigatorio));
+            Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_foto_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else if (post.getOdd_maxima() == null || post.getOdd_maxima().isEmpty()) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_odd_maxima_obrigatorio));
+            Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_odd_maxima_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else if (post.getOdd_minima() == null || post.getOdd_minima().isEmpty()) {
-            Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_odd_minima_obrigatorio));
+            Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_odd_minima_obrigatorio));
             progressBar.setVisibility(View.GONE);
         } else {
             post.salvar(activity, progressBar,true);

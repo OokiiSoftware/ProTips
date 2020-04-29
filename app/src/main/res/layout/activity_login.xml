@@ -71,12 +71,24 @@
             style="@style/EditText.Login" />
 
         <TextView
-            android:id="@+id/enviar_email_verificacao"
+            android:id="@+id/tv_enviar_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/enviar_email"
+            android:layout_marginTop="5dp"
+            android:text="@string/enviar_novo_email_verificacao"
             android:textSize="15sp"
-            android:visibility="gone"
+            android:visibility="visible"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/tv_recuperar_senha"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:text="@string/recuperar_senha"
+            android:textSize="15sp"
+            android:visibility="visible"
             android:textColor="@color/colorPrimaryDark"/>
 
         <TextView
@@ -101,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/txt_cadastro"
+                android:text="@string/cadastre_se"
                 android:textSize="20sp"
                 android:textColor="@color/colorPrimaryDark"/>
 
@@ -109,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/txt_ou"
+                android:text="@string/ou"
                 android:textSize="@dimen/title_size"
                 android:textColor="@color/colorPrimary"/>
 
@@ -138,12 +150,11 @@
                     android:id="@+id/lb_facebook"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:padding="3dp"/>
+                    android:layout_margin="10dp"/>
 
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_facebook"/>
 
@@ -151,19 +162,17 @@
 
             <ImageView
                 android:id="@+id/iv_twitter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_twitter"
-                android:padding="3dp" />
+                android:src="@drawable/ic_twitter" />
 
             <ImageView
                 android:id="@+id/iv_google"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:contentDescription="@null"
-                android:background="@drawable/ic_google"
-                android:padding="3dp"/>
+                android:background="@drawable/ic_google"/>
 
         </LinearLayout>
 

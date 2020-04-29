@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_menu_inicio"
+        android:id="@+id/nav_menu_feed"
         android:icon="@drawable/ic_feed"
         android:title="@string/nav_titulo_inicio" />
 
     <item
-        android:id="@+id/nav_menu_dashboard"
+        android:id="@+id/nav_menu_tipster"
         android:icon="@drawable/ic_share"
         android:title="@string/nav_titulo_pesquisa" />
 

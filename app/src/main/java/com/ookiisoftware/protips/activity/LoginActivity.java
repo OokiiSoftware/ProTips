@@ -27,6 +27,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -60,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     //================= Elementos do Layout
     private EditText et_email;
     private EditText et_senha;
+    private TextView recuperarSenha;
     private ProgressBar progressBar;
     private LinearLayout splashScreen;
     TextView enviar_email;
@@ -93,15 +95,15 @@ public class LoginActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             splashScreen.setVisibility(View.VISIBLE);
             Import.Alert.msg(TAG, "onStart", "auto login");
-            if (user.isEmailVerified())
-                VerificarLoginApostador();
+            if (user.isEmailVerified() && Import.get.hasConection(activity))
+                VerificarLoginPunter();
             else {
                 et_email.setEnabled(true);
                 et_senha.setEnabled(true);
                 splashScreen.setVisibility(View.GONE);
                 progressBar.setVisibility(View.INVISIBLE);
                 emailNaoVerificado(user);
-                Import.Alert.msg(TAG, "onStart", "email não verificado");
+                Import.Alert.msg(TAG, "onStart", "email não verificado", "ou sem conexão com a internet");
             }
         }
     }
@@ -139,14 +141,17 @@ public class LoginActivity extends AppCompatActivity {
         ImageView btn_login_google = findViewById(R.id.iv_google);
         TextView btn_cadastrar = findViewById(R.id.tv_cadastrar);
         TextView btn_login = findViewById(R.id.tv_login);
+        recuperarSenha = findViewById(R.id.tv_recuperar_senha);
         splashScreen = findViewById(R.id.splash_screen);
         progressBar = findViewById(R.id.progressBar);
         et_senha = findViewById(R.id.et_senha);
         et_email = findViewById(R.id.et_usuario);
-        enviar_email = findViewById(R.id.enviar_email_verificacao);
+        enviar_email = findViewById(R.id.tv_enviar_email);
         //endregion
 
-        et_email.setText(Import.getFirebase.getUltinoEmail(this));
+        recuperarSenha.setVisibility(View.GONE);
+        enviar_email.setVisibility(View.GONE);
+        et_email.setText(Import.getFirebase.getUltinoEmail(activity));
 
         // Initialize Firebase Auth
         firebaseAuth = Import.getFirebase.getAuth();
@@ -154,24 +159,36 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+
         //region cliques
 
-        //region Login
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = et_email.getText().toString();
-                String senha = et_senha.getText().toString();
-                if (email.isEmpty())
-                    et_email.setError("*");
-                else if (senha.isEmpty())
-                    et_senha.setError("*");
-                else
-                    OrganizarDados(email, senha);
-                progressBar.setVisibility(View.VISIBLE);
+                {
+                    String email = et_email.getText().toString();
+                    String senha = et_senha.getText().toString();
+                    if (email.isEmpty())
+                        et_email.setError("*");
+                    else if (senha.isEmpty())
+                        et_senha.setError("*");
+                    else
+                        OrganizarDados(email, senha);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
             }
         });
-        //endregion
+
+        recuperarSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    Intent intent = new Intent(activity, RecuperarSenhaActivity.class);
+                    intent.putExtra(Constantes.intent.EMAIL, et_email.getText().toString());
+                    startActivity(intent);
+                }
+            }
+        });
 
         //region Cadastrar
         btn_cadastrar.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +268,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            VerificarLoginApostador();
+                            VerificarLoginPunter();
                         } else {
                             progressBar.setVisibility(View.INVISIBLE);
                             Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
@@ -262,31 +279,43 @@ public class LoginActivity extends AppCompatActivity {
 
     private void OrganizarDados(String email, String senha) {
         Usuario usuario = new Usuario();
-//        usuario.setId(Criptografia.criptografar(email));
         usuario.setEmail(email);
         usuario.setSenha(senha);
         LoginComEmailESenha(usuario);
     }
     private void LoginComEmailESenha(final Usuario usuario) {
         firebaseAuth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        try {
-                            if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
-                                FirebaseUser user = task.getResult().getUser();
-                                if (user.isEmailVerified())
-                                    VerificarLoginApostador();
-                                else
-                                    emailNaoVerificado(user);
-                            } else {
-                                progressBar.setVisibility(View.INVISIBLE);
-                                throw Objects.requireNonNull(task.getException());
-                            }
-                        } catch (FirebaseAuthInvalidCredentialsException e) {
-                            Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
-                        } catch (Exception e) {
-                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
+                    public void onSuccess(AuthResult authResult) {
+                        FirebaseUser user = authResult.getUser();
+                        if (user == null) {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        } else {
+                            if (user.isEmailVerified())
+                                VerificarLoginPunter();
+                            else
+                                emailNaoVerificado(user);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        Import.Alert.erro(TAG, e);
+                        if (e.getMessage() != null)
+                        switch (e.getMessage()) {
+                            case "The password is invalid or the user does not have a password.":
+                                Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
+                                recuperarSenha.setVisibility(View.VISIBLE);
+                                break;
+                            case "There is no user record corresponding to this identifier. The user may have been deleted.":
+                                Import.Alert.toast(activity, getResources().getString(R.string.email_nao_encontrado));
+                                break;
+                            default:
+                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
+                                break;
                         }
                     }
                 });
@@ -302,7 +331,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void emailNaoVerificado(final FirebaseUser user) {
         if (hasWindowFocus()) {
-            Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.verifique_seu_email), getResources().getString(R.string.enviar_email), new View.OnClickListener() {
+            Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.verifique_seu_email), getResources().getString(R.string.enviar_novo_email), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     enviarNovoEmail(user);
@@ -324,18 +353,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful())
-                    Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.email_enviado));
+                    Import.Alert.snakeBar(activity, getResources().getString(R.string.email_enviado));
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Import.Alert.erro(TAG, e);
-                Import.Alert.toast(activity, getResources().getString(R.string.email_enviado_erro));
+                Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
             }
         });
     }
 
-    public void VerificarLoginApostador() {
+    public void VerificarLoginPunter() {
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
@@ -349,6 +378,8 @@ public class LoginActivity extends AppCompatActivity {
                                 throw new Exception();
                             Punter item = dataSnapshot.getValue(Punter.class);
                             if (item == null)
+                                throw new Exception();
+                            if (item.getDados().isBloqueado())
                                 throw new Exception();
 
                             Import.getFirebase.setUser(activity, item);

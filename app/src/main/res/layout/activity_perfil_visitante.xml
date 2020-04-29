@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:focusable="false"
-    android:background="@color/colorPrimaryLight_2"
+    android:background="@color/colorPrimaryLight"
     tools:context=".activity.PerfilActivity">
 
     <RelativeLayout
@@ -72,15 +72,14 @@
         android:layout_below="@+id/rl_1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-75dp"
-        app:cardCornerRadius="74dp">
+        app:cardCornerRadius="75dp">
 
         <ImageView
             android:id="@+id/iv_foto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_circulo_colorPrimaryLight"
-            android:contentDescription="@string/perfil_usuario_nome"
-            android:padding="2dp"
+            android:background="@drawable/bg_circulo_primary_light"
+            android:contentDescription="@string/nome"
             android:src="@drawable/ic_person_dark" />
 
     </androidx.cardview.widget.CardView>
@@ -115,17 +114,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_nome"
+                    android:text="@string/nome"
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/nome"
+                    android:id="@+id/et_nome"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_nome"
+                    android:hint="@string/seu_nome"
                     android:inputType="textPersonName"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -146,17 +145,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_tipname"
+                    android:text="@string/tipname"
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/tipname"
+                    android:id="@+id/et_tipname"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_tipname"
+                    android:hint="@string/seu_tipname"
                     android:inputType="textPersonName"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -165,7 +164,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/telefone_container"
+                android:id="@+id/ll_telefone_container"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="@dimen/login_item_margin"
@@ -182,13 +181,13 @@
                     android:textSize="20sp" />
 
                 <EditText
-                    android:id="@+id/telefone"
+                    android:id="@+id/et_telefone"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/_99_99999_9999"
+                    android:hint="@string/_00_00000_0000"
                     android:inputType="phone"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -197,7 +196,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/email_container"
+                android:id="@+id/ll_email_container"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="@dimen/login_item_margin"
@@ -210,7 +209,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@string/perfil_usuario_email"
+                    android:text="@string/email"
                     android:textSize="20sp" />
 
                 <EditText
@@ -220,7 +219,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_circulo_branco"
-                    android:hint="@string/perfil_usuario_et_email"
+                    android:hint="@string/seu_email"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimary"
@@ -235,10 +234,26 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:text="@string/dados_outros"/>
 
+            <EditText
+                android:id="@+id/et_info"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_circulo_branco"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:hint="@string/descricao"
+                android:padding="15dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimary"
+                android:importantForAutofill="no"  />
+
             <LinearLayout
-                android:id="@+id/tipster_container"
+                android:id="@+id/ll_tipster_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_item_margin"
                 android:orientation="vertical">
 
                 <TextView
@@ -248,7 +263,7 @@
                     android:text="@string/esportes"/>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/esportes"
+                    android:id="@+id/rv_esportes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -264,7 +279,7 @@
                     android:text="@string/mercados"/>
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mercados"
+                    android:id="@+id/rv_mercados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

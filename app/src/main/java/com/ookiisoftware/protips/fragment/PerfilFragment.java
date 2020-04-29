@@ -18,6 +18,7 @@ import com.ookiisoftware.protips.activity.PostActivity;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.modelo.Usuario;
 
 public class PerfilFragment extends Fragment {
 
@@ -25,6 +26,8 @@ public class PerfilFragment extends Fragment {
 //    private static final String TAG = "PerfilFragment";
 
     private Activity activity;
+    private ImageView btn_notificacao;
+
     //endregion
 
     public PerfilFragment(){}
@@ -53,30 +56,42 @@ public class PerfilFragment extends Fragment {
         TextView txt_email = view.findViewById(R.id.tv_email);
         TextView btm_edit = view.findViewById(R.id.tv_edit);
 
-        ImageView newPost = view.findViewById(R.id.iv_new_post);
-        ImageView newPunter = view.findViewById(R.id.iv_new_punter);
+        ImageView btn_newPost = view.findViewById(R.id.iv_new_post);
+        ImageView btn_planilha = view.findViewById(R.id.iv_planilha);
+        ImageView btn_3_perfil_fragment = view.findViewById(R.id.btn_3_perfil_fragment);
+        btn_notificacao = view.findViewById(R.id.iv_new_punter);
         //endregion
 
         boolean isTipster = Import.getFirebase.isTipster();
-        FirebaseUser user = Import.getFirebase.getAuth().getCurrentUser();
+
+        Usuario user;
+        if (isTipster)
+            user = Import.getFirebase.getTipster().getDados();
+        else
+            user = Import.getFirebase.getPunter().getDados();
+
+        if (user == null)
+            return;
 
         //region setValues
-        String uri = "";
-        if (user != null) {
-            txt_nome.setText(user.getDisplayName());
-            txt_email.setText(user.getEmail());
-            if (user.getPhotoUrl() != null) {
-                uri = user.getPhotoUrl().toString();
-            }
+
+        txt_nome.setText(user.getNome());
+        txt_email.setText(user.getEmail());
+        txt_tipname.setText(user.getTipname());
+        String uri = user.getFoto();
+
+        boolean b = isTipster && !user.isBloqueado();
+        btn_newPost.setEnabled(b);
+        btn_planilha.setEnabled(b);
+        if (!isTipster) {
+            btn_newPost.setVisibility(View.GONE);
+            btn_planilha.setVisibility(View.GONE);
+            btn_notificacao.setVisibility(View.GONE);
+            btn_3_perfil_fragment.setVisibility(View.GONE);
         }
-        if (isTipster) {
-            txt_tipname.setText(Import.getFirebase.getTipster().getDados().getTipname());
-        } else {
-            txt_tipname.setText(Import.getFirebase.getPunter().getDados().getTipname());
-        }
-        newPost.setEnabled(isTipster);
 
         Glide.with(activity).load(uri).into(img_foto_usuario);
+
         //endregion
 
         //region setListener
@@ -90,14 +105,14 @@ public class PerfilFragment extends Fragment {
         });
 
         if (isTipster)
-            newPunter.setOnClickListener(new View.OnClickListener() {
+            btn_notificacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Import.activites.getMainActivity().viewPager.setCurrentItem(3);
             }
         });
 
-        newPost.setOnClickListener(new View.OnClickListener() {
+        btn_newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, PostActivity.class);
@@ -105,6 +120,13 @@ public class PerfilFragment extends Fragment {
             }
         });
         //endregion
+    }
+
+    public void updateNotificacao() {
+        if (Import.get.tipsters.getPuntersPendentes().size() > 0)
+            btn_notificacao.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_sms_2));
+        else
+            btn_notificacao.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_sms));
     }
 
     //endregion

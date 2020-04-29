@@ -6,24 +6,24 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.PostAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Post {
 
@@ -38,16 +38,16 @@ public class Post {
     private String horario_maximo;
     private String horario_minimo;
     private String data;
-    private int esporte;
-    private int mercado;
+    private String esporte;
+    private String mercado;
     private boolean publico;
 
-    private List<String> bom, ruim;
+    private HashMap<String,String> bom, ruim;
     //endregion
 
     public Post() {
-        bom = new LinkedList<>();
-        ruim = new LinkedList<>();
+        bom = new HashMap<>();
+        ruim = new HashMap<>();
     }
 
     public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
@@ -77,7 +77,7 @@ public class Post {
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Import.Alert.snakeBar(activity.getCurrentFocus(), activity.getResources().getString(R.string.post_erro));
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
                     progressBar.setVisibility(View.GONE);
                 }
             });
@@ -98,38 +98,101 @@ public class Post {
                 .setValue(this);
     }
 
-    public void atualizar() {
-        Import.Alert.msg("Post", "data", Criptografia.criptografar(getData()));
-        final DatabaseReference reference = Import.getFirebase.getReference()
+    public void addBom(String id) {
+        Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
-                .child(Criptografia.criptografar(getData()));
+                .child(Criptografia.criptografar(getData()))
+                .child(Constantes.firebase.child.BOM)
+                .child(id)
+                .setValue(id);
+        removeRuim(id);
+        if (!getBom().containsValue(id)) {
+            getBom().put(id, id);
+            getRuim().remove(id);
+        }
+    }
 
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void addRuim(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(getId_tipster())
+                .child(Constantes.firebase.child.POSTES)
+                .child(Criptografia.criptografar(getData()))
+                .child(Constantes.firebase.child.RUIM)
+                .child(id)
+                .setValue(id);
+        removeBom(id);
+        if (!getRuim().containsValue(id)) {
+            getRuim().put(id, id);
+            getBom().remove(id);
+        }
+    }
+
+    public void removeBom(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(getId_tipster())
+                .child(Constantes.firebase.child.POSTES)
+                .child(Criptografia.criptografar(getData()))
+                .child(Constantes.firebase.child.BOM)
+                .child(id)
+                .removeValue();
+        getBom().remove(id);
+    }
+
+    public void removeRuim(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(getId_tipster())
+                .child(Constantes.firebase.child.POSTES)
+                .child(Criptografia.criptografar(getData()))
+                .child(Constantes.firebase.child.RUIM)
+                .child(id)
+                .removeValue();
+        getRuim().remove(id);
+    }
+
+    public void excluir(final PostAdapter adapter) {
+        String id = getId_tipster();
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(id)
+                .child(Constantes.firebase.child.POSTES);
+
+        ChildEventListener eventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Post item = dataSnapshot.getValue(Post.class);
-                String myId = Import.getFirebase.getId();
-                if (item != null) {
-                    if (getBom().contains(myId) && !item.getBom().contains(myId))
-                        item.getBom().add(myId);
-                    else if (!getBom().contains(myId))
-                        item.getBom().remove(myId);
-
-                    if (getRuim().contains(myId) && !item.getRuim().contains(myId))
-                        item.getRuim().add(myId);
-                    else if (!getRuim().contains(myId))
-                        item.getRuim().remove(myId);
-                    item.salvar(null, null, false);
-                } else
-                    Import.Alert.msg("Post", "atualizar", "item null");
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                ref.child(Criptografia.criptografar(getData())).removeValue();
             }
 
             @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Post item = dataSnapshot.getValue(Post.class);
+                if (item != null && item.getId().equals(getId())) {
+                    Import.get.tipsters.postes().remove(Post.this);
+                    Import.getFirebase.getTipster().getPostes().remove(getId());
+                    adapter.notifyDataSetChanged();
+                }
+                ref.removeEventListener(this);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
+        };
+        ref.addChildEventListener(eventListener);
     }
 
     //region gets sets
@@ -166,23 +229,23 @@ public class Post {
         this.foto = foto;
     }
 
-    public List<String> getBom() {
+    public HashMap<String,String> getBom() {
         if (bom == null)
-            bom = new ArrayList<>();
+            bom = new HashMap<>();
         return bom;
     }
 
-    public void setBom(List<String> bom) {
+    public void setBom(HashMap<String,String> bom) {
         this.bom = bom;
     }
 
-    public List<String> getRuim() {
+    public HashMap<String,String> getRuim() {
         if (ruim == null)
-            ruim = new ArrayList<>();
+            ruim = new HashMap<>();
         return ruim;
     }
 
-    public void setRuim(List<String> ruim) {
+    public void setRuim(HashMap<String,String> ruim) {
         this.ruim = ruim;
     }
 
@@ -234,19 +297,19 @@ public class Post {
         this.horario_minimo = horario_minimo;
     }
 
-    public int getEsporte() {
+    public String getEsporte() {
         return esporte;
     }
 
-    public void setEsporte(int esporte) {
+    public void setEsporte(String esporte) {
         this.esporte = esporte;
     }
 
-    public int getMercado() {
+    public String getMercado() {
         return mercado;
     }
 
-    public void setMercado(int mercado) {
+    public void setMercado(String mercado) {
         this.mercado = mercado;
     }
 

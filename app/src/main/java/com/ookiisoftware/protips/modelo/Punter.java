@@ -5,14 +5,15 @@ import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Punter {
 
     private Usuario dados;
-    private ArrayList<String> tipsters;
+    private HashMap<String,String> tipsters;
 
     public Punter() {
-        tipsters = new ArrayList<>();
+        tipsters = new HashMap<>();
         dados = new Usuario();
     }
 
@@ -30,14 +31,33 @@ public class Punter {
                 .child(dados.getTipname())
                 .setValue(dados.getId());
     }
-    public void salvarTipsters() {
-        DatabaseReference reference = Import.getFirebase.getReference();
-        reference
+
+    public void addTipster(String id) {
+        Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(Constantes.firebase.child.PUNTERS)
                 .child(dados.getId())
                 .child(Constantes.firebase.child.TIPSTERS)
-                .setValue(getTipsters());
+                .child(id)
+                .setValue(id);
+    }
+
+    public void removerTipster(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(dados.getId())
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(id)
+                .removeValue();
+    }
+
+    public void excluir() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(dados.getId())
+                .removeValue();
     }
 
     //region gets sets
@@ -50,15 +70,16 @@ public class Punter {
         this.dados = dados;
     }
 
-    public ArrayList<String> getTipsters() {
+    public HashMap<String, String> getTipsters() {
         if (tipsters == null)
-            tipsters = new ArrayList<>();
+            tipsters = new HashMap<>();
         return tipsters;
     }
 
-    public void setTipsters(ArrayList<String> tipsters) {
+    public void setTipsters(HashMap<String, String> tipsters) {
         this.tipsters = tipsters;
     }
 
     //endregion
+
 }

@@ -2,23 +2,18 @@
     <string name="app_name">ProTips</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="facebook_app_id">560218498115674</string>
-    <string name="fb_login_protocol_scheme">fb560218498115674</string>
+    <string name="facebook_app_id" translatable="false">560218498115674</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb560218498115674</string>
+    <string name="company_whats_app" translatable="false">+55 (99) 98110-2438</string>
+    <string name="company_email" translatable="false">protips@gmail.com</string>
 
-    <string name="perfil_usuario_nome">Nome</string>
-    <string name="perfil_usuario_email">Email</string>
-    <string name="perfil_usuario_tipname">TipName</string>
-    <string name="perfil_usuario_preferencias">Preferencias</string>
-    <string name="perfil_usuario_editar">Editar</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="tipname" translatable="false">TipName</string>
+    <string name="preferencias">Preferências</string>
+    <string name="editar">Editar</string>
 
-    <string name="perfil_usuario_et_nome">SEU NOME</string>
-    <string name="perfil_usuario_et_email">SEU EMAIL</string>
-    <string name="perfil_usuario_et_tipname">SEU TIPNAME</string>
-
-    <string name="ajuda_1">FEED DE POSTAGENS GRÁTIS DE TIPSTERS</string>
-
-    <!--Titulos de cada activity e fragmento-->
-    <string name="titulo_inicio">FEED</string>
+    <!--TODO Titulos de cada activity e fragmento-->
+    <string name="titulo_inicio" translatable="false">FEED</string>
     <string name="titulo_tipsters">ENCONTRE TIPSTERS</string>
     <string name="titulo_notificacoes">SOLICITAÇÕES</string>
     <string name="titulo_perfil">MEU PERFIL</string>
@@ -26,99 +21,121 @@
     <string name="titulo_conversas">CONVERSAS</string>
     <string name="titulo_contatos">CONTATOS</string>
 
+    <string name="titulo_criar_tip">Criar Tip</string>
     <string name="titulo_batepapo">BATEPAPO</string>
-    <string name="titulo_preferencias">PREFERENCIAS</string>
+    <string name="titulo_preferencias">PREFERÊNCIAS</string>
     <string name="titulo_edit_user">EDITAR PERFIL</string>
 
-    <!--Titulos da Navbar-->
+    <!--TODO Titulos da Navbar-->
     <string name="nav_titulo_inicio">Início</string>
-    <string name="nav_titulo_pesquisa">Tipsters</string>
+    <string name="nav_titulo_pesquisa" translatable="false">Tipsters</string>
     <string name="nav_titulo_perfil">Perfil</string>
     <string name="nav_titulo_notificacoes">Notificações</string>
 
-    <!--Menus em geral-->
-    <string name="menu_logout">Logout</string>
+    <!--TODO Menus em geral-->
+    <string name="menu_logout">Sair</string>
     <string name="menu_pesquisa">Pesquisar</string>
     <string name="menu_add_contato">Adicionar Contato</string>
-
     <string name="menu_batepapo">Batepapo</string>
     <string name="menu_postar_feed">Fazer uma postagem</string>
+    <string name="menu_settings">Configurações</string>
 
-    <string name="alert_erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="txt_cadastro">Cadastre-se</string>
-    <string name="txt_ou">OU</string>
-    <string name="txt_entre_com">Entre com</string>
-    <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
-    <string name="popup_titulo">Faça sua postagem</string>
+    <string name="submenu">Outras opções</string>
+
+    <!-- TODO: Palavras -->
+    <string name="cadastre_se">Cadastre-se</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="conta">CONTA</string>
+    <string name="criar">CRIAR</string>
+    <string name="criar_tip">CRIAR TIP</string>
+    <string name="e_mail" translatable="false">e-mail</string>
+    <string name="ou">OU</string>
     <string name="nao">Não</string>
     <string name="sim">Sim</string>
-    <string name="cancelar">Cancelar</string>
     <string name="postar">Postar</string>
-    <string name="popup_caixa_de_texto">Escreva aqui..</string>
-    <string name="perfil_usuario_categoria">Sou um</string>
     <string name="salvar">Salvar</string>
     <string name="voltar">Voltar</string>
-    <string name="confirmar_senha">Confirmar senha</string>
+    <string name="odd_maxima">Odd Máxima</string>
+    <string name="odd_minima">Odd Mínima</string>
     <string name="senha">Senha</string>
-    <string name="e_mail">e-mail</string>
     <string name="nome">Nome</string>
-    <string name="criar">CRIAR</string>
-    <string name="conta">CONTA</string>
-    <string name="bem_vindo_ao">Bem vindo ao</string>
-    <string name="protips">PROTIPS</string>
-
-    <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
-    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
-    <string name="erro_foto_salvar">Ocorreu um erro ao salvar esta foto</string>
-    <string name="erro_foto_carregar">Erro ao carregar a foto</string>
-    <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
-    <string name="erro_de_autencicacao">Erro de autencicação</string>
-    <string name="erro_generico">Ocorreu um erro</string>
-
-    <string name="login_cancelado">Login Cancelado</string>
-    <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
-    <string name="submenu">Submenu Drawer</string>
-    <string name="menu_settings">Configurações</string>
-    <string name="faca_sua_postagem">Faça sua postagem</string>
-    <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
-    <string name="carregando_a_imagem">Carregando a imagem</string>
-    <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
-    <string name="tipName_obrigatório">TipName obrigatório</string>
-    <string name="TipName_deve_conter_no_mínimo_6_dígitos">TipName deve conter no mínimo 6 dígitos</string>
-    <string name="insira_seu_nome">Insira seu nome</string>
-    <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatoria</string>
-    <string name="selecione_uma_categoria">Sou um: seleciona uma opção</string>
-    <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
-    <string name="campo_obrigatório">Campo obrigatório</string>
-    <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
-    <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
-    <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
-    <string name="cadastro_email_invalido">Este email não é inválido</string>
-    <string name="cadastro_email_repetido">Este email já está cadastrado</string>
-    <string name="usuario_salvo">Dados Salvos com sucesso</string>
-    <string name="nome_do_tipster">Nome do Tipster</string>
-    <string name="texto_aqui">Texto aqui</string>
-    <string name="_00_00_01_jan">00:00 01/jan</string>
+    <string name="protips" translatable="false">PROTIPS</string>
+    <string name="_00_00_01_jan" translatable="false">00:00 01/jan</string>
     <string name="bom">Bom</string>
     <string name="ruim">Ruim</string>
     <string name="legenda">Legenda</string>
+    <string name="titulo">Titulo</string>
+    <string name="_00_00" translatable="false">00:00</string>
+    <string name="_0" translatable="false">0</string>
+    <string name="mercado">Mercado</string>
+    <string name="imagem">Imagem</string>
+    <string name="descricao">Descrição..</string>
+    <string name="login">LOGIN</string>
+    <string name="pass_hint" translatable="false">***********</string>
+    <string name="usuario">Usuário</string>
+    <string name="telefone">Telefone</string>
+    <string name="_00_00000_0000" translatable="false">(__) _____–____</string>
+    <string name="nascimento">Nascimento</string>
+    <string name="_01_01_2000" translatable="false">__/__/____</string>
+    <string name="estado">Estado</string>
+    <string name="esportes">Esportes</string>
+    <string name="esporte">Esporte</string>
+    <string name="mercados">Mercados</string>
+    <string name="esportes_">Esportes +</string>
+    <string name="mercados_">Mercados +</string>
+    <string name="ok">OK</string>
+    <string name="_mais" translatable="false">+</string>
+    <string name="_menos" translatable="false">-</string>
+    <string name="odd">Odd</string>
+    <string name="horario">Horário</string>
+    <string name="categoria">Categoria</string>
+    <string name="minimo">Mínimo</string>
+    <string name="maximo">Máximo</string>
+    <string name="seguir">Seguir</string>
+    <string name="privacidade">Privacidade</string>
+    <string name="_exclamação" translatable="false">!</string>
+    <string name="pendente">Pendente</string>
+    <string name="remover">Remover</string>
+    <string name="informacao">Informação</string>
+    <string name="aceitar">Aceitar</string>
+    <string name="recusar">Recusar</string>
+    <string name="tipster" translatable="false">Tipster</string>
+    <string name="ajuda">Ajuda</string>
+    <string name="excluir">Excluir</string>
+    <string name="excluindo">Excluindo</string>
+    <string name="solicitar">Solicitar</string>
+    <string name="whats_app" translatable="false">WhatsApp</string>
+    <string name="fechar">Fechar</string>
+
+    <!-- TODO: Textos -->
+    <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
+    <string name="popup_caixa_de_texto">Escreva aqui..</string>
+    <string name="bem_vindo_ao">Bem vindo ao</string>
+    <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
+    <string name="faca_sua_postagem">Faça sua postagem</string>
+    <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
+    <string name="carregando_a_imagem">Carregando a imagem</string>
+    <string name="tipName_obrigatório">TipName obrigatório</string>
+    <string name="TipName_deve_conter_no_mínimo_6_dígitos">TipName deve conter no mínimo 6 dígitos</string>
+    <string name="insira_seu_nome">Insira seu nome</string>
+    <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatória</string>
+    <string name="campo_obrigatório">Campo obrigatório</string>
+
+    <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
+    <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
+    <string name="email_invalido">Este email é inválido</string>
+    <string name="cadastro_email_repetido">Este email já está cadastrado</string>
+
+    <string name="usuario_salvo">Dados Salvos com sucesso</string>
+    <string name="nome_do_tipster">Nome do Tipster</string>
+    <string name="texto_aqui">Texto aqui</string>
     <string name="tip_voto_bom">Tip marcado como BOM</string>
     <string name="tip_voto_ruim">Tip marcado como RUIM</string>
     <string name="post_erro">Ocorreu um erro ao postar seu Tip</string>
-    <string name="_00_00">00:00</string>
-    <string name="_0">0</string>
     <string name="more_info">Mais Informações do Tipster</string>
-    <string name="titulo">Titulo</string>
-    <string name="odd_maxima">Odd Máxima</string>
-    <string name="odd_minima">Odd Minima</string>
-    <string name="mercado">Mercado</string>
-    <string name="horario_minimo">Horario minimo indicado</string>
-    <string name="horario_maximo">Horario máximo indicado</string>
-    <string name="criar_tip">CRIAR TIP</string>
-    <string name="titulo_criar_tip">Criar Tip</string>
-    <string name="imagem">Imagem</string>
-    <string name="descricao">Descrição..</string>
+    <string name="horario_minimo">Horário mínimo indicado</string>
+    <string name="horario_maximo">Horário máximo indicado</string>
+
     <string name="post_titulo_obrigatorio">O Titulo é obrigatório</string>
     <string name="post_texto_obrigatorio">A Descrição é obrigatória</string>
     <string name="post_foto_obrigatorio">A Foto é obrigatória</string>
@@ -126,58 +143,74 @@
     <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
     <string name="post_esporte_obrigatorio">Selecione o esporte</string>
     <string name="post_mercado_obrigatorio">Selecione o mercado</string>
-    <string name="login">LOGIN</string>
-    <string name="pass_hint">***********</string>
-    <string name="usuario">Usuário</string>
+
     <string name="verifique_seu_email">Por favor verifique seu email</string>
-    <string name="enviar_email">Enviar novo email</string>
+    <string name="enviar_novo_email">Enviar novo email</string>
+    <string name="enviar_email">Enviar email</string>
     <string name="email_enviado">Email enviado</string>
-    <string name="email_enviado_erro">Não foi possivel enviar um email de verificação</string>
-    <string name="telefone">Telefone</string>
-    <string name="_99_99999_9999">(__) _____–____</string>
-    <string name="nascimento">Nascimento</string>
-    <string name="_01_01_2000">__/__/____</string>
-    <string name="estado">Estado</string>
     <string name="dados_pessoais">Dados pessoais</string>
     <string name="dados_outros">Outros dados</string>
-    <string name="esportes">Esportes</string>
-    <string name="esporte">Esporte</string>
-    <string name="mercados">Mercados</string>
-    <string name="esportes_">Esportes +</string>
-    <string name="mercados_">Mercados +</string>
-    <string name="ok">OK</string>
-    <string name="_mais">+</string>
-    <string name="_menos">-</string>
     <string name="remover_item">Remover este item?</string>
     <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
+    <string name="quero_ser_um_punter">Quero ser um Punter</string>
     <string name="idade_minima">A idade mínima é 18 anos</string>
-    <string name="odd">Odd</string>
-    <string name="horario">Horario</string>
-    <string name="categoria">Categoria</string>
-    <string name="minimo">Minimo</string>
-    <string name="maximo">Máximo</string>
     <string name="titulo_punters">MEUS PUNTERS</string>
-    <string name="seguir">Seguir</string>
-    <string name="privacidade">Privacidade</string>
-    <string name="_exclamação">!</string>
-
-    <string name="privacidade_info">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
-    <string name="pendente">Pendente</string>
-    <string name="remover">Remover</string>
-    <string name="informacao">Informação</string>
-    <string name="aceitar">Aceitar</string>
-    <string name="recusar">Recusar</string>
     <string name="nova_solicitação_punter">Nova solicitação de Punter</string>
     <string name="punter_aceito">Sua solicitação foi aceita</string>
-    <string name="tipster">Tipster</string>
     <string name="novo_poste">Novo Tip</string>
     <string name="novos_postes">Novos Tips</string>
     <string name="seu_nome">Seu nome</string>
     <string name="seu_email">Seu email</string>
+    <string name="seu_tipname">SEU TIPNAME</string>
     <string name="sua_senha">Sua senha</string>
+    <string name="tip_publico">Tip público</string>
     <string name="postar_tip">POSTAR TIP</string>
-    <string name="protips_gmail_com">protips@gmail.com</string>
+    <string name="txt_entre_com">Entre com</string>
+    <string name="perfil_usuario_categoria">Sou um</string>
+    <string name="confirmar_senha">Confirmar senha</string>
+    <string name="login_cancelado">Login Cancelado</string>
+    <string name="registrar_numero">Registrar número</string>
+    <string name="numero_invalido">Número inválido</string>
+    <string name="enviar_codigo">Enviar o código</string>
+    <string name="ex_123456" translatable="false">ex: 123456</string>
+    <string name="solicitacao_tipster">Solicitação para ser um Tipster</string>
+    <string name="entre_em_contato_com">"Entre em contato com "</string>
+    <string name="em_analize">Em análise</string>
+    <string name="sem_esporte_registrado">Sem esporte registrado</string>
+    <string name="sem_mercado_registrado">Sem mercado registrado</string>
+    <string name="cancelar_solicitacao">Cancelar solicitação</string>
+    <string name="tip_voto_removido">Voto removido</string>
+    <string name="recuperar_senha">Recuperar senha</string>
+    <string name="enviar_novo_email_verificacao">Enviar novo email de verificação</string>
+    <string name="email_nao_encontrado">Este email não está cadastrado</string>
 
+    <!-- TODO: Mensagens de Erro -->
+    <string name="erro_email_enviado">Não foi possivel enviar um email de verificação</string>
+    <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
+    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
+    <string name="erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
+    <string name="erro_foto_salvar">Ocorreu um erro ao salvar essa foto</string>
+    <string name="erro_foto_carregar">Erro ao carregar a foto</string>
+    <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
+    <string name="erro_de_autencicacao">Erro de autenticação</string>
+    <string name="erro_generico">Ocorreu um erro</string>
+
+    <!-- TODO: Mensagens de Aviso -->
+    <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
+    <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
+    <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
+    <string name="aviso_exluir_conta">Atenção! Ao realizar esta ação sua conta será excluida permanentemente.</string>
+    <string name="aviso_recriar_conta_punter">Sua conta será recriada como Punter.</string>
+
+    <!-- TODO: Mensagens de Informação -->
+    <string name="info_privacidade">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
+    <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Punters. Você pode postar 5 Tips públicas por dia.</string>
+    <string name="info_registrar_telefone">Insira seu Número de telefone abaixo e solicite um código chegar via sms. Este serviço poderá ser cobrado pela sua operadora.</string>
+    <string name="info_registrar_codigo">Insira o código no campo abaixo</string>
+    <string name="info_numero_registrado">Número registrado com sucesso</string>
+    <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
+
+    <!-- TODO: Arrays -->
     <string-array name="categoria">
         <item>Apostador</item>
         <item>Tipster</item>

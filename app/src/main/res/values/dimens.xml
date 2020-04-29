@@ -6,6 +6,7 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">30dp</dimen>
     <dimen name="login_item_margin">15dp</dimen>
+    <dimen name="item_table_margin">5dp</dimen>
     <dimen name="login_table_horizontal">70dp</dimen>
 
     <!-- Textos -->
@@ -20,4 +21,5 @@
     <dimen name="et_novo_tip">5dp</dimen>
     <dimen name="drawable_paddind">5dp</dimen>
 
+    <dimen name="toolbar_height">60dp</dimen>
 </resources>
