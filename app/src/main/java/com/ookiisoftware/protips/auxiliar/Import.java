@@ -22,9 +22,12 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.facebook.CallbackManager;
+import com.facebook.login.LoginManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -126,6 +129,28 @@ public class Import {
         manager.notify(1, notification);
     }
 
+    public static void organizarTituloTollbar(Activity activity, AppCompatTextView text_1, AppCompatTextView text_2, CharSequence title) {
+        String[] titulo_da_pagina = title.toString().split(" ");
+        if (titulo_da_pagina.length > 1) {
+            text_1.setText(titulo_da_pagina[0]);
+            text_1.setTypeface(Import.getFonteNormal(activity));
+            text_2.setText(titulo_da_pagina[1]);
+            text_2.setTypeface(Import.getFonteBold(activity));
+        } else {
+            text_1.setText(titulo_da_pagina[0]);
+            text_1.setTypeface(Import.getFonteBold(activity));
+            text_2.setText("");
+        }
+    }
+
+    private static Typeface getFonteNormal(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
+    }
+
+    private static Typeface getFonteBold(Context context){
+        return Typeface.createFromAsset(context.getAssets(), "bebasneue_bold.otf");
+    }
+
     /*public static boolean SalvarMensagemNoDispositivo(Context context, Mensagem mensagem) {
         try {
 //            SQLiteMensagem db = new SQLiteMensagem(context);
@@ -135,6 +160,7 @@ public class Import {
             return false;
         }
     }*/
+
     /*public static boolean SalvarConversaNoDispositivo(Context context, Conversa conversa) {
         try {
             SQLiteConversa db = new SQLiteConversa(context);
@@ -156,13 +182,6 @@ public class Import {
         return pref.getString(Constantes.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
     }
 
-    public static Typeface getFonteNormal(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
-    }
-    public static Typeface getFonteBold(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "bebasneue_bold.otf");
-    }
-
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {
@@ -177,6 +196,7 @@ public class Import {
     public static void logOut(Activity activity) {
         limparDados();
         getFirebase.getAuth().signOut();
+        LoginManager.getInstance().logOut();
         irProLogin(activity);
     }
 
@@ -389,7 +409,15 @@ public class Import {
             msg += "\nMensagem: "+ ex.getMessage();
             msg += "\nLocalizedMessage: "+ ex.getLocalizedMessage();
             msg += "\n-------";
-//            tag = "\n" + tag;
+            Log.e(tag, msg);
+        }
+
+        public static void erro(String tag, String metodo, Exception ex) {
+            String msg = "erro:";
+            msg += "\nMetodo: " + metodo;
+            msg += "\nMensagem: "+ ex.getMessage();
+            msg += "\nLocalizedMessage: "+ ex.getLocalizedMessage();
+            msg += "\n-------";
             Log.e(tag, msg);
         }
         public static void erro(String tag, String titulo, String texto) {
@@ -419,7 +447,7 @@ public class Import {
 
         public static StorageReference getStorage() {
             if(firebaseStorage == null)
-                firebaseStorage = FirebaseStorage.getInstance().getReference( );
+                firebaseStorage = FirebaseStorage.getInstance().getReference();
             return firebaseStorage;
         }
 
@@ -454,6 +482,7 @@ public class Import {
 
             punter = user;
         }
+
         public static void setUser(Context context, Tipster user) {
             if (user != null) {
                 SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
@@ -473,6 +502,7 @@ public class Import {
         public static Punter getPunter() {
             return punter;
         }
+
         public static Tipster getTipster() {
             return tipster;
         }
@@ -480,8 +510,9 @@ public class Import {
         public static Usuario getUsuario() {
             if (isTipster())
                 return getTipster().getDados();
-            else
-            return getPunter().getDados();
+            else if (getPunter() != null)
+                return getPunter().getDados();
+            return null;
         }
 
         public static boolean isTipster() {
@@ -492,10 +523,21 @@ public class Import {
             SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             return pref.getString(Constantes.user.logado.ULTIMO_EMAIL, "");
         }
+
         public static void setUltinoEmail(Context context, String email) {
             SharedPreferences.Editor editor = context.getSharedPreferences("info", MODE_PRIVATE).edit();
             editor.putString(Constantes.user.logado.ULTIMO_EMAIL, email);
             editor.apply();
+        }
+
+        public static void setGerencia(Activity activity, boolean isGerente) {
+            SharedPreferences.Editor editor = activity.getSharedPreferences("info", MODE_PRIVATE).edit();
+            editor.putBoolean(Constantes.presset.IS_GERENTE, isGerente);
+            editor.apply();
+        }
+
+        public static boolean isGerente(Activity activity) {
+            return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Constantes.presset.IS_GERENTE, false);
         }
     }
 

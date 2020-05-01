@@ -90,12 +90,44 @@ public class SegundoPlanoService extends Service {
                 Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildAdded", key);
                 Import.getFirebase.getTipster().getPuntersPendentes().put(key, key);
 
-                DatabaseReference ref =  Import.getFirebase.getReference()
-                        .child(Constantes.firebase.child.USUARIO)
-                        .child(Constantes.firebase.child.PUNTERS)
-                        .child(key);
+                getPunter(key);
+            }
 
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                String key = dataSnapshot.getValue(String.class);
+                if (key == null)
+                    return;
+                Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildRemoved", key);
+                Import.getFirebase.getTipster().getPuntersPendentes().remove(key);
+
+                Punter item = Import.get.tipsters.findPuntersPendentes(key);
+                if (item != null) {
+                    Import.get.tipsters.getPuntersPendentes().remove(item);
+                    try {
+                        Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
+                        Import.activites.getMainActivity().perfilFragment.updateNotificacao();
+                    } catch (Exception ignored) {}
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    private void getPunter(String key) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Punter item = dataSnapshot.getValue(Punter.class);
@@ -117,34 +149,6 @@ public class SegundoPlanoService extends Service {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
-                Import.Alert.msg(TAG, "CommandTipsterPunterPendente", "onChildRemoved", key);
-                Import.getFirebase.getTipster().getPuntersPendentes().remove(key);
-
-                Punter item = Import.get.tipsters.findPuntersPendentes(key);
-                if (item != null) {
-                    Import.get.tipsters.getPuntersPendentes().remove(item);
-                    try {
-                        Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
-                    } catch (Exception ignored) {}
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        });
     }
 
     // Quando um Punter é adicionado na lista de 'punters' do Tipster

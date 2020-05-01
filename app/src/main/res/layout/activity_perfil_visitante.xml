@@ -23,8 +23,8 @@
             android:background="@null"
             android:layout_marginStart="3dp"
             android:layout_alignParentBottom="true"
-            android:textColor="@color/text_dark"
-            android:textSize="15sp"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size"
             android:text="@string/voltar"/>
 
         <LinearLayout
@@ -39,8 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:textColor="@color/text_dark"
-                android:textSize="15sp"
+                android:textColor="?attr/textColor"
+                android:textSize="@dimen/text_size"
                 android:text="@string/seguir"
                 tools:ignore="RelativeOverlap" />
 
@@ -50,8 +50,8 @@
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:visibility="gone"
-                android:textColor="@color/text_dark"
-                android:textSize="15sp"
+                android:textColor="?attr/textColor"
+                android:textSize="@dimen/text_size"
                 android:text="@string/seguir"
                 tools:ignore="RelativeOverlap" />
 
@@ -87,13 +87,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="40dp"
-        android:paddingEnd="40dp"
         android:layout_below="@+id/cardView">
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/perfil_table_horizontal">
 
             <TextView
                 android:layout_width="0dp"
@@ -115,20 +114,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/nome"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <EditText
                     android:id="@+id/et_nome"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_nome"
                     android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no"  />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -146,20 +142,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/tipname"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_tipname"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_tipname"
                     android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -178,20 +171,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/telefone"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_telefone"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/_00_00000_0000"
                     android:inputType="phone"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -210,20 +200,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/email"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_email"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_email"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -245,9 +232,8 @@
                 android:padding="15dp"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimary"
-                android:importantForAutofill="no"  />
+                android:importantForAutofill="no"
+                style="@style/EditText.Perfil"  />
 
             <LinearLayout
                 android:id="@+id/ll_tipster_container"

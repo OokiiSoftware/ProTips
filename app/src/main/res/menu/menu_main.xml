@@ -17,4 +17,9 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
+    <item
+        android:id="@+id/menu_verificar_atualizacao"
+        android:title="@string/verificar_atualizacao"
+        app:showAsAction="never"/>
+
 </menu>

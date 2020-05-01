@@ -14,6 +14,8 @@ import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
 
+    public static final int APP_VERSAO = 2;
+
     //===================== Conversas
     public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
     public static final String CONVERSA_CONTATO_NOME = "conversa_contato_nome";
@@ -23,6 +25,12 @@ public class Constantes {
     public static final int CONVERSA_MENSAGEM_LIDA = 2;
     public static final int CONVERSA_MENSAGEM_ENVIADA = 1;
     public static final int CONVERSA_MENSAGEM_NAO_ENVIADA = 0;
+
+    public static class formats {
+        public static final String TELEFONE = "+NN (NN) NNNNN-NNNN";
+        public static final String CPF = "NNN.NNN.NNN-NN";
+        public static final String DATA = "NN/NN/NNNN";
+    }
 
     public static class firebase {
         public static class child {
@@ -45,6 +53,9 @@ public class Constantes {
             public static final String ESPORTES = "esportes";
             public static final String MERCADOS = "mercados";
             public static final String BLOQUEADO = "bloqueado";
+            public static final String ADMINISTRADORES = "administradores";
+            public static final String VERSAO = "versao";
+            public static final String APP = "app";
         }
     }
 
@@ -67,6 +78,11 @@ public class Constantes {
         public static final String USER_ID = "user_id";
         public static final String PAGE_SELECT = "page_select";
         public static final String EMAIL = "email";
+        public static final String IS_GERENCIA = "is_gerencia";
+    }
+
+    public static class presset {
+        public static final String IS_GERENTE = "is_gerente";
     }
 
     //============================== SQLite
@@ -75,9 +91,15 @@ public class Constantes {
     public static final String SQLITE_TABELA_CONVERSAS = "conversas";
     public static final String SQLITE_TABELA_MENSAGENS = "mensagens";
 
-    //================================== Classes com ViewPager
-    public static final String CLASSE_MAIN_ACTIVITY_NAME = "MainActivity";
-    public static final String CLASSE_BATEPAPO_NAME = "BatepapoActivity";
+
+    public static class classes {
+        public static class activites {
+            //================================== Classes com ViewPager
+            public static final String MAIN = "MainActivity";
+            public static final String BATEPAPO = "BatepapoActivity";
+            public static final String GERENCIA = "GerenciaActivity";
+        }
+    }
 
     //=============================================== Permissões
     public static final int REQUEST_PERMISSION_STORANGE = 101;

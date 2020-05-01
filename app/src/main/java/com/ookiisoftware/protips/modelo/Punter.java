@@ -60,6 +60,28 @@ public class Punter {
                 .removeValue();
     }
 
+    public void bloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(true);
+        getDados().setBloqueado(true);
+    }
+
+    public void desbloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.PUNTERS)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(false);
+        getDados().setBloqueado(false);
+    }
+
     //region gets sets
 
     public Usuario getDados() {

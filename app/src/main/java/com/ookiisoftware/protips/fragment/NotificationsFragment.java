@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.PerfilVisitanteActivity;
+import com.ookiisoftware.protips.activity.PerfilPunterActivity;
 import com.ookiisoftware.protips.adapter.PunterAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
@@ -43,6 +43,12 @@ public class NotificationsFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapterUpdate();
+    }
+
     private void Init(View view) {
         recyclerView = view.findViewById(R.id.recycler);
 
@@ -53,8 +59,9 @@ public class NotificationsFragment extends Fragment {
             public void onClick(View v) {
                 int position = recyclerView.getChildAdapterPosition(v);
                 Punter item = adapter.getItem(position);
-                Intent intent = new Intent(activity, PerfilVisitanteActivity.class);
+                Intent intent = new Intent(activity, PerfilPunterActivity.class);
                 intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                Import.Alert.msg("", "onClick", item.getDados().getId());
                 activity.startActivity(intent);
             }
         };

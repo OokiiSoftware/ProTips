@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,7 +32,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -45,8 +43,6 @@ import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 import com.ookiisoftware.protips.modelo.Usuario;
 import com.ookiisoftware.protips.auxiliar.Import;
-
-import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -95,9 +91,14 @@ public class LoginActivity extends AppCompatActivity {
             progressBar.setVisibility(View.VISIBLE);
             splashScreen.setVisibility(View.VISIBLE);
             Import.Alert.msg(TAG, "onStart", "auto login");
-            if (user.isEmailVerified() && Import.get.hasConection(activity))
-                VerificarLoginPunter();
-            else {
+            if (user.isEmailVerified() && Import.get.hasConection(activity)) {
+                boolean isGerente = Import.getFirebase.isGerente(activity);
+                if (isGerente) {
+                    Intent intent = new Intent(activity, GerenciaActivity.class);
+                    startIntent(intent);
+                } else
+                    VerificarLoginPunter();
+            } else {
                 et_email.setEnabled(true);
                 et_senha.setEnabled(true);
                 splashScreen.setVisibility(View.GONE);
@@ -111,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "requestCode" + requestCode);
+        Import.Alert.msg(TAG, "requestCode", requestCode + "");
         // Resultado retornado ao iniciar o Intent de GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -122,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Falha no login do Google, atualize a interface do usuário adequadamente
-                Log.w(TAG, "Google sign in failed", e);
+                Import.Alert.erro(TAG, "onActivityResult", e);
             }
         }
         // Passe o resultado da atividade de volta ao SDK do Facebook
@@ -264,15 +265,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private void LoginComToken(AuthCredential credential) {
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>(){
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            VerificarLoginPunter();
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
-                        }
+                    public void onSuccess(AuthResult authResult) {
+                        Import.Alert.msg(TAG, "LoginComToken", "Sucesso");
+                        VerificarLoginPunter();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Import.Alert.erro(TAG, "LoginComToken", e);
+                        progressBar.setVisibility(View.INVISIBLE);
+                        if (e.getMessage() != null)
+                            if (e.getMessage().contains("The supplied auth credential is malformed or has expired."))
+                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao_muitas_tentativas));
+                            else
+                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
                     }
                 });
     }
@@ -303,7 +312,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Import.Alert.erro(TAG, e);
+                        Import.Alert.erro(TAG, "LoginComEmailESenha", e);
                         if (e.getMessage() != null)
                         switch (e.getMessage()) {
                             case "The password is invalid or the user does not have a password.":
@@ -358,13 +367,14 @@ public class LoginActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Import.Alert.erro(TAG, e);
+                Import.Alert.erro(TAG, "enviarNovoEmail", e);
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
             }
         });
     }
 
     public void VerificarLoginPunter() {
+        Import.getFirebase.setGerencia(activity, false);
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)

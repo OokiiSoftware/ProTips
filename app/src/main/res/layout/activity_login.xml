@@ -10,7 +10,7 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/login_table_horizontal"
+        android:paddingTop="@dimen/login_table_vertical"
         android:paddingStart="@dimen/login_table_horizontal"
         android:paddingEnd="@dimen/login_table_horizontal">
 
@@ -32,14 +32,14 @@
                 android:textColor="@color/text_dark"
                 android:text="@string/bem_vindo_ao"
                 android:layout_marginEnd="5dp"
-                android:textSize="25sp"/>
+                android:textSize="@dimen/title_size"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/protips"
                 android:textColor="@color/text_dark"
-                android:textSize="25sp"
+                android:textSize="@dimen/title_size"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="@string/enviar_novo_email_verificacao"
-            android:textSize="15sp"
+            android:textSize="@dimen/text_size"
             android:visibility="visible"
             android:textColor="@color/colorPrimaryDark"/>
 
@@ -87,7 +87,7 @@
             android:layout_marginTop="5dp"
             android:gravity="end"
             android:text="@string/recuperar_senha"
-            android:textSize="15sp"
+            android:textSize="@dimen/text_size"
             android:visibility="visible"
             android:textColor="@color/colorPrimaryDark"/>
 
@@ -114,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/cadastre_se"
-                android:textSize="20sp"
+                android:textSize="@dimen/title_size"
                 android:textColor="@color/colorPrimaryDark"/>
 
             <TextView

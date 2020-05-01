@@ -40,7 +40,7 @@ public class BatepapoActivity extends AppCompatActivity {
             tabs = findViewById(R.id.batepapo_tabs);
         }// Pegar elementos do layout pelo ID
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), 0, this);
+        SectionsPagerAdapter sectionsPagerAdapter = null;// new SectionsPagerAdapter(getSupportFragmentManager(), 0, this);
 
         {
             setSupportActionBar(toolbar);

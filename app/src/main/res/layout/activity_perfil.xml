@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
@@ -23,8 +23,8 @@
             android:background="@null"
             android:layout_marginStart="3dp"
             android:layout_alignParentBottom="true"
-            android:textColor="@color/text_dark"
-            android:textSize="15sp"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size"
             android:text="@string/voltar"/>
 
         <Button
@@ -34,13 +34,13 @@
             android:background="@null"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:textColor="@color/text_dark"
-            android:textSize="15sp"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size"
             android:text="@string/salvar"
             tools:ignore="RelativeOverlap" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/progressBarHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="5dp"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
@@ -69,18 +69,17 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="40dp"
-        android:paddingEnd="40dp"
         android:layout_below="@+id/cardView">
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/perfil_table_horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="?attr/colorPrimaryDark"
                 android:text="@string/dados_pessoais"/>
 
             <LinearLayout
@@ -97,20 +96,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/nome"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_nome"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_nome"
                     android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no"  />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -128,24 +124,23 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/tipname"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size" />
 
                 <EditText
                     android:id="@+id/et_tipname"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_tipname"
                     android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_telefone_container"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="@dimen/login_item_margin"
@@ -159,20 +154,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/telefone"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_telefone"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/_00_00000_0000"
                     android:inputType="phone"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -190,20 +182,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/email"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_email"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/seu_email"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -221,22 +210,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/nascimento"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <EditText
                     android:id="@+id/et_data"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_circulo_branco"
                     android:hint="@string/_01_01_2000"
                     android:inputType="date"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimary"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
 
             </LinearLayout>
 
@@ -254,7 +238,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/estado"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <Spinner
                     android:id="@+id/sp_estado"
@@ -282,7 +266,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/privacidade"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <Spinner
                     android:id="@+id/sp_privacidade"
@@ -308,7 +292,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/login_item_margin"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="?attr/colorPrimaryDark"
                 android:text="@string/dados_outros"/>
 
             <EditText
@@ -322,9 +306,8 @@
                 android:padding="15dp"
                 android:inputType="text"
                 android:maxLines="1"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorPrimary"
-                android:importantForAutofill="no"  />
+                android:importantForAutofill="no"
+                style="@style/EditText.Perfil" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -341,7 +324,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/perfil_usuario_categoria"
-                    android:textSize="20sp" />
+                    android:textSize="@dimen/text_size"  />
 
                 <Spinner
                     android:id="@+id/sp_categoria"
@@ -361,7 +344,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:text="@string/quero_ser_um_tipster"
-                android:textSize="20sp"
+                android:textSize="@dimen/text_size"
                 android:layout_marginBottom="@dimen/login_item_margin"
                 android:background="@drawable/bg_circulo_branco"/>
 
@@ -369,13 +352,13 @@
                 android:id="@+id/ll_tipster_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="?attr/colorPrimaryDark"
                     android:text="@string/esportes_"/>
 
                 <LinearLayout
@@ -417,12 +400,26 @@
                     android:background="@color/text_dark"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/login_item_margin"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:text="@string/mercados_"/>
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/login_item_margin"
+                        android:textColor="?attr/colorPrimaryDark"
+                        android:text="@string/mercados_"/>
+
+                    <TextView
+                        android:id="@+id/tv_selecionado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/login_item_margin"
+                        android:textColor="?attr/textColor"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -469,5 +466,13 @@
         </TableLayout>
 
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_below="@id/rl_1"/>
 
 </RelativeLayout>

@@ -146,7 +146,7 @@
     <string name="solicitacao_tipster">Request to be a Tipster</string>
     <string name="entre_em_contato_com">Get in touch with</string>
     <string name="em_analize">In analysis</string>
-    <string name="info_registrar_telefone">Enter your Phone Number below and request a code to arrive via SMS. This service may be charged by your operator.</string>
+    <string name="info_registrar_telefone">Enter your Phone Number below and request a code via SMS. This service may be charged by your operator.</string>
     <string name="info_registrar_codigo">Enter the code in the field below</string>
     <string name="info_numero_registrado">Number successfully registered</string>
     <string name="sem_esporte_registrado">No registered sport</string>
@@ -162,4 +162,14 @@
     <string name="fechar">Close</string>
     <string name="enviar_novo_email_verificacao">Send new verification email</string>
     <string name="email_nao_encontrado">This email is not registered</string>
+    <string name="atualizacao_disponivel">New update found</string>
+    <string name="baixar">Download</string>
+    <string name="titulo_g_solicitacoes">Requests</string>
+    <string name="verificando_atualizacao">Checking update</string>
+    <string name="verificar_atualizacao">Check for update</string>
+    <string name="titulo_g_inicio">Home</string>
+    <string name="sem_atualizacao">No update</string>
+    <string name="salve_primeiro">Save data first</string>
+    <string name="erro_baixar_atualizacao">Error downloading update</string>
+    <string name="erro_de_autencicacao_muitas_tentativas">Too many login attempts. Try again later</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
@@ -22,6 +24,9 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.modelo.Usuario;
@@ -34,7 +39,7 @@ public class CadastroActivity extends AppCompatActivity {
 
     //region Variáveis
 
-//    private final String TAG = "CadastroActivity";
+    private final String TAG = "CadastroActivity";
     private Random random = new Random();
     private Activity activity;
 
@@ -42,6 +47,8 @@ public class CadastroActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private ImageView foto;
 
+    private int radAtual;
+    private int rad;
     //endregion
 
     //region Override
@@ -83,22 +90,28 @@ public class CadastroActivity extends AppCompatActivity {
             public void onClick(View view) {
                 {
                     String nome = et_nome.getText().toString();
-                    String usuario = et_email.getText().toString();
+                    String email = et_email.getText().toString();
                     String senha = et_senha.getText().toString();
                     String senha_2 = et_confirmar_senha.getText().toString();
-                    if(nome.isEmpty())
-                        et_nome.setError(getResources().getString(R.string.campo_obrigatório));
-                    else if(usuario.isEmpty())
-                        et_email.setError(getResources().getString(R.string.campo_obrigatório));
-                    else if(senha.isEmpty())
-                        et_senha.setError(getResources().getString(R.string.campo_obrigatório));
-                    else if(senha_2.isEmpty())
-                        et_confirmar_senha.setError(getResources().getString(R.string.campo_obrigatório));
-                    else if(!senha.equals(senha_2))
-                        et_confirmar_senha.setError(getResources().getString(R.string.aviso_cadastro_senhas_diferentes));
-                    else {
-                        progressBar.setVisibility(View.VISIBLE);
-                        OrganizarDados(nome, usuario, senha);
+                    if (rad == 2 && radAtual == 5) {
+                        Usuario usuario = new Usuario();
+                        usuario.setEmail(email);
+                        usuario.setSenha(senha);
+                        login(usuario);
+                    } else {
+                        if(nome.isEmpty())
+                            et_nome.setError(getResources().getString(R.string.campo_obrigatório));
+                        else if(email.isEmpty())
+                            et_email.setError(getResources().getString(R.string.campo_obrigatório));
+                        else if(senha.isEmpty())
+                            et_senha.setError(getResources().getString(R.string.campo_obrigatório));
+                        else if(senha_2.isEmpty())
+                            et_confirmar_senha.setError(getResources().getString(R.string.campo_obrigatório));
+                        else if(!senha.equals(senha_2))
+                            et_confirmar_senha.setError(getResources().getString(R.string.aviso_cadastro_senhas_diferentes));
+                        else {
+                            OrganizarDados(nome, email, senha);
+                        }
                     }
                 }
             }
@@ -107,7 +120,8 @@ public class CadastroActivity extends AppCompatActivity {
         foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (random.nextInt(5)){
+                radAtual = random.nextInt(6);
+                switch (radAtual) {
                     case 0:
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_amarelo));
                         break;
@@ -124,7 +138,8 @@ public class CadastroActivity extends AppCompatActivity {
                         foto.setBackground(getDrawable(R.drawable.bg_circulo_verde));
                         break;
                     case 5:
-                        foto.setBackground(getDrawable(R.drawable.bg_circulo_branco));
+                        foto.setBackground(getDrawable(R.drawable.bg_circulo_preto));
+                        rad++;
                         break;
                 }
             }
@@ -137,11 +152,11 @@ public class CadastroActivity extends AppCompatActivity {
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setSenha(senha);
-
-        SalvarDadosNoFirebase(usuario);
+        criarContaNoFirebase(usuario);
     }
 
-    private void SalvarDadosNoFirebase(final Usuario usuario) {
+    private void criarContaNoFirebase(final Usuario usuario) {
+        progressBar.setVisibility(View.VISIBLE);
         final FirebaseAuth firebaseAuth = Import.getFirebase.getAuth();
         firebaseAuth.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -194,6 +209,54 @@ public class CadastroActivity extends AppCompatActivity {
                         Import.Alert.toast(CadastroActivity.this, getResources().getString(R.string.erro_cadastro));
                     }
                 }
+            }
+        });
+    }
+
+    private void login(final Usuario usuario) {
+        progressBar.setVisibility(View.VISIBLE);
+        Import.getFirebase.getAuth().signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        FirebaseUser user = authResult.getUser();
+                        if (user != null) {
+                            if (user.isEmailVerified()) {
+                                Import.getFirebase.getReference()
+                                        .child(Constantes.firebase.child.ADMINISTRADORES)
+                                        .child(user.getUid())
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                try {
+                                                    if (dataSnapshot.getValue() == null)
+                                                        throw new Exception();
+                                                    String uid = dataSnapshot.getValue(String.class);
+                                                    if (uid == null)
+                                                        throw new Exception();
+                                                    Import.getFirebase.setGerencia(activity, true);
+                                                    Intent intent = new Intent(activity, GerenciaActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } catch (Exception ignored) {
+                                                    progressBar.setVisibility(View.GONE);
+                                                    Import.getFirebase.getAuth().signOut();
+                                                    rad++;
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) { }
+                                        });
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressBar.setVisibility(View.GONE);
+                rad++;
             }
         });
     }

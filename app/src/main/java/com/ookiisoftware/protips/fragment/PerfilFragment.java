@@ -44,6 +44,12 @@ public class PerfilFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateNotificacao();
+    }
+
     //endregion
 
     //region Métodos
@@ -86,8 +92,8 @@ public class PerfilFragment extends Fragment {
         if (!isTipster) {
             btn_newPost.setVisibility(View.GONE);
             btn_planilha.setVisibility(View.GONE);
-            btn_notificacao.setVisibility(View.GONE);
-            btn_3_perfil_fragment.setVisibility(View.GONE);
+//            btn_notificacao.setVisibility(View.GONE);
+//            btn_3_perfil_fragment.setVisibility(View.GONE);
         }
 
         Glide.with(activity).load(uri).into(img_foto_usuario);

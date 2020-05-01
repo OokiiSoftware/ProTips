@@ -7,13 +7,14 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="fontFamily">@font/bebasneue_regular</item>
+        <item name="fontFamily">@font/century_gothic</item>
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="titleTextColor">@color/text_dark</item>
 
         <item name="textColor">@color/text_dark</item>
+        <item name="tintColor">@color/text_dark</item>
         <item name="backgroundColor">@color/colorPrimaryLight_3</item>
         <item name="toolbarHeight">@dimen/toolbar_height</item>
 
@@ -36,7 +37,17 @@
         <item name="android:textColorHint">@color/text_dark</item>
         <item name="android:layout_marginTop">@dimen/login_item_margin</item>
     </style>
-    <style name="EditText.NovoTip" parent="Base.Widget.AppCompat.EditText">
+
+    <style name="EditText.Perfil" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:paddingStart">@dimen/et_start_end</item>
+        <item name="android:paddingEnd">@dimen/et_start_end</item>
+        <item name="android:background">@color/text_dark</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
+    </style>
+
+
+    <style name="EditText.NewTip" parent="Base.Widget.AppCompat.EditText">
         <item name="android:padding">@dimen/et_novo_tip</item>
         <item name="android:background">@drawable/bg_stroke_primary_color</item>
         <item name="android:textColor">@color/text_light</item>

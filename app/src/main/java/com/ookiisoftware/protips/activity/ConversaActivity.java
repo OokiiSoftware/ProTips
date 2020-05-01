@@ -111,7 +111,7 @@ public class ConversaActivity extends AppCompatActivity {
          */
         {
             toolbar.setTitle(usuarioDestino.getNome());
-            toolbar.setNavigationIcon(R.drawable.ic_back);
+            toolbar.setNavigationIcon(R.drawable.ic_voltar);
             setSupportActionBar(toolbar);
         }// toolbar
 

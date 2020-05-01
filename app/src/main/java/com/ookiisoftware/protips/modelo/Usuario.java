@@ -52,26 +52,6 @@ public class Usuario {
         return item;
     }
 
-    public void bloquear() {
-        Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.PUNTERS)
-                .child(getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.BLOQUEADO)
-                .setValue(true);
-    }
-
-    public void desbloquear() {
-        Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.PUNTERS)
-                .child(getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.BLOQUEADO)
-                .setValue(false);
-    }
-
     //region gets sets
 
     public String getId() {

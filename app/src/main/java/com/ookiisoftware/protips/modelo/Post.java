@@ -170,6 +170,10 @@ public class Post {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 ref.child(Criptografia.criptografar(getData())).removeValue();
+
+                Import.getFirebase.getStorage()
+                        .child(Constantes.firebase.child.POSTES)
+                        .child(getId()).delete();
             }
 
             @Override

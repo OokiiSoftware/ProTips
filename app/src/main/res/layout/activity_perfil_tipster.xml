@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:focusable="false"
+    android:background="@color/colorPrimaryLight"
+    tools:context=".activity.PerfilActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimary">
+
+        <Button
+            android:id="@+id/cancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginStart="3dp"
+            android:layout_alignParentBottom="true"
+            android:textColor="?attr/textColor"
+            android:textSize="@dimen/text_size"
+            android:text="@string/voltar"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true">
+
+            <Button
+                android:id="@+id/salvar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:textColor="?attr/textColor"
+                android:textSize="@dimen/text_size"
+                android:text="@string/seguir"
+                tools:ignore="RelativeOverlap" />
+
+            <Button
+                android:id="@+id/btn_recusar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:visibility="gone"
+                android:textColor="?attr/textColor"
+                android:textSize="@dimen/text_size"
+                android:text="@string/recusar"
+                tools:ignore="RelativeOverlap" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="150dp"
+        android:layout_height="150sp"
+        android:layout_below="@+id/rl_1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-75dp"
+        app:cardCornerRadius="75dp">
+
+        <ImageView
+            android:id="@+id/iv_foto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_circulo_primary_light"
+            android:contentDescription="@string/nome"
+            android:src="@drawable/ic_person_dark" />
+
+    </androidx.cardview.widget.CardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/cardView">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/perfil_table_horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/dados_pessoais"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:background="@drawable/bg_circulo_branco"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/nome"
+                    android:textSize="@dimen/text_size" />
+
+                <EditText
+                    android:id="@+id/et_nome"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/seu_nome"
+                    android:inputType="textPersonName"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:background="@drawable/bg_circulo_branco"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/tipname"
+                    android:textSize="@dimen/text_size"  />
+
+                <EditText
+                    android:id="@+id/et_tipname"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/seu_tipname"
+                    android:inputType="textPersonName"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_telefone_container"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:background="@drawable/bg_circulo_branco"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/telefone"
+                    android:textSize="@dimen/text_size"  />
+
+                <EditText
+                    android:id="@+id/et_telefone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/_00_00000_0000"
+                    android:inputType="phone"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_email_container"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:background="@drawable/bg_circulo_branco"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/email"
+                    android:textSize="@dimen/text_size"  />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/seu_email"
+                    android:inputType="textEmailAddress"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.Perfil" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/dados_outros"/>
+
+            <EditText
+                android:id="@+id/et_info"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_circulo_branco"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:hint="@string/descricao"
+                android:padding="15dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:importantForAutofill="no"
+                style="@style/EditText.Perfil"  />
+
+            <LinearLayout
+                android:id="@+id/ll_tipster_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="@string/esportes"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_esportes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:padding="5dp"
+                    android:background="@color/text_dark"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/login_item_margin"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:text="@string/mercados"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_mercados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="@dimen/login_item_margin"
+                    android:padding="5dp"
+                    android:background="@color/text_dark"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+        </TableLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

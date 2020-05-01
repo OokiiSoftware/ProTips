@@ -8,13 +8,17 @@
     <dimen name="login_item_margin">15dp</dimen>
     <dimen name="item_table_margin">5dp</dimen>
     <dimen name="login_table_horizontal">70dp</dimen>
+    <dimen name="login_table_vertical">40dp</dimen>
+    <dimen name="perfil_table_horizontal">40dp</dimen>
+    <dimen name="perfil_table_vertical">40dp</dimen>
+    <dimen name="new_tip_table_padding">10dp</dimen>
 
-    <!-- Textos -->
+    <!--TODO Textos -->
     <dimen name="title_size">20sp</dimen>
     <dimen name="title_medio_size">25sp</dimen>
-    <dimen name="title_max_size">30sp</dimen>
+    <dimen name="title_max_size">28sp</dimen>
     <dimen name="subtitle_size">15sp</dimen>
-    <dimen name="text_size">17sp</dimen>
+    <dimen name="text_size">15sp</dimen>
 
     <dimen name="et_top_bot">12dp</dimen>
     <dimen name="et_start_end">17dp</dimen>

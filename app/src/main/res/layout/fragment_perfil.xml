@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/backgroundColor"
     tools:context=".fragment.PerfilFragment">
 
     <LinearLayout
@@ -49,6 +48,7 @@
                 android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/nome"
+                android:textSize="@dimen/text_size"
                 android:textColor="?attr/textColor" />
 
             <TextView
@@ -61,6 +61,7 @@
                 android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/email"
+                android:textSize="@dimen/text_size"
                 android:textColor="?attr/textColor" />
 
             <TextView
@@ -73,6 +74,7 @@
                 android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/tipname"
+                android:textSize="@dimen/text_size"
                 android:textColor="?attr/textColor" />
 
             <TextView
@@ -87,7 +89,7 @@
                 android:paddingVertical="5dp"
                 android:paddingHorizontal="7dp"
                 android:text="@string/editar"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_size"
                 style="@style/EditText.Login" />
 
         </LinearLayout>
@@ -134,12 +136,12 @@
                     android:background="@color/colorPrimaryDark">
 
                     <ImageView
-                        android:id="@+id/iv_planilha"
+                        android:id="@+id/btn_3_perfil_fragment"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:contentDescription="@null"
                         android:padding="15dp"
-                        android:src="@drawable/ic_planilha"
+                        android:src="@drawable/ic_cash"
                         android:scaleType="fitXY"
 
                         app:layout_constraintDimensionRatio="1:1"
@@ -156,12 +158,12 @@
                     android:background="@color/colorPrimaryDark">
 
                     <ImageView
-                        android:id="@+id/btn_3_perfil_fragment"
+                        android:id="@+id/iv_planilha"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:contentDescription="@null"
                         android:padding="15dp"
-                        android:src="@drawable/ic_cash"
+                        android:src="@drawable/ic_planilha"
                         android:scaleType="fitXY"
 
                         app:layout_constraintDimensionRatio="1:1"

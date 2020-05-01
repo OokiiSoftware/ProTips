@@ -1,12 +1,19 @@
 package com.ookiisoftware.protips.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.ChildEventListener;
@@ -41,7 +48,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private static final String TAG = "MainActivity";
     private Activity activity;
-    private boolean isTipster;
+    private String meuId;
+//    private boolean isTipster;
 
     public CustomViewPager viewPager;
     private DrawerLayout drawer;
@@ -84,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(getApplicationContext(), SegundoPlanoService.class));
-
         activity = this;
+        startService(new Intent(activity, SegundoPlanoService.class));
+
         Import.Alert.msg(TAG, "Timezone1", TimeZone.getDefault().getID());
         Import.Alert.msg(TAG, "Timezone2", TimeZone.getDefault().getDisplayName());
 
@@ -97,9 +105,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onStart() {
         super.onStart();
         inPrimeiroPlano = true;
-        if (isTipster)
-            getMyPunters();
-        else
+//        if (isTipster)
+//            getMyPunters();
+//        else
             refAllTipsters.addChildEventListener(eventAllTipsters);
     }
 
@@ -107,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onStop() {
         super.onStop();
         inPrimeiroPlano = false;
-        if (!isTipster)
+//        if (!isTipster)
             refAllTipsters.removeEventListener(eventAllTipsters);
     }
 
@@ -129,9 +137,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public boolean onQueryTextChange(String newText) {
                 tipstersFragment.refreshLayout.setEnabled(newText.isEmpty());
                 feedFragment.refreshLayout.setEnabled(newText.isEmpty());
-                if (isTipster)
-                    tipstersFragment.getPunterAdapter().getFilter().filter(newText);
-                else
+//                if (isTipster)
+//                    tipstersFragment.getPunterAdapter().getFilter().filter(newText);
+//                else
                     tipstersFragment.getTipsterAdapter().getFilter().filter(newText);
                 return false;
             }
@@ -143,8 +151,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            drawer.openDrawer(GravityCompat.START, true);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawer.openDrawer(GravityCompat.START, true);
+                break;
+            case R.id.menu_verificar_atualizacao:
+                verificar_atualizacao();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -181,17 +194,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onPageSelected(int position) {
-        String[] titulo_da_pagina = Objects.requireNonNull(sectionsPagerAdapter.getPageTitle(position)).toString().split(" ");
-        if (titulo_da_pagina.length > 1){
-            action_bar_titulo_1.setText(titulo_da_pagina[0]);
-            action_bar_titulo_1.setTypeface(Import.getFonteNormal(activity));
-            action_bar_titulo_2.setText(titulo_da_pagina[1]);
-            action_bar_titulo_2.setTypeface(Import.getFonteBold(activity));
-        } else {
-            action_bar_titulo_1.setText(titulo_da_pagina[0]);
-            action_bar_titulo_1.setTypeface(Import.getFonteBold(activity));
-            action_bar_titulo_2.setText("");
-        }
+        CharSequence title = sectionsPagerAdapter.getPageTitle(position);
+        if (title != null)
+            Import.organizarTituloTollbar(activity, action_bar_titulo_1, action_bar_titulo_2, title);
+
         switch (position) {
             case 0:
                 navView.setSelectedItemId(R.id.nav_menu_feed);
@@ -228,12 +234,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private void Init() {
         //region findViewById
         Toolbar toolbar = findViewById(R.id.toolbar);
-        NavigationView navigationView = findViewById(R.id.nv_menu_lateral);
+        NavigationView navigationView = findViewById(R.id.navigationView);
         viewPager = findViewById(R.id.viewPager);
         navView = findViewById(R.id.bottonNavigationView);
         drawer = findViewById(R.id.drawer);
         //endregion
 
+        meuId = Import.getFirebase.getId();
         int pageSelect = 0;
         try {
             Bundle bundle = getIntent().getExtras();
@@ -252,11 +259,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             notificationsFragment = new NotificationsFragment(activity);
             perfilFragment = new PerfilFragment(activity);
 
-            isTipster = Import.getFirebase.isTipster();
+//            isTipster = Import.getFirebase.isTipster();
             Import.activites = new Activites();
             Import.activites.setMainActivity(this);
-
-
         } catch (Exception ex) {
             Import.Alert.erro(TAG, ex);
             Import.Alert.toast(activity, getResources().getString(R.string.erro_init_main_activity));
@@ -266,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //region Toolbar
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_menu));
             getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             getSupportActionBar().setCustomView(R.layout.custom_action_bar);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -279,9 +285,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //region NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navView.setOnNavigationItemSelectedListener(this);
+        navView.inflateMenu(R.menu.nav_menu_main);
         //endregion
 
-        //region SectionsPagerAdapter
+        //region viewPager
         sectionsPagerAdapter = new SectionsPagerAdapter(
                 getSupportFragmentManager(),
                 FragmentPagerAdapter.POSITION_UNCHANGED,
@@ -292,8 +299,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         viewPager.setCurrentItem(pageSelect);
         //endregion
 
-        if (!isTipster)
-            getAllTipsters();
+        getAllTipsters();
     }
 
     private void SwithMenu(int position) {
@@ -320,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     Tipster item = dataSnapshot.getValue(Tipster.class);
                     if (item != null) {
                         if (item.getDados().isBloqueado())
+                            return;
+                        if (item.getDados().getId().equals(meuId))
                             return;
                         Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
                         if (item_2 == null) {
@@ -414,6 +422,89 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public boolean isInPrimeiroPlano() {
         return inPrimeiroPlano;
+    }
+
+    private void verificar_atualizacao() {
+        final Dialog dialog = new Dialog(activity);
+        dialog.setTitle(getResources().getString(R.string.verificando_atualizacao));
+        final ProgressBar progressBar = new ProgressBar(activity);
+        dialog.setContentView(progressBar);
+
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.VERSAO);
+
+        final ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Long> values = new ArrayList<>();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Long item = data.getValue(Long.class);
+                    if (item != null) {
+                        values.add(item);
+                    }
+                }
+                if (values.size() > 0) {
+                    final long ultima = values.get(values.size() -1);
+                    if (ultima > Constantes.APP_VERSAO) {
+                        dialog.dismiss();
+                        final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                        dialog.setTitle(getResources().getString(R.string.atualizacao_disponivel));
+                        dialog.setPositiveButton(getResources().getString(R.string.baixar), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String appName = "protips_" + ultima + ".apk";
+                                Import.Alert.toast(activity, "aguarde");
+                                Import.Alert.msg(TAG, "verificar_atualizacao", appName);
+                                Import.getFirebase.getStorage()
+                                        .child(Constantes.firebase.child.APP)
+                                        .child(appName)
+                                        .getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                                startActivity(intent);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Import.Alert.erro(TAG, "verificar_atualizacao", e);
+                                                atualizacao_erro();
+                                            }
+                                        });
+                            }
+                        });
+                        dialog.show();
+                    } else {
+                        sem_atualizacao();
+                    }
+                } else {
+                    sem_atualizacao();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+
+            private void atualizacao_erro() {
+                Import.Alert.toast(activity, "erro ao baixar");
+            }
+
+            private void sem_atualizacao() {
+                Import.Alert.toast(activity, "sem atualização");
+                dialog.dismiss();
+            }
+        };
+
+        ref.addListenerForSingleValueEvent(eventListener);
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ref.removeEventListener(eventListener);
+            }
+        });
+        dialog.show();
     }
 
     //endregion

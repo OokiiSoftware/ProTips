@@ -14,10 +14,9 @@ public class Tipster {
     private HashMap<String, String> punters;
     private HashMap<String,String> puntersPendentes;
 
-    public enum Acao {
-        Seguir, Desseguir, Remover_Pendente, Aceitar
-
-    }
+//    public enum Acao {
+//        Seguir, Desseguir, Cancelar, Aceitar, Recusar, Remover
+//    }
 
     public Tipster() {
         punters = new HashMap<>();
@@ -34,11 +33,14 @@ public class Tipster {
     }
 
     public void solicitarSerTipsterCancelar() {
+        removerSolicitarSerTipster();
+        getDados().toPunter().desbloquear();
+    }
+    public void removerSolicitarSerTipster() {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
                 .child(dados.getId())
                 .removeValue();
-        getDados().toPunter().getDados().desbloquear();
     }
 
     public void salvar() {
@@ -54,75 +56,6 @@ public class Tipster {
                 .child(dados.getTipname())
                 .setValue(dados.getId());
     }
-
-    /*public void solicitar1(final Punter punter, final Acao acao) {
-        Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
-                .child(dados.getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.getValue() == null)
-                            return;
-                        Tipster item = dataSnapshot.getValue(Tipster.class);
-                        if (item == null)
-                            return;
-
-                        String id_punter = punter.getDados().getId();
-                        switch (acao) {
-                            case Seguir: {
-                                    if (!item.getPunters().contains(id_punter) && !item.getPuntersPendentes().values().contains(id_punter))
-                                        item.getPuntersPendentes().values().add(id_punter);
-                                    dataSnapshot.getRef()
-                                            .child(Constantes.firebase.child.PUNTERS_PENDENTES)
-                                            .setValue(item.getPuntersPendentes());
-                                    break;
-                                }
-                            case Desseguir: {
-                                    item.getPunters().remove(id_punter);
-                                    dataSnapshot.getRef()
-                                            .child(Constantes.firebase.child.PUNTERS)
-                                            .setValue(item.getPunters());
-                                    break;
-                                }
-                            case Remover_Pendente: {
-                                    item.getPuntersPendentes().remove(id_punter);
-                                    dataSnapshot.getRef()
-                                            .child(Constantes.firebase.child.PUNTERS_PENDENTES)
-                                            .setValue(item.getPuntersPendentes());
-                                    break;
-                                }
-                            case Aceitar: {
-                                if (!item.getPunters().contains(id_punter)) {
-                                    item.getPunters().add(id_punter);
-                                    dataSnapshot.getRef()
-                                            .child(Constantes.firebase.child.PUNTERS)
-                                            .setValue(item.getPunters());
-
-                                    String meuId = Import.getFirebase.getId();
-                                    punter.addTipster(meuId);
-                                    solicitar1(punter, Acao.Remover_Pendente);
-
-//                                    Import.getFirebase.getTipster().getPunters().add(id_punter);
-//                                    Import.get.punter.getAll().add(punter);
-//
-//                                    Import.getFirebase.getTipster().getPuntersPendentes().remove(id_punter);
-//                                    Import.get.tipsters.getPuntersPendentes().remove(punter);
-//                                    Import.activites.getMainActivity().tipstersFragment.adapterUpdate();
-//                                    Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
-                                }
-                                break;
-                            }
-                        }
-
-                        dataSnapshot.getRef().setValue(item);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
-    }*/
 
     public void addSolicitacao(String id) {
         Import.getFirebase.getReference()
@@ -167,6 +100,7 @@ public class Tipster {
                 .child(Constantes.firebase.child.PUNTERS)
                 .child(id)
                 .removeValue();
+        getPunters().remove(punter.getDados().getId());
         punter.removerTipster(id);
     }
 
@@ -230,6 +164,28 @@ public class Tipster {
                 .child(Constantes.firebase.child.TIPSTERS)
                 .child(dados.getId())
                 .removeValue();
+    }
+
+    public void bloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(true);
+        getDados().setBloqueado(true);
+    }
+
+    public void desbloquear() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.BLOQUEADO)
+                .setValue(false);
+        getDados().setBloqueado(false);
     }
 
     //region gets sets

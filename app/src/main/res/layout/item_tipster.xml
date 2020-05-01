@@ -37,7 +37,7 @@
             android:maxLines="1"
             android:text="@string/nome_do_tipster"
             android:textColor="@color/text_light"
-            android:textSize="17sp" />
+            android:textSize="@dimen/title_size" />
 
         <LinearLayout
             android:id="@+id/ll_green_red"

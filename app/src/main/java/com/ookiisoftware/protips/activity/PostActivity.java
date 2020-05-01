@@ -39,7 +39,7 @@ public class PostActivity extends AppCompatActivity {
 
     //region Variáveis
 
-//    private static final String TAG = "PostActivity";
+    private static final String TAG = "PostActivity";
     private Activity activity;
     private String foto_path;
 
@@ -152,17 +152,22 @@ public class PostActivity extends AppCompatActivity {
 
         texto.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String valor = texto.getText().length() + "/200";
                 textLength.setText(valor);
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable s) {
+//                if (texto.getLayout() != null && texto.getLayout().getLineCount() > 7) {
+//                    texto.getText().delete(texto.getText().length() - 1, texto.getText().length());
+//                }
+            }
         });
+
         foto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
