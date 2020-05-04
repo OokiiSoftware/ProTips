@@ -16,12 +16,10 @@ import java.util.List;
 
 public class EsporteSpinnerAdapter extends ArrayAdapter<Esporte> {
 
-    private Context context;
     private List<Esporte> objects;
 
     public EsporteSpinnerAdapter(@NonNull Context context, int resource, @NonNull List<Esporte> objects) {
         super(context, resource, objects);
-        this.context = context;
         this.objects = objects;
     }
 

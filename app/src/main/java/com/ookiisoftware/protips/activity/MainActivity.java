@@ -3,17 +3,13 @@ package com.ookiisoftware.protips.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.database.ChildEventListener;
@@ -33,7 +29,6 @@ import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.modelo.Activites;
 import com.ookiisoftware.protips.modelo.Post;
-import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 
 import androidx.annotation.NonNull;
@@ -380,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         };
     }
 
-    private void getMyPunters() {
+    /*private void getMyPunters() {
         for (String s : Import.getFirebase.getTipster().getPunters().values()) {
             DatabaseReference ref =  Import.getFirebase.getReference()
                     .child(Constantes.firebase.child.USUARIO)
@@ -413,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 public void onCancelled(@NonNull DatabaseError databaseError) {}
             });
         }
-    }
+    }*/
 
     public void feedUpdate() {
         onStop();
@@ -449,31 +444,22 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         dialog.dismiss();
                         final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                         dialog.setTitle(getResources().getString(R.string.atualizacao_disponivel));
-                        dialog.setPositiveButton(getResources().getString(R.string.baixar), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String appName = "protips_" + ultima + ".apk";
-                                Import.Alert.toast(activity, "aguarde");
-                                Import.Alert.msg(TAG, "verificar_atualizacao", appName);
-                                Import.getFirebase.getStorage()
-                                        .child(Constantes.firebase.child.APP)
-                                        .child(appName)
-                                        .getDownloadUrl()
-                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                            @Override
-                                            public void onSuccess(Uri uri) {
-                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                                startActivity(intent);
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Import.Alert.erro(TAG, "verificar_atualizacao", e);
-                                                atualizacao_erro();
-                                            }
-                                        });
-                            }
+                        dialog.setPositiveButton(getResources().getString(R.string.baixar), (dialog1, which) -> {
+                            String appName = "protips_" + ultima + ".apk";
+                            Import.Alert.toast(activity, "aguarde");
+                            Import.Alert.msg(TAG, "verificar_atualizacao", appName);
+                            Import.getFirebase.getStorage()
+                                    .child(Constantes.firebase.child.APP)
+                                    .child(appName)
+                                    .getDownloadUrl()
+                                    .addOnSuccessListener(uri -> {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                        startActivity(intent);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Import.Alert.erro(TAG, "verificar_atualizacao", e);
+                                        atualizacao_erro();
+                                    });
                         });
                         dialog.show();
                     } else {
@@ -498,12 +484,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         };
 
         ref.addListenerForSingleValueEvent(eventListener);
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                ref.removeEventListener(eventListener);
-            }
-        });
+        dialog.setOnDismissListener(dialog12 -> ref.removeEventListener(eventListener));
         dialog.show();
     }
 

@@ -255,7 +255,8 @@ public class SegundoPlanoService extends Service {
                 if (key == null)
                     return;
 
-                DatabaseReference ref =  Import.getFirebase.getReference()
+                getTipster(key);
+                /*DatabaseReference ref =  Import.getFirebase.getReference()
                         .child(Constantes.firebase.child.USUARIO)
                         .child(Constantes.firebase.child.TIPSTERS)
                         .child(key);
@@ -287,7 +288,7 @@ public class SegundoPlanoService extends Service {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
+                });*/
             }
 
             @Override
@@ -416,33 +417,47 @@ public class SegundoPlanoService extends Service {
     //region notifications
 
     private void notificationPunterPendente(@NonNull Usuario usuario) {
-        String titulo = getResources().getString(R.string.app_name);
-        String texto = getResources().getString(R.string.nova_solicitação_punter) + "\n" + usuario.getNome();
+        try {
+            if (Import.activites.getMainActivity().viewPager.getCurrentItem() != Constantes.classes.fragments.pagerPosition.NOTIFICATIONS) {
+                String titulo = getResources().getString(R.string.app_name);
+                String texto = getResources().getString(R.string.nova_solicitação_punter) + "\n" + usuario.getNome();
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.putExtra(Constantes.intent.PAGE_SELECT, 3);
-        Import.notificacao(getContext(), intent, titulo, texto);
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+                int channelId = Constantes.notification.id.NOVO_PUNTER_PENDENTE;
+                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void notificationPunterAceito(@NonNull Usuario usuario) {
-        String titulo = getResources().getString(R.string.app_name);
-        String texto = getResources().getString(R.string.punter_aceito) + "\n" + getResources().getString(R.string.tipster) + ": "
-                + usuario.getNome();
+        try {
+            if (Import.activites.getMainActivity().viewPager.getCurrentItem() != Constantes.classes.fragments.pagerPosition.FEED) {
+                String titulo = getResources().getString(R.string.app_name);
+                String texto = getResources().getString(R.string.punter_aceito) + "\n" + getResources().getString(R.string.tipster) + ": " + usuario.getNome();
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        Import.notificacao(getContext(), intent, titulo, texto);
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                int channelId = Constantes.notification.id.NOVO_PUNTER_ACEITO;
+                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void notificationNewPost(@NonNull Tipster usuario, @NonNull Post post) {
-        String titulo = getResources().getString(R.string.app_name);
-        String texto = getResources().getString(R.string.novo_poste) + ": " + usuario.getDados().getNome();
-        texto += "\n" + getResources().getString(R.string.esporte) + ": " + post.getEsporte();
-        texto += "\n" + getResources().getString(R.string.mercado) + ": " + post.getMercado();
-        texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
-        texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
+        try {
+            if (Import.activites.getMainActivity().viewPager.getCurrentItem() != Constantes.classes.fragments.pagerPosition.FEED) {
+                String titulo = getResources().getString(R.string.app_name);
+                String texto = getResources().getString(R.string.novo_poste) + ": " + usuario.getDados().getNome();
+                texto += "\n" + getResources().getString(R.string.esporte) + ": " + post.getEsporte();
+                texto += "\n" + getResources().getString(R.string.mercado) + ": " + post.getMercado();
+                texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
+                texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
 
-        Intent intent = new Intent(getContext(), MainActivity.class);
-        Import.notificacao(getContext(), intent, titulo, texto);
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                int channelId = Constantes.notification.id.NOVO_POST;
+                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+            }
+        } catch (Exception ignored) {}
     }
 
     /*private void CriarNotificacaoDaMensagem(String id_conversa, String titulo, String texto) {
@@ -466,6 +481,35 @@ public class SegundoPlanoService extends Service {
     }*/
 
     //endregion
+
+    private void getTipster(String id) {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(Constantes.firebase.child.TIPSTERS)
+                .child(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Tipster item = dataSnapshot.getValue(Tipster.class);
+                        if (item != null) {
+                            Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
+                            if (item_2 == null) {
+                                Import.get.tipsters.getAll().add(item);
+                                Import.get.tipsters.getAllAux().add(item);
+                            } else {
+                                Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
+                                Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
+                            }
+//                            Import.activites.getMainActivity().solicitacoesFragment.adapterUpdate();
+                            notificationPunterAceito(item.getDados());
+                        }
+//                        Import.activites.getMainActivity().solicitacoesFragment.refreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+    }
 
     private void postAddChildEventList(String id_tipster) {
         Import.getFirebase.getReference()
@@ -527,7 +571,7 @@ public class SegundoPlanoService extends Service {
                 });
     }
 
-    private boolean verifyApplicationRunning(Context context) {
+    private boolean verifyApplicationRunning(@NonNull Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> procInfos;
         if (activityManager != null) {

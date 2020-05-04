@@ -3,9 +3,14 @@ package com.ookiisoftware.protips.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,14 +18,18 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.PostPerfilAdapter;
 import com.ookiisoftware.protips.adapter.TextAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.auxiliar.OnSwipeListener;
 import com.ookiisoftware.protips.modelo.Esporte;
+import com.ookiisoftware.protips.modelo.PostPerfil;
 import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 import com.ookiisoftware.protips.modelo.Usuario;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PerfilTipsterActivity extends AppCompatActivity {
@@ -33,6 +42,19 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
     private HashMap<String, String> mercados;
     private HashMap<String, Esporte> esportes;
+
+    private RecyclerView recyclerPosts;
+
+    private ArrayList<PostPerfil> postPerfils;
+    private Dialog dialog;
+    private OnSwipeListener onSwipeListener = new OnSwipeListener() {
+        @Override
+        public void onTouchUp() {
+            if (dialog != null)
+                if (dialog.isShowing())
+                    dialog.dismiss();
+        }
+    };
 
     private Activity activity;
     private Tipster tipster;
@@ -57,6 +79,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
     //region Métodos
 
+    @SuppressLint("ClickableViewAccessibility")
     private void init() {
         //region findViewById
         final RecyclerView esportesRecycler = findViewById(R.id.rv_esportes);
@@ -72,6 +95,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         final Button btn_voltar = findViewById(R.id.cancelar);
         final Button btn_seguir = findViewById(R.id.salvar);
         final Button btn_recusar = findViewById(R.id.btn_recusar);
+        recyclerPosts = findViewById(R.id.recyclerPosts);
         //endregion
 
         meuId = Import.getFirebase.getId();
@@ -139,6 +163,25 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         };
         esportesRecycler.setAdapter(esportesAdapter);
 
+        postPerfils = new ArrayList<>(tipster.getPost_perfil().values());
+        ArrayList<PostPerfil> data = postPerfils;
+        PostPerfilAdapter perfilAdapter = new PostPerfilAdapter(activity, data, true, onSwipeListener) {
+            @Override
+            public void onClick(View v) {
+
+            }
+
+            @Override
+            public boolean onLongClick(View v) {
+                int position = recyclerPosts.getChildAdapterPosition(v);
+                PostPerfil item = postPerfils.get(position);
+                popupPhoto(item.getFoto());
+                return super.onLongClick(v);
+            }
+        };
+        recyclerPosts.setAdapter(perfilAdapter);
+        recyclerPosts.setOnTouchListener(onSwipeListener);
+
         if (isGerencia) {
             btn_seguir.setVisibility(View.VISIBLE);
             if (usuario.isBloqueado()) {
@@ -188,77 +231,88 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
         //region setListener
 
-        btn_recusar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isGerencia) {
-                    tipster.solicitarSerTipsterCancelar();
-                    tipster.getDados().toPunter().desbloquear();
-                }
-                btn_seguir.setVisibility(View.GONE);
-                btn_recusar.setVisibility(View.GONE);
+        btn_recusar.setOnClickListener(v -> {
+            if (isGerencia) {
+                tipster.solicitarSerTipsterCancelar();
+                tipster.getDados().toPunter().desbloquear();
             }
+            btn_seguir.setVisibility(View.GONE);
+            btn_recusar.setVisibility(View.GONE);
         });
-        btn_seguir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    if (isGerencia) {
-                        switch (acao1) {
-                            case R.string.remover: {
-                                tipster.bloquear();
-                                tipster.getDados().toPunter().desbloquear();
-                                btn_seguir.setVisibility(View.GONE);
-                                break;
-                            }
-                            case R.string.aceitar: {
+        btn_seguir.setOnClickListener(view -> {
+            try {
+                if (isGerencia) {
+                    switch (acao1) {
+                        case R.string.remover: {
+                            tipster.bloquear();
+                            tipster.getDados().toPunter().desbloquear();
+                            btn_seguir.setVisibility(View.GONE);
+                            break;
+                        }
+                        case R.string.aceitar: {
 //                                acao = Tipster.Acao.Cancelar;
 
-                                tipster.desbloquear();
-                                tipster.removerSolicitarSerTipster();
+                            tipster.desbloquear();
+                            tipster.removerSolicitarSerTipster();
 
-                                btn_seguir.setText(getResources().getString(R.string.remover));
-                                btn_recusar.setVisibility(View.GONE);
-                                break;
-                            }
-                        }
-                    } else {
-                        switch (acao1) {
-                            case R.string.seguir: {
-                                btn_seguir.setText(getResources().getString(R.string.pendente));
-                                tipster.addSolicitacao(meuId);
-                                acao1 = R.string.pendente;
-                                break;
-                            }
-                            case R.string.remover: {
-                                Punter eu = Import.getFirebase.getPunter();
-                                if (eu != null)
-                                    tipster.removerPunter(eu);
-                                acao1 = R.string.seguir;
-                                btn_seguir.setText(getResources().getString(R.string.seguir));
-                            }
-                            case R.string.pendente: {
-                                tipster.removerSolicitacao(meuId);
-                                btn_seguir.setText(getResources().getString(R.string.seguir));
-                                acao1 = R.string.seguir;
-                                break;
-                            }
+                            btn_seguir.setText(getResources().getString(R.string.remover));
+                            btn_recusar.setVisibility(View.GONE);
+                            break;
                         }
                     }
-                } catch (Exception e) {
-                    Import.Alert.erro(TAG, "btn_seguir.setOnClickListener", e);
+                } else {
+                    switch (acao1) {
+                        case R.string.seguir: {
+                            btn_seguir.setText(getResources().getString(R.string.pendente));
+                            tipster.addSolicitacao(meuId);
+                            acao1 = R.string.pendente;
+                            break;
+                        }
+                        case R.string.remover: {
+                            Punter eu = Import.getFirebase.getPunter();
+                            if (eu != null)
+                                tipster.removerPunter(eu);
+                            acao1 = R.string.seguir;
+                            btn_seguir.setText(getResources().getString(R.string.seguir));
+                        }
+                        case R.string.pendente: {
+                            tipster.removerSolicitacao(meuId);
+                            btn_seguir.setText(getResources().getString(R.string.seguir));
+                            acao1 = R.string.seguir;
+                            break;
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                Import.Alert.erro(TAG, "btn_seguir.setOnClickListener", e);
             }
         });
-        btn_voltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        btn_voltar.setOnClickListener(view -> onBackPressed());
 
         //endregion
 
+    }
+
+    private void popupPhoto(String uri) {
+        if (uri == null || uri.isEmpty())
+            return;
+        dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.popup_foto);
+        dialog.setOnDismissListener(dialog -> {
+            recyclerPosts.suppressLayout(false);
+            Import.activites.getMainActivity().viewPager.setPagingEnabled(true);
+        });
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+        recyclerPosts.suppressLayout(true);
+        Import.activites.getMainActivity().viewPager.setPagingEnabled(false);
+
+        ImageView foto = dialog.findViewById(R.id.iv_foto);
+        foto.setVisibility(View.VISIBLE);
+        Glide.with(activity).load(uri).into(foto);
+        foto.requestLayout();
     }
 
     //endregion

@@ -79,12 +79,9 @@ public class FeedFragment extends Fragment {
                     Import.get.tipsters.postes().add(item);
             refreshLayout.setEnabled(false);
         } else {
-            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    Import.activites.getMainActivity().feedUpdate();
-                    haveNewPostes(false);
-                }
+            refreshLayout.setOnRefreshListener(() -> {
+                Import.activites.getMainActivity().feedUpdate();
+                haveNewPostes(false);
             });
         }
 
@@ -125,12 +122,9 @@ public class FeedFragment extends Fragment {
             }
         });
 
-        novos_postes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Import.activites.getMainActivity().feedUpdate();
-                haveNewPostes(false);
-            }
+        novos_postes.setOnClickListener(v -> {
+            Import.activites.getMainActivity().feedUpdate();
+            haveNewPostes(false);
         });
 
         //endregion

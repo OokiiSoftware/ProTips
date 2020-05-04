@@ -2,6 +2,8 @@ package com.ookiisoftware.protips.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.activity.PerfilActivity;
+import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
+import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.Tipster;
@@ -27,17 +32,20 @@ import java.util.Objects;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder>
-        implements View.OnClickListener, View.OnTouchListener {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implements View.OnClickListener, View.OnTouchListener {
 
+    //region Variáveis
 //    private final static String TAG = "PostAdapter";
     private Activity activity;
     private ArrayList<Post> data;
+    //endregion
 
     protected PostAdapter(Activity activity, ArrayList<Post> data) {
         this.activity = activity;
         this.data = data;
     }
+
+    //region Overrides
 
     @NonNull
     @Override
@@ -66,13 +74,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder>
         holder.horario_max.setText(item.getHorario_maximo());
 
         if (item.getBom().containsValue(myId))
+            holder.bom.setTextColor(activity.getResources().getColor(R.color.amarelo));
+        else
             holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light));
-        else
-            holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light_disabled));
         if (item.getRuim().containsValue(myId))
-            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
+            holder.ruim.setTextColor(activity.getResources().getColor(R.color.amarelo));
         else
-            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light_disabled));
+            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
 
         //region path foto
         String id_Tipster = item.getId_tipster();
@@ -104,45 +112,63 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder>
             Glide.with(activity).load(foto_post).into(holder.foto_post);
 
         //region setListener
-        holder.bom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    if (item.getBom().containsValue(myId)) {
-                        item.removeBom(myId);
-                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
-                    } else {
-                        item.addBom(myId);
-                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_bom));
-                    }
-                    notifyItemChanged(position);
+        holder.bom.setOnClickListener(v -> {
+            {
+                if (item.getBom().containsValue(myId)) {
+                    item.removeBom(myId);
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+                } else {
+                    item.addBom(myId);
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_bom));
                 }
+                notifyItemChanged(position);
             }
         });
-        holder.ruim.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    if (item.getRuim().containsValue(myId)) {
-                        item.removeRuim(myId);
-                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
-                    } else {
-                        item.addRuim(myId);
-                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_ruim));
-                    }
-                    notifyItemChanged(position);
+        holder.ruim.setOnClickListener(v -> {
+            {
+                if (item.getRuim().containsValue(myId)) {
+                    item.removeRuim(myId);
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+                } else {
+                    item.addRuim(myId);
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_ruim));
                 }
+                notifyItemChanged(position);
             }
         });
 
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        holder.toolbar.setOnClickListener(v -> {
+            Intent intent;
+            if (Objects.equals(item.getId_tipster(), Import.getFirebase.getId())) {
+                intent = new Intent(activity, PerfilActivity.class);
+            } else {
+                intent = new Intent(activity, PerfilTipsterActivity.class);
+                intent.putExtra(Constantes.intent.USER_ID, item.getId_tipster());
+            }
+            activity.startActivity(intent);
+        });
+        holder.toolbar.setOnMenuItemClickListener(_item -> {
+            if (_item.getItemId() == R.id.menu_excluir) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle(activity.getResources().getString(R.string.excluir));
+                dialog.setMessage(activity.getResources().getString(R.string.excluir_post));
+                dialog.setPositiveButton(activity.getResources().getString(R.string.ok), (dialog1, which) -> {
+                    item.excluir(PostAdapter.this);
+                    holder.tipster.setText(activity.getResources().getString(R.string.excluindo));
+                });
+                dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), null);
+                dialog.show();
+            }
+            return false;
+        });
+        /*menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem _item) {
                 item.excluir(PostAdapter.this);
                 holder.tipster.setText(activity.getResources().getString(R.string.excluindo));
                 return false;
             }
-        });
+        });*/
         holder.foto_post.setOnTouchListener(this);
         //endregion
 
@@ -161,6 +187,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder>
     public boolean onTouch(View v, MotionEvent event) {
         return false;
     }
+
+    //endregion
 
     static class Holder extends RecyclerView.ViewHolder {
         ImageView foto_user;

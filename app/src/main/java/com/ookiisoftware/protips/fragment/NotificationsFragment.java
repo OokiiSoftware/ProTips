@@ -30,6 +30,8 @@ public class NotificationsFragment extends Fragment {
     private PunterAdapter adapter;
     private ArrayList<Punter> punters;
 
+    private boolean isTipster;
+
     public NotificationsFragment() {}
     public NotificationsFragment(Activity activity) {
         this.activity = activity;
@@ -47,12 +49,14 @@ public class NotificationsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         adapterUpdate();
+        removeNotification();
     }
 
     private void Init(View view) {
         recyclerView = view.findViewById(R.id.recycler);
 
         punters = Import.get.tipsters.getPuntersPendentes();
+        isTipster = Import.getFirebase.isTipster();
 
         adapter = new PunterAdapter(activity, punters) {
             @Override
@@ -61,7 +65,6 @@ public class NotificationsFragment extends Fragment {
                 Punter item = adapter.getItem(position);
                 Intent intent = new Intent(activity, PerfilPunterActivity.class);
                 intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
-                Import.Alert.msg("", "onClick", item.getDados().getId());
                 activity.startActivity(intent);
             }
         };
@@ -74,7 +77,7 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void ConfigurarSwippeDoRecyclerView() {
-        ItemTouchHelper.SimpleCallback itemTouchHelper = new ItemTouchHelper.SimpleCallback((int)0, ItemTouchHelper.LEFT) {
+        ItemTouchHelper.SimpleCallback itemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -89,6 +92,13 @@ public class NotificationsFragment extends Fragment {
         };
 
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
+    }
+
+    private void removeNotification() {
+        if (isTipster)
+            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_PENDENTE);
+        else
+            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_ACEITO);
     }
 
     /*public class SingleItemNotificacaoAdapter extends RecyclerView.Adapter<ViewHolder> {

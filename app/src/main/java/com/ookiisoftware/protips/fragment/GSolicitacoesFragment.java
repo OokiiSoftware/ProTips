@@ -50,12 +50,7 @@ public class GSolicitacoesFragment extends Fragment {
         refreshLayout = view.findViewById(R.id.swipeRefresh);
         //endregion
 
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Import.activites.getMainActivity().feedUpdate();
-            }
-        });
+        refreshLayout.setOnRefreshListener(() -> Import.activites.getMainActivity().feedUpdate());
 
         tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
             @Override

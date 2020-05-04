@@ -27,6 +27,9 @@
     <!--TODO Titulos de cada activity e fragmento-->
     <string name="titulo_feed" translatable="false">FEED</string>
     <string name="titulo_tipsters">ENCONTRE TIPSTERS</string>
+    <string name="titulo_meus_tipsters">MEUS TIPSTERS</string>
+    <string name="titulo_meus_punters">MEUS PUNTERS</string>
+    <string name="titulo_meus_seguidores">MEUS SEGUIDORES</string>
     <string name="titulo_notificacoes">SOLICITAÇÕES</string>
     <string name="titulo_perfil">MEU PERFIL</string>
 
@@ -227,6 +230,12 @@
     <string name="selecione_esporte">Seleione um esporte</string>
     <string name="selecione_mercado">Selecione um mercado</string>
     <string name="nova_solicitação_tipster">Nova solicitação para Tipster</string>
+    <string name="punters">Punters</string>
+    <string name="tipsters">Tipsters</string>
+    <string name="green">Green</string>
+    <string name="red">Red</string>
+    <string name="excluir_post">Deseja excluir este Tip permanentemente?</string>
+    <string name="posts_no_perfil">Posts no perfil</string>
 
     <!-- TODO: Arrays -->
     <string-array name="categoria">

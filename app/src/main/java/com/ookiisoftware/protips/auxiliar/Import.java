@@ -26,7 +26,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.facebook.CallbackManager;
 import com.facebook.login.LoginManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,51 +81,63 @@ public class Import {
         return reborn;
     }
 
-    static void notificacao(Context context, Intent intent, String titulo, String texto) {
-        Import.Alert.msg(TAG, "Notificacao", titulo, texto);
-        String CHANNEL_ID = "tips";
+    static void notificacao(Context context, Intent intent, int id, String titulo, String texto) {
+        try {
+            Import.Alert.msg(TAG, "Notificacao", titulo, texto);
+            String CHANNEL_ID = "tips";
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        RemoteViews notificacaoSimples = new RemoteViews(context.getPackageName(), R.layout.notification_simples);
-        RemoteViews notificacaoExpandida = new RemoteViews(context.getPackageName(), R.layout.notification_expandida);
+            RemoteViews notificacaoSimples = new RemoteViews(context.getPackageName(), R.layout.notification_simples);
+            RemoteViews notificacaoExpandida = new RemoteViews(context.getPackageName(), R.layout.notification_expandida);
 
-        notificacaoExpandida.setOnClickPendingIntent(R.id.notification_titulo, pendingIntent);
+            notificacaoExpandida.setOnClickPendingIntent(R.id.notification_titulo, pendingIntent);
 
-        notificacaoSimples.setTextViewText(R.id.notification_titulo, titulo);
-        notificacaoExpandida.setTextViewText(R.id.notification_titulo, titulo);
-        notificacaoSimples.setTextViewText(R.id.notification_subtitulo, texto);
-        notificacaoExpandida.setTextViewText(R.id.notification_texto, texto);
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (manager == null)
-            return;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, titulo, NotificationManager.IMPORTANCE_DEFAULT);
-
-            //Roxo (notification_light_color)
-            channel.setLightColor(Color.rgb(80, 0, 255));
-            channel.setDescription(texto);
-            channel.setSound(Constantes.notification.SOUND_DEFAULT, Constantes.notification.audioAttributes);
-            channel.setVibrationPattern(Constantes.notification.VIBRATION);
-
-            manager = context.getSystemService(NotificationManager.class);
+            notificacaoSimples.setTextViewText(R.id.notification_titulo, titulo);
+            notificacaoExpandida.setTextViewText(R.id.notification_titulo, titulo);
+            notificacaoSimples.setTextViewText(R.id.notification_subtitulo, texto);
+            notificacaoExpandida.setTextViewText(R.id.notification_texto, texto);
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager == null)
                 return;
-            manager.createNotificationChannel(channel);
-        }
-        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_icon_dark)
-                .setCustomContentView(notificacaoSimples)
-                .setCustomBigContentView(notificacaoExpandida)
-                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                .setContentIntent(pendingIntent)
-                .setSound(Constantes.notification.SOUND_DEFAULT)
-                .setVibrate(Constantes.notification.VIBRATION)
-                .setAutoCancel(true)
-                .build();
 
-        manager.notify(1, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, titulo, NotificationManager.IMPORTANCE_DEFAULT);
+
+                //Roxo (notification_light_color)
+                channel.setLightColor(Color.rgb(80, 0, 255));
+                channel.setDescription(texto);
+                channel.setSound(Constantes.notification.SOUND_DEFAULT, Constantes.notification.audioAttributes);
+                channel.setVibrationPattern(Constantes.notification.VIBRATION);
+
+                manager = context.getSystemService(NotificationManager.class);
+                if (manager == null)
+                    return;
+                manager.createNotificationChannel(channel);
+            }
+            Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_notification_icon_dark)
+                    .setCustomContentView(notificacaoSimples)
+                    .setCustomBigContentView(notificacaoExpandida)
+                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                    .setContentIntent(pendingIntent)
+                    .setSound(Constantes.notification.SOUND_DEFAULT)
+                    .setVibrate(Constantes.notification.VIBRATION)
+                    .setAutoCancel(true)
+                    .build();
+
+            manager.notify(id, notification);
+        } catch (Exception ignored) {}
+    }
+
+    public static void notificacaoCancel(Activity activity, int id) {
+        try {
+            String ns = Context.NOTIFICATION_SERVICE;
+            NotificationManager manager = (NotificationManager) activity.getSystemService(ns);
+            if (manager != null) {
+                manager.cancel(id);
+            }
+        } catch (Exception ignored) {}
     }
 
     public static void organizarTituloTollbar(Activity activity, AppCompatTextView text_1, AppCompatTextView text_2, CharSequence title) {
@@ -213,12 +224,12 @@ public class Import {
     }
 
     private static void limparDados() {
-        get.tipsters.setPostes(new ArrayList<Post>());
-        get.tipsters.setPuntersPendentes(new ArrayList<Punter>());
-        get.tipsters.setTipsters(new ArrayList<Tipster>());
-        get.tipsters.setTipstersAux(new ArrayList<Tipster>());
-        get.punter.setPunters(new ArrayList<Punter>());
-        get.punter.setPuntersAux(new ArrayList<Punter>());
+        get.tipsters.setPostes(new ArrayList<>());
+        get.tipsters.setPuntersPendentes(new ArrayList<>());
+        get.tipsters.setTipsters(new ArrayList<>());
+        get.tipsters.setTipstersAux(new ArrayList<>());
+        get.punter.setPunters(new ArrayList<>());
+        get.punter.setPuntersAux(new ArrayList<>());
     }
 
     //endregion

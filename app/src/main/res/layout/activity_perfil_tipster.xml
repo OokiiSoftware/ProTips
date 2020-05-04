@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            tools:ignore="RelativeOverlap">
 
             <Button
                 android:id="@+id/salvar"
@@ -275,6 +276,21 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
             </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_item_margin"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/posts_no_perfil"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerPosts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:spanCount="2"
+                tools:listitem="@layout/item_post_perfil"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
         </TableLayout>
 

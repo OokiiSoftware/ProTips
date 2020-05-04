@@ -41,69 +41,44 @@ public class TipstersFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tipsters, container, false);
-        Init(view);
+        init(view);
         return view;
     }
 
     //region Métodos
 
-    private void Init(View view) {
+    private void init(View view) {
         //region findViewById
         final RecyclerView recyclerView = view.findViewById(R.id.recycler);
         refreshLayout = view.findViewById(R.id.swipeRefresh);
         //endregion
 
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(() -> Import.activites.getMainActivity().feedUpdate());
+
+        tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
             @Override
-            public void onRefresh() {
-                Import.activites.getMainActivity().feedUpdate();
+            public void onClick(View v) {
+                int position = recyclerView.getChildAdapterPosition(v);
+                Tipster item = tipsterAdapter.getItem(position);
+
+                Intent intent = new Intent(activity, PerfilTipsterActivity.class);
+                intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                activity.startActivity(intent);
             }
-        });
+        };
+        recyclerView.setAdapter(tipsterAdapter);
 
-        boolean isTipster = Import.getFirebase.isTipster();
-
-        /*if (isTipster) {
-            punterAdapter = new PunterAdapter(activity, Import.get.punter.getAll()) {
-                @Override
-                public void onClick(View v) {
-                    int position = recyclerView.getChildAdapterPosition(v);
-                    Punter item = punterAdapter.getItem(position);
-
-                    Intent intent = new Intent(activity, PerfilTipsterActivity.class);
-                    intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
-                    activity.startActivity(intent);
-                }
-            };
-            recyclerView.setAdapter(punterAdapter);
-        } else*/ {
-            tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
-                @Override
-                public void onClick(View v) {
-                    int position = recyclerView.getChildAdapterPosition(v);
-                    Tipster item = tipsterAdapter.getItem(position);
-
-                    Intent intent = new Intent(activity, PerfilTipsterActivity.class);
-                    intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
-                    activity.startActivity(intent);
-                }
-            };
-            recyclerView.setAdapter(tipsterAdapter);
-        }
     }
 
     public void adapterUpdate() {
         if (tipsterAdapter != null)
             tipsterAdapter.notifyDataSetChanged();
-//        if (punterAdapter != null)
-//            punterAdapter.notifyDataSetChanged();
     }
 
     public TipsterAdapter getTipsterAdapter() {
         return tipsterAdapter;
     }
-//    public PunterAdapter getPunterAdapter() {
-//        return punterAdapter;
-//    }
+
 
     //endregion
 }

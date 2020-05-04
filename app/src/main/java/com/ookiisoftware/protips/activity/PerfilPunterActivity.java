@@ -44,7 +44,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil_visitante);
+        setContentView(R.layout.activity_perfil_punter);
         activity = this;
         init();
     }
@@ -79,6 +79,8 @@ public class PerfilPunterActivity extends AppCompatActivity {
                 return;
             }
             punter = Import.get.punter.find(idUser);
+            if (punter == null)
+                punter = Import.get.tipsters.findPuntersPendentes(idUser);
             if (punter != null)
                 usuario = punter.getDados();
         }
@@ -143,43 +145,32 @@ public class PerfilPunterActivity extends AppCompatActivity {
 
         //region setListener
 
-        btn_recusar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Import.getFirebase.getTipster().removerSolicitacao(punter.getDados().getId());
-                Import.get.tipsters.getPuntersPendentes().remove(punter);
-                btn_aceitar.setVisibility(View.GONE);
-                btn_recusar.setVisibility(View.GONE);
-            }
+        btn_recusar.setOnClickListener(v -> {
+            Import.getFirebase.getTipster().removerSolicitacao(punter.getDados().getId());
+            Import.get.tipsters.getPuntersPendentes().remove(punter);
+            btn_aceitar.setVisibility(View.GONE);
+            btn_recusar.setVisibility(View.GONE);
         });
-        btn_aceitar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    switch (acao) {
-                        case R.string.aceitar: {
-                            btn_aceitar.setText(getResources().getString(R.string.remover));
-                            eu.addPunter(punter);
-                            acao = R.string.remover;
-                            break;
-                        }
-                        case R.string.remover: {
-                            btn_aceitar.setVisibility(View.GONE);
-                            btn_recusar.setVisibility(View.GONE);
-                            eu.removerPunter(punter);
-                        }
+        btn_aceitar.setOnClickListener(view -> {
+            try {
+                switch (acao) {
+                    case R.string.aceitar: {
+                        btn_aceitar.setText(getResources().getString(R.string.remover));
+                        eu.addPunter(punter);
+                        acao = R.string.remover;
+                        break;
                     }
-                } catch (Exception e) {
-                    Import.Alert.erro(TAG, "btn_aceitar.setOnClickListener", e);
+                    case R.string.remover: {
+                        btn_aceitar.setVisibility(View.GONE);
+                        btn_recusar.setVisibility(View.GONE);
+                        eu.removerPunter(punter);
+                    }
                 }
+            } catch (Exception e) {
+                Import.Alert.erro(TAG, "btn_aceitar.setOnClickListener", e);
             }
         });
-        btn_voltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        btn_voltar.setOnClickListener(view -> onBackPressed());
 
         //endregion
 

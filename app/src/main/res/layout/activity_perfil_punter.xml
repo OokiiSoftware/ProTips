@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            tools:ignore="RelativeOverlap">
 
             <Button
                 android:id="@+id/salvar"
@@ -234,47 +235,6 @@
                 android:maxLines="1"
                 android:importantForAutofill="no"
                 style="@style/EditText.Perfil"  />
-
-            <LinearLayout
-                android:id="@+id/ll_tipster_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/login_item_margin"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:text="@string/esportes"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_esportes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:padding="5dp"
-                    android:background="@color/text_dark"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/login_item_margin"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:text="@string/mercados"/>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_mercados"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="@dimen/login_item_margin"
-                    android:padding="5dp"
-                    android:background="@color/text_dark"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-            </LinearLayout>
 
         </TableLayout>
 

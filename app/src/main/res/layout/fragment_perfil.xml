@@ -17,21 +17,38 @@
         android:paddingHorizontal="20dp"
         android:paddingVertical="20dp">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_marginEnd="15dp"
-            android:backgroundTint="@color/colorPrimaryLight"
-            app:cardCornerRadius="70dp">
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="15dp">
 
-            <ImageView
-                android:id="@+id/iv_foto"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/nome"
-                android:src="@drawable/ic_person_dark" />
+                android:backgroundTint="@color/colorPrimaryLight"
+                app:cardCornerRadius="60dp">
 
-        </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:id="@+id/iv_foto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/nome"
+                    android:src="@drawable/ic_person_dark" />
+
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:translationZ="10dp"
+                android:padding="5dp"
+                android:background="@drawable/bg_circulo_amarelo"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mais"/>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,17 +95,15 @@
                 android:textColor="?attr/textColor" />
 
             <TextView
-                android:id="@+id/tv_edit"
+                android:id="@+id/tv_seguidores"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 android:layout_gravity="end"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:drawableStart="@drawable/ic_edit"
                 android:maxLines="1"
                 android:paddingVertical="5dp"
                 android:paddingHorizontal="7dp"
-                android:text="@string/editar"
+                android:text="@string/punters"
                 android:textSize="@dimen/text_size"
                 style="@style/EditText.Login" />
 
@@ -119,12 +134,28 @@
                         android:layout_height="0dp"
                         android:contentDescription="@null"
                         android:padding="15dp"
-                        android:src="@drawable/ic_sms"
+                        android:src="@drawable/ic_sms_2"
                         android:scaleType="fitXY"
 
                         app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_notification_quant"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_circulo_amarelo"
+                        android:gravity="center"
+                        android:text="@string/_0"
+                        android:textSize="@dimen/text_size"
+                        android:textStyle="bold"
+                        android:textColor="?attr/textColor"
+
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -199,7 +230,46 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorPrimaryDark">
+
+                    <ImageView
+                        android:id="@+id/iv_new_post_perfil"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:contentDescription="@null"
+                        android:padding="15dp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_mais"
+
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </TableRow>
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/posts_no_perfil"
+                android:padding="7dp"
+                android:textSize="@dimen/title_size"
+                android:textColor="@color/text_light"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:spanCount="2"
+                tools:listitem="@layout/item_post_perfil"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
         </TableLayout>
 

@@ -1,6 +1,5 @@
 package com.ookiisoftware.protips.auxiliar;
 
-import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,17 +11,11 @@ import androidx.annotation.Nullable;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.GerenciaActivity;
-import com.ookiisoftware.protips.activity.MainActivity;
-import com.ookiisoftware.protips.modelo.Post;
-import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Tipster;
 import com.ookiisoftware.protips.modelo.Usuario;
-
-import java.util.List;
 
 public class TerceiroPlanoService extends Service {
 
@@ -144,12 +137,17 @@ public class TerceiroPlanoService extends Service {
     //region notifications
 
     private void notificationSolicitacao(@NonNull Usuario usuario) {
-        String titulo = getResources().getString(R.string.app_name);
-        String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + usuario.getNome();
+        try {
+            if (Import.activites.getMainActivity().viewPager.getCurrentItem() != Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
+                String titulo = getResources().getString(R.string.app_name);
+                String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + usuario.getNome();
 
-        Intent intent = new Intent(getContext(), GerenciaActivity.class);
-        intent.putExtra(Constantes.intent.PAGE_SELECT, 1);
-        Import.notificacao(getContext(), intent, titulo, texto);
+                Intent intent = new Intent(getContext(), GerenciaActivity.class);
+                intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
+                int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
+                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+            }
+        } catch (Exception ignored) {}
     }
 
     //endregion

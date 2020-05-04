@@ -11,7 +11,7 @@ public class OnSwipeListener implements View.OnTouchListener{
     private String TAG = "OnSwipeListener";
     private final Handler handlersingleTouch = new Handler();
     private final Handler handlerLongTouch = new Handler();
-    private boolean toqueSimples;
+    //    private boolean toqueSimples;
     private boolean clickFocus;
     private boolean itemNoNull;
     private boolean swipped;
@@ -21,17 +21,17 @@ public class OnSwipeListener implements View.OnTouchListener{
 
     private Runnable longTouch = new Runnable() {
         public void run() {
-            toqueSimples = false;
+//            toqueSimples = false;
             touchCount = 0;
             handlersingleTouch.removeCallbacks(singleTouch);
-            onLongTouch();
+//            onLongTouch();
         }
     };
     private Runnable singleTouch = new Runnable() {
         @Override
         public void run() {
-            if (toqueSimples && touchCount == 1)
-                onSingleTouch();
+//            if (toqueSimples && touchCount == 1)
+//                onSingleTouch();
             touchCount = 0;
         }
     };
@@ -49,10 +49,9 @@ public class OnSwipeListener implements View.OnTouchListener{
 
                 clickFocus = true;
                 if (view.getTag() != null) {//tag == null é o recyclerView
-                    Constantes.item_clicado = view;
                     itemNoNull = true;
                     handlerLongTouch.postDelayed(longTouch, Constantes.LONGCLICK);
-                    toqueSimples = true;
+//                    toqueSimples = true;
                     if (touchCount == 1)
                         touchCount++;
                     if (touchCount == 0) {
@@ -64,17 +63,20 @@ public class OnSwipeListener implements View.OnTouchListener{
             }
             case MotionEvent.ACTION_UP: {
                 swipped = false;
-                onSingleTouchUp();
+                onTouchUp();
                 handlerLongTouch.removeCallbacks(longTouch);
                 if (clickFocus) {
-                    if (!Constantes.SELECIONAR_ITEM) {
+//                    if (!Config.SELECIONAR_ITEM)
+                    {
                         if (touchCount == 2) {
-                            onDoubleTouch();
+//                            onDoubleTouch();
                             touchCount = 0;
                         }
-                    } else {
+                    }
+//                    else
+                    {
                         if(itemNoNull) {
-                            onSingleTouch();
+//                            onSingleTouch();
                             handlersingleTouch.removeCallbacks(singleTouch);
                             touchCount = 0;
                             itemNoNull = false;
@@ -102,7 +104,7 @@ public class OnSwipeListener implements View.OnTouchListener{
                     handlerLongTouch.removeCallbacks(longTouch);
                     handlersingleTouch.removeCallbacks(singleTouch);
                     touchCount = 0;
-                    toqueSimples = false;
+//                    toqueSimples = false;
                 }
                 break;
             }
@@ -126,13 +128,13 @@ public class OnSwipeListener implements View.OnTouchListener{
         Log.e(TAG, "Baixo");
     }
 
-    public void onSingleTouch() {
+    public void onTouchUp() {
+        Log.e(TAG, "ToqueUp");
+    }
+    /*public void onSingleTouch() {
         Log.e(TAG, "ToqueSimples");
     }
 
-    public void onSingleTouchUp() {
-        /*Log.e(TAG, "ToqueSimplesUp");*/
-    }
 
     public void onLongTouch() {
         Log.e(TAG, "ToqueLongo");
@@ -140,5 +142,5 @@ public class OnSwipeListener implements View.OnTouchListener{
 
     public void onDoubleTouch() {
         Log.e(TAG, "ToqueDuplo");
-    }
+    }*/
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="7dp">
+
+    <EditText
+        android:id="@+id/et_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/titulo"
+        android:textSize="@dimen/title_size"
+        android:textAlignment="center"
+        android:inputType="textPersonName"
+        android:importantForAutofill="no"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp">
+
+        <ImageView
+            android:id="@+id/iv_foto"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_download"
+
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <EditText
+        android:id="@+id/et_texto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:hint="@string/legenda"
+        android:textSize="@dimen/title_size"
+        android:inputType="text"
+        android:importantForAutofill="no" />
+
+    <RelativeLayout
+        android:id="@+id/rl_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:padding="@dimen/login_item_margin">
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_light"
+            android:text="@string/cancelar"
+            style="@style/Widget.AppCompat.Button.Colored" />
+
+        <Button
+            android:id="@+id/ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_light"
+            android:text="@string/postar"
+            android:layout_alignParentEnd="true"
+            style="@style/Widget.AppCompat.Button.Colored"
+            tools:ignore="RelativeOverlap" />
+
+    </RelativeLayout>
+
+</LinearLayout>

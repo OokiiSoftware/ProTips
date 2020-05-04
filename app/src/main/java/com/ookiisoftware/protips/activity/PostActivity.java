@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
@@ -39,14 +38,36 @@ public class PostActivity extends AppCompatActivity {
 
     //region Variáveis
 
-    private static final String TAG = "PostActivity";
+//    private static final String TAG = "PostActivity";
+    private static final String TITULO = "354354";
+    private static final String TEXTO = "34534";
+    private static final String ODD_MAX = "7564";
+    private static final String ODD_MIN = "45557";
+    private static final String HOTARIO_MIN = "6785";
+    private static final String HOTARIO_MAX = "45634";
+    private static final String ESPORTE = "346486";
+    private static final String MERCADO = "4537";
+    private static final String PUBLICO = "6453";
+    private static final String FOTO_PATH = "85675";
+
     private Activity activity;
     private String foto_path;
 
-    private final String FOTO_PATH = "photo_path_saved";
-
     private ImageView foto;
     private ProgressBar progressBar;
+
+    private EditText titulo;
+    private EditText texto;
+    private EditText odd_max;
+    private EditText odd_min;
+    private EditText horario_minimo;
+    private EditText horario_maximo;
+    private CheckBox tipPublico;
+
+    private TextView textLength;
+
+    private Spinner esporte;
+    private Spinner mercado;
 
     //endregion
 
@@ -63,6 +84,17 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(FOTO_PATH, foto_path);
+        outState.putString(TITULO, titulo.getText().toString());
+        outState.putString(TEXTO, texto.getText().toString());
+        outState.putString(ODD_MAX, odd_max.getText().toString());
+        outState.putString(ODD_MIN, odd_min.getText().toString());
+        outState.putString(HOTARIO_MIN, horario_minimo.getText().toString());
+        outState.putString(HOTARIO_MAX, horario_maximo.getText().toString());
+
+        outState.putInt(ESPORTE, esporte.getSelectedItemPosition());
+        outState.putInt(MERCADO, mercado.getSelectedItemPosition());
+        outState.putBoolean(PUBLICO, tipPublico.isChecked());
+
         super.onSaveInstanceState(outState);
     }
 
@@ -72,6 +104,17 @@ public class PostActivity extends AppCompatActivity {
         foto_path = savedInstanceState.getString(FOTO_PATH);
         if (foto_path != null && !foto_path.isEmpty())
             Glide.with(activity).load(foto_path).into(foto);
+
+        titulo.setText(savedInstanceState.getString(TITULO));
+        texto.setText(savedInstanceState.getString(TEXTO));
+        odd_max.setText(savedInstanceState.getString(ODD_MAX));
+        odd_min.setText(savedInstanceState.getString(ODD_MIN));
+        horario_minimo.setText(savedInstanceState.getString(HOTARIO_MIN));
+        horario_maximo.setText(savedInstanceState.getString(HOTARIO_MAX));
+
+        esporte.setSelection(savedInstanceState.getInt(ESPORTE));
+        esporte.setSelection(savedInstanceState.getInt(MERCADO));
+        tipPublico.setChecked(savedInstanceState.getBoolean(PUBLICO));
     }
 
     @Override
@@ -99,22 +142,22 @@ public class PostActivity extends AppCompatActivity {
         //region findViewById
         foto = findViewById(R.id.iv_foto);
         progressBar = findViewById(R.id.progressBar);
-        final CheckBox tipPublico = findViewById(R.id.cb_tip_publico);
+        tipPublico = findViewById(R.id.cb_tip_publico);
 
-        final EditText titulo = findViewById(R.id.et_titulo);
-        final EditText texto = findViewById(R.id.et_texto);
-        final EditText odd_max = findViewById(R.id.et_odd_max);
-        final EditText odd_min = findViewById(R.id.et_odd_min);
-        final EditText horario_minimo = findViewById(R.id.et_horario_min);
-        final EditText horario_maximo = findViewById(R.id.et_horario_max);
+        titulo = findViewById(R.id.et_titulo);
+        texto = findViewById(R.id.et_texto);
+        odd_max = findViewById(R.id.et_odd_max);
+        odd_min = findViewById(R.id.et_odd_min);
+        horario_minimo = findViewById(R.id.et_horario_min);
+        horario_maximo = findViewById(R.id.et_horario_max);
 
-        final TextView textLength = findViewById(R.id.tv_popup_length);
-        final TextView postar = findViewById(R.id.tv_postar);
-        final TextView ajuda = findViewById(R.id.tv_ajuda);
+        textLength = findViewById(R.id.tv_popup_length);
+        TextView postar = findViewById(R.id.tv_postar);
+        TextView ajuda = findViewById(R.id.tv_ajuda);
 
-        final Spinner esporte = findViewById(R.id.sp_esporte);
-        final Spinner mercado = findViewById(R.id.sp_mercado);
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        esporte = findViewById(R.id.sp_esporte);
+        mercado = findViewById(R.id.sp_mercado);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         //endregion
 
         setSupportActionBar(toolbar);
@@ -168,88 +211,59 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        foto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pegarFotoDaGaleria();
+        foto.setOnClickListener(v -> pegarFotoDaGaleria());
+
+        horario_minimo.setOnClickListener(v -> {
+            {
+                final int hora = toHour(horario_minimo.getText().toString());
+                final int min = toMinute(horario_minimo.getText().toString());
+                TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_minimo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+                dialog.show();
+            }
+        });
+        horario_maximo.setOnClickListener(v -> {
+            {
+                final int hora = toHour(horario_maximo.getText().toString());
+                final int min = toMinute(horario_maximo.getText().toString());
+                TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_maximo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+                dialog.show();
             }
         });
 
-        horario_minimo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    final int hora = toHour(horario_minimo.getText().toString());
-                    final int min = toMinute(horario_minimo.getText().toString());
-                    TimePickerDialog dialog = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            horario_minimo.setText(dateToString(hourOfDay, minute));
-                        }
-                    }, hora, min, true);
-                    dialog.show();
-                }
-            }
-        });
-        horario_maximo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    final int hora = toHour(horario_maximo.getText().toString());
-                    final int min = toMinute(horario_maximo.getText().toString());
-                    TimePickerDialog dialog = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            horario_maximo.setText(dateToString(hourOfDay, minute));
-                        }
+        ajuda.setOnClickListener(v -> {
+            {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle(getResources().getString(R.string.informacao));
+                dialog.setMessage(getResources().getString(R.string.info_tip_publico));
+                dialog.setPositiveButton(getResources().getString(R.string.ok), null);
 
-                    }, hora, min, true);
-                    dialog.show();
-                }
-            }
-
-        });
-
-        ajuda.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                    dialog.setTitle(getResources().getString(R.string.informacao));
-                    dialog.setMessage(getResources().getString(R.string.info_tip_publico));
-                    dialog.setPositiveButton(getResources().getString(R.string.ok), null);
-
-                    dialog.show();
-                }
+                dialog.show();
             }
         });
 
-        postar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    if (esportes.size() == 0) {
-                        Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_esporte_registrado));
-                    } else if (mercados.size() == 0) {
-                        Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_mercado_registrado));
-                    } else {
-                        progressBar.setVisibility(View.VISIBLE);
-                        Post post = new Post();
-                        post.setHorario_maximo(horario_maximo.getText().toString());
-                        post.setHorario_minimo(horario_minimo.getText().toString());
-                        post.setMercado(mercado.getSelectedItem().toString());
-                        post.setEsporte(((Esporte)esporte.getSelectedItem()).getNome());
-                        post.setOdd_maxima(odd_max.getText().toString());
-                        post.setOdd_minima(odd_min.getText().toString());
-                        post.setId_tipster(Import.getFirebase.getId());
-                        post.setTitulo(titulo.getText().toString());
-                        post.setTexto(texto.getText().toString());
-                        post.setPublico(tipPublico.isChecked());
-                        post.setId(Import.get.randomString());
-                        post.setData(Import.get.Data());
-                        post.setFoto(foto_path);
-                        verificar(post);
-                    }
+        postar.setOnClickListener(view -> {
+            {
+                if (esportes.size() == 0) {
+                    Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_esporte_registrado));
+                } else if (mercados.size() == 0) {
+                    Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_mercado_registrado));
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    Post post = new Post();
+                    post.setHorario_maximo(horario_maximo.getText().toString());
+                    post.setHorario_minimo(horario_minimo.getText().toString());
+                    post.setMercado(mercado.getSelectedItem().toString());
+                    post.setEsporte(((Esporte)esporte.getSelectedItem()).getNome());
+                    post.setOdd_maxima(odd_max.getText().toString());
+                    post.setOdd_minima(odd_min.getText().toString());
+                    post.setId_tipster(Import.getFirebase.getId());
+                    post.setTitulo(titulo.getText().toString());
+                    post.setTexto(texto.getText().toString());
+                    post.setPublico(tipPublico.isChecked());
+                    post.setId(Import.get.randomString());
+                    post.setData(Import.get.Data());
+                    post.setFoto(foto_path);
+                    verificar(post);
                 }
             }
         });

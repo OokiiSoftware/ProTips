@@ -24,12 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -163,41 +159,28 @@ public class LoginActivity extends AppCompatActivity {
 
         //region cliques
 
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                {
-                    String email = et_email.getText().toString();
-                    String senha = et_senha.getText().toString();
-                    if (email.isEmpty())
-                        et_email.setError("*");
-                    else if (senha.isEmpty())
-                        et_senha.setError("*");
-                    else
-                        OrganizarDados(email, senha);
-                    progressBar.setVisibility(View.VISIBLE);
-                }
+        btn_login.setOnClickListener(view -> {
+            {
+                String email = et_email.getText().toString();
+                String senha = et_senha.getText().toString();
+                if (email.isEmpty())
+                    et_email.setError("*");
+                else if (senha.isEmpty())
+                    et_senha.setError("*");
+                else
+                    OrganizarDados(email, senha);
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
 
-        recuperarSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    Intent intent = new Intent(activity, RecuperarSenhaActivity.class);
-                    intent.putExtra(Constantes.intent.EMAIL, et_email.getText().toString());
-                    startActivity(intent);
-                }
-            }
+        recuperarSenha.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, RecuperarSenhaActivity.class);
+            intent.putExtra(Constantes.intent.EMAIL, et_email.getText().toString());
+            startActivity(intent);
         });
 
         //region Cadastrar
-        btn_cadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                IrParaCadastro();
-            }
-        });
+        btn_cadastrar.setOnClickListener(view -> IrParaCadastro());
         //endregion
 
         //region Facebook
@@ -222,22 +205,16 @@ public class LoginActivity extends AppCompatActivity {
         //endregion
 
         //region Twitter
-        btn_login_twitter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginComTwitter();
-                progressBar.setVisibility(View.VISIBLE);
-            }
+        btn_login_twitter.setOnClickListener(view -> {
+            LoginComTwitter();
+            progressBar.setVisibility(View.VISIBLE);
         });
         //endregion
 
         //region Google
-        btn_login_google.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginComGoogle();
-                progressBar.setVisibility(View.VISIBLE);
-            }
+        btn_login_google.setOnClickListener(view -> {
+            LoginComGoogle();
+            progressBar.setVisibility(View.VISIBLE);
         });
         //endregion
 
@@ -265,24 +242,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void LoginComToken(AuthCredential credential) {
         firebaseAuth.signInWithCredential(credential)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Import.Alert.msg(TAG, "LoginComToken", "Sucesso");
-                        VerificarLoginPunter();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    Import.Alert.msg(TAG, "LoginComToken", "Sucesso");
+                    VerificarLoginPunter();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Import.Alert.erro(TAG, "LoginComToken", e);
-                        progressBar.setVisibility(View.INVISIBLE);
-                        if (e.getMessage() != null)
-                            if (e.getMessage().contains("The supplied auth credential is malformed or has expired."))
-                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao_muitas_tentativas));
-                            else
-                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
-                    }
+                .addOnFailureListener(e -> {
+                    Import.Alert.erro(TAG, "LoginComToken", e);
+                    progressBar.setVisibility(View.INVISIBLE);
+                    if (e.getMessage() != null)
+                        if (e.getMessage().contains("The supplied auth credential is malformed or has expired."))
+                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao_muitas_tentativas));
+                        else
+                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
                 });
     }
 
@@ -294,38 +265,32 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void LoginComEmailESenha(final Usuario usuario) {
         firebaseAuth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        FirebaseUser user = authResult.getUser();
-                        if (user == null) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                        } else {
-                            if (user.isEmailVerified())
-                                VerificarLoginPunter();
-                            else
-                                emailNaoVerificado(user);
-                        }
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = authResult.getUser();
+                    if (user == null) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    } else {
+                        if (user.isEmailVerified())
+                            VerificarLoginPunter();
+                        else
+                            emailNaoVerificado(user);
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        Import.Alert.erro(TAG, "LoginComEmailESenha", e);
-                        if (e.getMessage() != null)
-                        switch (e.getMessage()) {
-                            case "The password is invalid or the user does not have a password.":
-                                Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
-                                recuperarSenha.setVisibility(View.VISIBLE);
-                                break;
-                            case "There is no user record corresponding to this identifier. The user may have been deleted.":
-                                Import.Alert.toast(activity, getResources().getString(R.string.email_nao_encontrado));
-                                break;
-                            default:
-                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
-                                break;
-                        }
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Import.Alert.erro(TAG, "LoginComEmailESenha", e);
+                    if (e.getMessage() != null)
+                    switch (e.getMessage()) {
+                        case "The password is invalid or the user does not have a password.":
+                            Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
+                            recuperarSenha.setVisibility(View.VISIBLE);
+                            break;
+                        case "There is no user record corresponding to this identifier. The user may have been deleted.":
+                            Import.Alert.toast(activity, getResources().getString(R.string.email_nao_encontrado));
+                            break;
+                        default:
+                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
+                            break;
                     }
                 });
     }
@@ -340,36 +305,20 @@ public class LoginActivity extends AppCompatActivity {
 
     private void emailNaoVerificado(final FirebaseUser user) {
         if (hasWindowFocus()) {
-            Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.verifique_seu_email), getResources().getString(R.string.enviar_novo_email), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    enviarNovoEmail(user);
-                }
-            });
+            Import.Alert.snakeBar(getCurrentFocus(), getResources().getString(R.string.verifique_seu_email), getResources().getString(R.string.enviar_novo_email), v -> enviarNovoEmail(user));
         } else {
             enviar_email.setVisibility(View.VISIBLE);
-            enviar_email.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    enviarNovoEmail(user);
-                }
-            });
+            enviar_email.setOnClickListener(v -> enviarNovoEmail(user));
             Import.Alert.toast(activity, getResources().getString(R.string.verifique_seu_email));
         }
     }
     private void enviarNovoEmail(final FirebaseUser user) {
-        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful())
-                    Import.Alert.snakeBar(activity, getResources().getString(R.string.email_enviado));
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Import.Alert.erro(TAG, "enviarNovoEmail", e);
-                Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
-            }
+        user.sendEmailVerification().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                Import.Alert.snakeBar(activity, getResources().getString(R.string.email_enviado));
+        }).addOnFailureListener(e -> {
+            Import.Alert.erro(TAG, "enviarNovoEmail", e);
+            Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
         });
     }
 

@@ -15,6 +15,7 @@
 
         <item name="textColor">@color/text_dark</item>
         <item name="tintColor">@color/text_dark</item>
+        <item name="hintColor">@color/text_dark</item>
         <item name="backgroundColor">@color/colorPrimaryLight_3</item>
         <item name="toolbarHeight">@dimen/toolbar_height</item>
 

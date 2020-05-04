@@ -14,7 +14,7 @@ import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
 
-    public static final int APP_VERSAO = 2;
+    public static final int APP_VERSAO = 4;
 
     //===================== Conversas
     public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
@@ -42,6 +42,7 @@ public class Constantes {
 
             public static final String PERFIL = "perfil";
             public static final String POSTES = "postes";
+            public static final String POSTES_PERFIL = "post_perfil";
             public static final String TIPSTERS = "tipsters";
             public static final String PUNTERS = "punters";
             public static final String PUNTERS_PENDENTES = "puntersPendentes";
@@ -85,13 +86,6 @@ public class Constantes {
         public static final String IS_GERENTE = "is_gerente";
     }
 
-    //============================== SQLite
-    public static final int SQLITE_BANCO_DE_DADOS_VERSAO = 1;
-    public static final String SQLITE_BANCO_DE_DADOS = "protips_db" ;
-    public static final String SQLITE_TABELA_CONVERSAS = "conversas";
-    public static final String SQLITE_TABELA_MENSAGENS = "mensagens";
-
-
     public static class classes {
         public static class activites {
             //================================== Classes com ViewPager
@@ -99,7 +93,29 @@ public class Constantes {
             public static final String BATEPAPO = "BatepapoActivity";
             public static final String GERENCIA = "GerenciaActivity";
         }
+        public static class fragments {
+            public static class pagerPosition {
+                public static final int FEED = 0;
+                public static final int TIPSTERS = 1;
+                public static final int PERFIL = 2;
+                public static final int NOTIFICATIONS = 3;
+
+                public static final int INICIO = 0;
+                public static final int TIPSTER_SOLICITACAO = 1;
+            }
+            public static final String MAIN = "MainActivity";
+            public static final String BATEPAPO = "BatepapoActivity";
+            public static final String GERENCIA = "GerenciaActivity";
+        }
     }
+
+    //============================== SQLite
+    public static final int SQLITE_BANCO_DE_DADOS_VERSAO = 1;
+    public static final String SQLITE_BANCO_DE_DADOS = "protips_db" ;
+    public static final String SQLITE_TABELA_CONVERSAS = "conversas";
+
+    public static final String SQLITE_TABELA_MENSAGENS = "mensagens";
+
 
     //=============================================== Permissões
     public static final int REQUEST_PERMISSION_STORANGE = 101;
@@ -122,6 +138,15 @@ public class Constantes {
     public static final String FRAGMENT_PREFERENCIAS = "Preferencias";
 
     public static class notification {
+
+        public static class id {
+            public static final int NOVO_PUNTER_PENDENTE = 235345;
+            public static final int NOVO_PUNTER_ACEITO = 56462;
+            public static final int NOVO_POST = 573425;
+            public static final int TIPSTER_SOLICITACAO = 65645;
+
+        }
+
         public static AudioAttributes audioAttributes = new AudioAttributes
                 .Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

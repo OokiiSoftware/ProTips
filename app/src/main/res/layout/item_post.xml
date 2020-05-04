@@ -245,7 +245,7 @@
             android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_green"
             android:gravity="center"
-            android:text="@string/bom"/>
+            android:text="@string/green"/>
 
         <TextView
             android:id="@+id/tv_ruim"
@@ -254,7 +254,7 @@
             android:drawableStart="@drawable/ic_red"
             android:drawablePadding="5dp"
             android:gravity="center"
-            android:text="@string/ruim"/>
+            android:text="@string/red"/>
 
     </LinearLayout>
 

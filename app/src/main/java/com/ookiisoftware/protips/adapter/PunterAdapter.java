@@ -29,7 +29,7 @@ public class PunterAdapter extends RecyclerView.Adapter<PunterAdapter.Holder> im
     private ArrayList<Punter> dataFull;
     //endregion
 
-    public PunterAdapter(Activity activity, ArrayList<Punter> data) {
+    protected PunterAdapter(Activity activity, ArrayList<Punter> data) {
         this.activity = activity;
         this.data = data;
         dataFull = new ArrayList<>();

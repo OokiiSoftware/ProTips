@@ -1,5 +1,7 @@
 package com.ookiisoftware.protips.modelo;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
@@ -12,11 +14,8 @@ public class Tipster {
     private HashMap<String, Post> postes;
     private HashMap<String, Esporte> esportes;
     private HashMap<String, String> punters;
+    private HashMap<String, PostPerfil> post_perfil;
     private HashMap<String,String> puntersPendentes;
-
-//    public enum Acao {
-//        Seguir, Desseguir, Cancelar, Aceitar, Recusar, Remover
-//    }
 
     public Tipster() {
         punters = new HashMap<>();
@@ -77,7 +76,7 @@ public class Tipster {
                 .removeValue();
     }
 
-    public void addPunter(Punter punter) {
+    public void addPunter(@NonNull Punter punter) {
         String id = punter.getDados().getId();
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
@@ -91,7 +90,7 @@ public class Tipster {
         removerSolicitacao(id);
     }
 
-    public void removerPunter(Punter punter) {
+    public void removerPunter(@NonNull Punter punter) {
         String id = punter.getDados().getId();
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
@@ -234,6 +233,16 @@ public class Tipster {
 
     public void setPuntersPendentes(HashMap<String,String> puntersPendentes) {
         this.puntersPendentes = puntersPendentes;
+    }
+
+    public HashMap<String, PostPerfil> getPost_perfil() {
+        if (post_perfil == null)
+            post_perfil = new HashMap<>();
+        return post_perfil;
+    }
+
+    public void setPost_perfil(HashMap<String, PostPerfil> post_perfil) {
+        this.post_perfil = post_perfil;
     }
 
     //endregion

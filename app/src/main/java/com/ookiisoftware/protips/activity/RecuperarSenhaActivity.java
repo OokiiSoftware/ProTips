@@ -12,8 +12,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
@@ -48,36 +46,27 @@ public class RecuperarSenhaActivity extends AppCompatActivity {
         if (bundle != null)
             et_email.setText(bundle.getString(Constantes.intent.EMAIL));
 
-        enviar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                {
-                    enviar.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    Import.getFirebase.getAuth()
-                            .sendPasswordResetEmail(et_email.getText().toString())
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Import.Alert.snakeBar(activity, getResources().getString(R.string.verifique_seu_email));
-                                    info.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    String texto = getResources().getString(R.string.erro_email_enviado);
-                                    if (Objects.equals(e.getMessage(), "The email address is badly formatted."))
-                                        texto = getResources().getString(R.string.email_invalido);
+        enviar.setOnClickListener(v -> {
+            {
+                enviar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                Import.getFirebase.getAuth()
+                        .sendPasswordResetEmail(et_email.getText().toString())
+                        .addOnSuccessListener(aVoid -> {
+                            Import.Alert.snakeBar(activity, getResources().getString(R.string.verifique_seu_email));
+                            info.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                        })
+                        .addOnFailureListener(e -> {
+                            String texto = getResources().getString(R.string.erro_email_enviado);
+                            if (Objects.equals(e.getMessage(), "The email address is badly formatted."))
+                                texto = getResources().getString(R.string.email_invalido);
 
-                                    Import.Alert.snakeBar(activity, texto);
-                                    enviar.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    Import.Alert.erro(TAG, e);
-                                }
-                            });
-                }
+                            Import.Alert.snakeBar(activity, texto);
+                            enviar.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            Import.Alert.erro(TAG, e);
+                        });
             }
         });
     }
