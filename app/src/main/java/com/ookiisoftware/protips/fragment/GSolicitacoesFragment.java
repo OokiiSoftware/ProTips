@@ -52,7 +52,7 @@ public class GSolicitacoesFragment extends Fragment {
 
         refreshLayout.setOnRefreshListener(() -> Import.activites.getMainActivity().feedUpdate());
 
-        tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
+        tipsterAdapter = new TipsterAdapter(activity , Import.get.tipsters.getAll()) {
             @Override
             public void onClick(View v) {
                 int position = recyclerView.getChildAdapterPosition(v);

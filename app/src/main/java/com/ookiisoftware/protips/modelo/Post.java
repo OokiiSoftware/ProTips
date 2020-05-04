@@ -8,15 +8,10 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.UploadTask;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.PostAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
@@ -56,31 +51,22 @@ public class Post {
                     .child(Constantes.firebase.child.POSTES)
                     .child(getId())
                     .putFile(Uri.parse(getFoto()))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
-                                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.getResult() != null) {
-                                            setFoto(task.getResult().toString());
-                                            salvar();
-                                            activity.finish();
-                                            Import.get.tipsters.postes().add(Post.this);
-                                            Import.getFirebase.getTipster().getPostes().put(getId(), Post.this);
-                                            Import.activites.getMainActivity().feedFragment.adapterUpdate();
-                                        }
-                                    }
-                                });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+                    .addOnSuccessListener(taskSnapshot -> {
+                        if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(task -> {
+                                if (task.getResult() != null) {
+                                    setFoto(task.getResult().toString());
+                                    salvar();
+                                    activity.finish();
+                                    Import.get.tipsters.postes().add(Post.this);
+                                    Import.getFirebase.getTipster().getPostes().put(getId(), Post.this);
+                                    Import.activites.getMainActivity().feedFragment.adapterUpdate();
+                                }
+                            });
+                    }).addOnFailureListener(e -> {
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
+                        progressBar.setVisibility(View.GONE);
+                    });
         } else {
             salvar();
         }

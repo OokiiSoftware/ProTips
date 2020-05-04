@@ -5,14 +5,7 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.storage.UploadTask;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
@@ -35,30 +28,21 @@ public class PostPerfil {
                     .child(Constantes.firebase.child.POSTES_PERFIL)
                     .child(getId())
                     .putFile(Uri.parse(getFoto()))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
-                                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.getResult() != null) {
-                                            setFoto(task.getResult().toString());
-                                            salvar();
-                                            activity.finish();
-                                            Import.activites.getMainActivity().perfilFragment.adapterUpdate();
-                                        }
-                                    }
-                                });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
-                    if (progressBar != null)
-                        progressBar.setVisibility(View.GONE);
-                }
-            });
+                    .addOnSuccessListener(taskSnapshot -> {
+                        if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(task -> {
+                                if (task.getResult() != null) {
+                                    setFoto(task.getResult().toString());
+                                    salvar();
+                                    activity.finish();
+                                    Import.activites.getMainActivity().perfilFragment.adapterUpdate();
+                                }
+                            });
+                    }).addOnFailureListener(e -> {
+                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
+                        if (progressBar != null)
+                            progressBar.setVisibility(View.GONE);
+                    });
         } else {
             salvar();
         }
