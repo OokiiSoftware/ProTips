@@ -14,7 +14,7 @@ import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
 
-    public static final int APP_VERSAO = 4;
+    public static final int APP_VERSAO = 10;
 
     //===================== Conversas
     public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
@@ -25,6 +25,11 @@ public class Constantes {
     public static final int CONVERSA_MENSAGEM_LIDA = 2;
     public static final int CONVERSA_MENSAGEM_ENVIADA = 1;
     public static final int CONVERSA_MENSAGEM_NAO_ENVIADA = 0;
+
+    public static class files {
+//        public static final String PUNTER_JSON = "4646753466.json";
+        public static final String USER_JSON = "46434567.json";
+    }
 
     public static class formats {
         public static final String TELEFONE = "+NN (NN) NNNNN-NNNN";
@@ -43,12 +48,14 @@ public class Constantes {
             public static final String PERFIL = "perfil";
             public static final String POSTES = "postes";
             public static final String POSTES_PERFIL = "post_perfil";
-            public static final String TIPSTERS = "tipsters";
-            public static final String PUNTERS = "punters";
-            public static final String PUNTERS_PENDENTES = "puntersPendentes";
+//            public static final String TIPSTERS = "tipsters";
+//            public static final String PUNTERS = "punters";
+            public static final String SEGUIDORES_PENDENTES = "seguidoresPendentes";
             public static final String TELEFONE = "telefone";
 
             public static final String SOLICITACAO_NOVO_TIPSTER = "solicitacao_novo_tipster";
+            public static final String SEGUIDORES = "seguidores";
+            public static final String SEGUINDO = "seguindo";
             public static final String BOM = "bom";
             public static final String RUIM = "ruim";
             public static final String ESPORTES = "esportes";
@@ -57,6 +64,7 @@ public class Constantes {
             public static final String ADMINISTRADORES = "administradores";
             public static final String VERSAO = "versao";
             public static final String APP = "app";
+            public static final String TIPSTER = "tipster";
         }
     }
 
@@ -65,9 +73,16 @@ public class Constantes {
             public static final String NOME = "usuario_logado_nome";
             public static final String TIPNAME = "usuario_logado_tipname";
             public static final String EMAIL = "usuario_logado_email";
-            public static final String CATEGORIA = "usuario_logado_categoria";
             public static final String FOTO = "usuario_logado_foto";
             public static final String ULTIMO_EMAIL = "usuario_logado_ultimo_email";
+
+            public static final String ID = "usuario_logado_categoria";
+            public static final String TELEFONE = "usuario_logado_categoria";
+            public static final String PRIVADO = "usuario_logado_categoria";
+            public static final String NASCIMENTO = "usuario_logado_categoria";
+            public static final String BLOQUEADO = "usuario_logado_categoria";
+            public static final String ENDERECO = "usuario_logado_categoria";
+            public static final String INFO = "usuario_logado_categoria";
         }
         public static class conversa {
 
@@ -92,6 +107,7 @@ public class Constantes {
             public static final String MAIN = "MainActivity";
             public static final String BATEPAPO = "BatepapoActivity";
             public static final String GERENCIA = "GerenciaActivity";
+            public static final String PERFIL_TIPSTER = "PerfilTipsterActivity";
         }
         public static class fragments {
             public static class pagerPosition {
@@ -106,6 +122,11 @@ public class Constantes {
             public static final String MAIN = "MainActivity";
             public static final String BATEPAPO = "BatepapoActivity";
             public static final String GERENCIA = "GerenciaActivity";
+
+            //============================================== Identificador dos fragmentos
+//            public static final String FRAGMENT = "id_fragment";
+//            public static final String FRAGMENT_EDIT = "EditarPerfil";
+//            public static final String FRAGMENT_PREFERENCIAS = "Preferencias";
         }
     }
 
@@ -131,11 +152,6 @@ public class Constantes {
     public static final int DOUBLETAP = 500;
     public static final int SWIPE_RADIO_LIMITE = 10;
     public static final int SWIPE_RANGE_LIMITE = 10;
-
-    //============================================== Identificador dos fragmentos
-    public static final String FRAGMENT = "id_fragment";
-    public static final String FRAGMENT_EDIT = "EditarPerfil";
-    public static final String FRAGMENT_PREFERENCIAS = "Preferencias";
 
     public static class notification {
 

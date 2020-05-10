@@ -28,8 +28,7 @@ import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.modelo.Activites;
-import com.ookiisoftware.protips.modelo.Post;
-import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.User;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,33 +50,33 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     //region Variáveis
 
     private static final String TAG = "MainActivity";
-    private Activity activity;
-    private String meuId;
-//    private boolean isTipster;
-
-    public CustomViewPager viewPager;
-    private DrawerLayout drawer;
-    private BottomNavigationView navView;
-
-    // Itens do Menu
-    private MenuItem menu_pesquisa;
-
-    private SectionsPagerAdapter sectionsPagerAdapter;
     private static final int FRAGMENT_FEED = 0;
     private static final int FRAGMENT_TIPSTER = 1;
     private static final int FRAGMENT_PERFIL = 2;
+
+    private Activity activity;
+    private String meuId;
+    private SectionsPagerAdapter sectionsPagerAdapter;
     private boolean inPrimeiroPlano;
 
     private DatabaseReference refAllTipsters;
     private ChildEventListener eventAllTipsters;
+//    private boolean isTipster;
 
-    // Titulo personalizado pra ActionBar
-    private AppCompatTextView action_bar_titulo_1, action_bar_titulo_2;
-
+    //Elementos do Layout
+    private CustomViewPager viewPager;
+    private DrawerLayout drawer;
+    private BottomNavigationView navView;
+    // Itens do Menu
+    private MenuItem menu_pesquisa;
+    //Fragments
     public FeedFragment feedFragment;
     public PerfilFragment perfilFragment;
     public TipstersFragment tipstersFragment;
     public NotificationsFragment notificationsFragment;
+
+    // Titulo personalizado pra ActionBar
+    private AppCompatTextView action_bar_titulo_1, action_bar_titulo_2;
 
     //endregion
 
@@ -93,36 +92,36 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Import.Alert.msg(TAG, "Timezone1", TimeZone.getDefault().getID());
         Import.Alert.msg(TAG, "Timezone2", TimeZone.getDefault().getDisplayName());
 
-        Init();
+        init();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         inPrimeiroPlano = true;
-//        if (isTipster)
-//            getMyPunters();
-//        else
-            refAllTipsters.addChildEventListener(eventAllTipsters);
+        refAllTipsters.addChildEventListener(eventAllTipsters);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         inPrimeiroPlano = false;
-//        if (!isTipster)
-            refAllTipsters.removeEventListener(eventAllTipsters);
+        refAllTipsters.removeEventListener(eventAllTipsters);
+        try {
+            Import.getFirebase.saveUser(activity);
+        } catch (Exception e) {
+            Import.Alert.erro(TAG, "onStop", e);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-//        menu_new_feed = menu.findItem(R.id.menu_postar_feed);
         menu_pesquisa = menu.findItem(R.id.menu_pesquisa);
 
-        SearchView et_pesquisa = (SearchView) menu_pesquisa.getActionView();
-        et_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        et_pesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        SearchView sv_pesquisa = (SearchView) menu_pesquisa.getActionView();
+        sv_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        sv_pesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 //                if (isTipster)
 //                    tipstersFragment.getPunterAdapter().getFilter().filter(newText);
 //                else
-                    tipstersFragment.getTipsterAdapter().getFilter().filter(newText);
+                    tipstersFragment.getUserAdapter().getFilter().filter(newText);
                 return false;
             }
         });
@@ -193,17 +192,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (title != null)
             Import.organizarTituloTollbar(activity, action_bar_titulo_1, action_bar_titulo_2, title);
 
-        switch (position) {
-            case 0:
-                navView.setSelectedItemId(R.id.nav_menu_feed);
-                break;
-            case 1:
-                navView.setSelectedItemId(R.id.nav_menu_tipster);
-                break;
-            case 2:
-                navView.setSelectedItemId(R.id.nav_menu_perfil);
-                break;
-        }
         SwithMenu(position);
     }
 
@@ -226,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     //region Métodos
 
-    private void Init() {
+    private void init() {
         //region findViewById
         Toolbar toolbar = findViewById(R.id.toolbar);
         NavigationView navigationView = findViewById(R.id.navigationView);
@@ -237,28 +225,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         meuId = Import.getFirebase.getId();
         int pageSelect = 0;
-        try {
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                boolean primeiroLogin = bundle.getBoolean(Constantes.intent.PRIMEIRO_LOGIN);
-                pageSelect = bundle.getInt(Constantes.intent.PAGE_SELECT);
-                if (primeiroLogin) {
-                    Intent intent = new Intent(activity, PerfilActivity.class);
-                    intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
-                    startActivity(intent);
-                }
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            boolean primeiroLogin = bundle.getBoolean(Constantes.intent.PRIMEIRO_LOGIN);
+            pageSelect = bundle.getInt(Constantes.intent.PAGE_SELECT);
+            if (primeiroLogin) {
+                Intent intent = new Intent(activity, PerfilActivity.class);
+                intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
+                startActivity(intent);
             }
+        }
 
+        try {
             feedFragment = new FeedFragment(activity);
-            tipstersFragment = new TipstersFragment(activity);
-            notificationsFragment = new NotificationsFragment(activity);
             perfilFragment = new PerfilFragment(activity);
+            tipstersFragment = new TipstersFragment(activity, false);
+            notificationsFragment = new NotificationsFragment(activity, false);
 
-//            isTipster = Import.getFirebase.isTipster();
             Import.activites = new Activites();
             Import.activites.setMainActivity(this);
-        } catch (Exception ex) {
-            Import.Alert.erro(TAG, ex);
+        } catch (Exception e) {
+            Import.Alert.erro(TAG, "init", e);
             Import.Alert.toast(activity, getResources().getString(R.string.erro_init_main_activity));
             Import.irProLogin(activity);
         }
@@ -285,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         //region viewPager
         sectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager(),
-                FragmentPagerAdapter.POSITION_UNCHANGED,
+                getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
                 activity, feedFragment, tipstersFragment, perfilFragment, notificationsFragment);
 
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -294,57 +281,64 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         viewPager.setCurrentItem(pageSelect);
         //endregion
 
+        atualizarMeusDados();
         getAllTipsters();
     }
 
     private void SwithMenu(int position) {
-        /*switch (position) {
+        boolean recolherSV = true;
+        switch (position) {
             case 0:
-            case 1:
-            case 2:
-            case 3:
+                navView.setSelectedItemId(R.id.nav_menu_feed);
                 break;
-        }*/
-        if (menu_pesquisa != null)
+            case 1:
+                navView.setSelectedItemId(R.id.nav_menu_tipster);
+                recolherSV = false;
+                break;
+            case 2:
+                navView.setSelectedItemId(R.id.nav_menu_perfil);
+                break;
+        }
+        if (menu_pesquisa != null) {
+            if (recolherSV && menu_pesquisa.isActionViewExpanded()) {
+                menu_pesquisa.collapseActionView();
+            }
             menu_pesquisa.setVisible(position == 1);
+        }
     }
 
     private void getAllTipsters() {
         refAllTipsters = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS);
+                .child(Constantes.firebase.child.USUARIO);
 
         eventAllTipsters = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
-                    Tipster item = dataSnapshot.getValue(Tipster.class);
-                    if (item != null) {
-                        if (item.getDados().isBloqueado())
-                            return;
-                        if (item.getDados().getId().equals(meuId))
-                            return;
-                        Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
-                        if (item_2 == null) {
-                            Import.get.tipsters.getAll().add(item);
-                            Import.get.tipsters.getAllAux().add(item);
-                        } else {
-                            Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
-                            Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
-                        }
-                        if (Import.getFirebase.getPunter().getTipsters().containsValue(item.getDados().getId())) {
-                            for (Post post : item.getPostes().values()) {
-                                if (Import.get.tipsters.findPost(post.getId()) == null)
-                                    Import.get.tipsters.postes().add(post);
-                            }
-                        } else {
-                            for (Post post : item.getPostes().values())
-                                if (post.isPublico() && Import.get.tipsters.findPost(post.getId()) == null)
-                                    Import.get.tipsters.postes().add(post);
-                        }
-                        tipstersFragment.adapterUpdate();
-                        feedFragment.adapterUpdate();
+                    User item = dataSnapshot.getValue(User.class);
+                    if (item == null)
+                        return;
+                    if (item.getDados().isBloqueado())
+                        return;
+                    if (item.getDados().getId().equals(meuId))
+                        return;
+
+                    String id = item.getDados().getId();
+
+                    if (item.getDados().isTipster()) {
+                        Import.get.tipsters.add(item);
                     }
+
+                    if (Import.getFirebase.getTipster().getSeguidores().containsValue(id)) {
+                        Import.get.seguidores.add(item);
+                    }
+
+                    if (Import.getFirebase.getTipster().getSeguindo().containsValue(id)) {
+                        Import.get.seguindo.add(item);
+                    }
+
+                    tipstersFragment.adapterUpdate();
+                    feedFragment.adapterUpdate();
                 } catch (Exception ex) {
                     Import.Alert.erro(TAG, ex);
                     Import.Alert.msg(TAG, "onChildAdded", dataSnapshot.getKey());
@@ -360,10 +354,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getKey();
-                Import.get.tipsters.getAll().remove(Import.get.tipsters.findTipster(value));
-                Import.get.tipsters.getAllAux().remove(Import.get.tipsters.findTipster(value));
-                Import.Alert.msg(TAG, "onChildRemoved", value);
+                String key = dataSnapshot.getKey();
+
+                Import.get.tipsters.remove(key);
+                Import.get.seguindo.remove(key);
+                Import.get.seguidores.remove(key);
+
+                Import.Alert.msg(TAG, "onChildRemoved", key);
                 tipstersFragment.adapterUpdate();
             }
 
@@ -375,44 +372,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         };
     }
 
-    /*private void getMyPunters() {
-        for (String s : Import.getFirebase.getTipster().getPunters().values()) {
-            DatabaseReference ref =  Import.getFirebase.getReference()
-                    .child(Constantes.firebase.child.USUARIO)
-                    .child(Constantes.firebase.child.PUNTERS)
-                    .child(s);
-
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Punter item = dataSnapshot.getValue(Punter.class);
-                    if (item != null) {
-                        Punter item2 = Import.get.punter.find(item.getDados().getId());
-                        if (item2 == null) {
-                            Import.get.punter.getAll().add(item);
-                            Import.get.punter.getAllAux().add(item);
-                        } else {
-                            Import.get.punter.getAll().set(Import.get.punter.getAll().indexOf(item2), item);
-                            Import.get.punter.getAllAux().set(Import.get.punter.getAllAux().indexOf(item2), item);
-                        }
-                    }
-                    try {
-                        tipstersFragment.adapterUpdate();
-                        tipstersFragment.refreshLayout.setRefreshing(false);
-                    } catch (Exception e) {
-                        Import.Alert.erro(TAG, e);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {}
-            });
-        }
-    }*/
-
     public void feedUpdate() {
         onStop();
         onStart();
+    }
+
+    public int getPagePosition() {
+        return viewPager.getCurrentItem();
+    }
+
+    public void setPagingEnabled(boolean b) {
+        viewPager.setPagingEnabled(b);
+    }
+
+    public void setPagePosition(int position) {
+        viewPager.setCurrentItem(position);
     }
 
     public boolean isInPrimeiroPlano() {
@@ -486,6 +460,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         ref.addListenerForSingleValueEvent(eventListener);
         dialog.setOnDismissListener(dialog12 -> ref.removeEventListener(eventListener));
         dialog.show();
+    }
+
+    private void atualizarMeusDados() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(meuId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        try {
+                            User user = dataSnapshot.getValue(User.class);
+                            if (user != null) {
+                                Import.getFirebase.setUser(activity, user, true);
+                                Import.get.seguindo.addAll(user.getPostes());
+                            }
+                        } catch (Exception e) {
+                            Import.Alert.erro(TAG, "atualizarMeusDados", e);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
     }
 
     //endregion

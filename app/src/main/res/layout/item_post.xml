@@ -230,7 +230,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ll_green_red"
+        android:id="@+id/tipster_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"

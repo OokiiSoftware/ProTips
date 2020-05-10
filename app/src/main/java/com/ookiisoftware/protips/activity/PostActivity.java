@@ -15,7 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,14 +25,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.adapter.EsporteSpinnerAdapter;
-import com.ookiisoftware.protips.adapter.MercadoSpinnerAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.Post;
-
-import java.util.ArrayList;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -167,31 +162,7 @@ public class PostActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        final ArrayList<Esporte> esportes = new ArrayList<>(Import.getFirebase.getTipster().getEsportes().values());
-        final ArrayList<String> mercados = new ArrayList<>();
-
-        final MercadoSpinnerAdapter mercadoAdapter = new MercadoSpinnerAdapter(activity, android.R.layout.simple_spinner_item, mercados);
-        mercado.setAdapter(mercadoAdapter);
-
-        final EsporteSpinnerAdapter esporteSpinnerAdapter = new EsporteSpinnerAdapter(activity, android.R.layout.simple_spinner_item, esportes);
-        esporte.setAdapter(esporteSpinnerAdapter);
-
         //region setListener
-
-        esporte.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Esporte item = esporteSpinnerAdapter.getItem(position);
-                if (item != null) {
-                    mercados.clear();
-                    mercados.addAll(item.getMercados().values());
-                    mercadoAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
 
         texto.addTextChangedListener(new TextWatcher() {
             @Override
@@ -214,64 +185,57 @@ public class PostActivity extends AppCompatActivity {
         foto.setOnClickListener(v -> pegarFotoDaGaleria());
 
         horario_minimo.setOnClickListener(v -> {
-            {
-                final int hora = toHour(horario_minimo.getText().toString());
-                final int min = toMinute(horario_minimo.getText().toString());
-                TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_minimo.setText(dateToString(hourOfDay, minute)), hora, min, true);
-                dialog.show();
-            }
+            final int hora = toHour(horario_minimo.getText().toString());
+            final int min = toMinute(horario_minimo.getText().toString());
+            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_minimo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+            dialog.show();
         });
         horario_maximo.setOnClickListener(v -> {
-            {
-                final int hora = toHour(horario_maximo.getText().toString());
-                final int min = toMinute(horario_maximo.getText().toString());
-                TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_maximo.setText(dateToString(hourOfDay, minute)), hora, min, true);
-                dialog.show();
-            }
+            final int hora = toHour(horario_maximo.getText().toString());
+            final int min = toMinute(horario_maximo.getText().toString());
+            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_maximo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+            dialog.show();
         });
 
         ajuda.setOnClickListener(v -> {
-            {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                dialog.setTitle(getResources().getString(R.string.informacao));
-                dialog.setMessage(getResources().getString(R.string.info_tip_publico));
-                dialog.setPositiveButton(getResources().getString(R.string.ok), null);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+            dialog.setTitle(getResources().getString(R.string.informacao));
+            dialog.setMessage(getResources().getString(R.string.info_tip_publico));
+            dialog.setPositiveButton(getResources().getString(R.string.ok), null);
 
-                dialog.show();
-            }
+            dialog.show();
         });
 
         postar.setOnClickListener(view -> {
-            {
-                if (esportes.size() == 0) {
-                    Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_esporte_registrado));
-                } else if (mercados.size() == 0) {
-                    Import.Alert.snakeBar(activity, getResources().getString(R.string.sem_mercado_registrado));
-                } else {
-                    progressBar.setVisibility(View.VISIBLE);
-                    Post post = new Post();
-                    post.setHorario_maximo(horario_maximo.getText().toString());
-                    post.setHorario_minimo(horario_minimo.getText().toString());
-                    post.setMercado(mercado.getSelectedItem().toString());
-                    post.setEsporte(((Esporte)esporte.getSelectedItem()).getNome());
-                    post.setOdd_maxima(odd_max.getText().toString());
-                    post.setOdd_minima(odd_min.getText().toString());
-                    post.setId_tipster(Import.getFirebase.getId());
-                    post.setTitulo(titulo.getText().toString());
-                    post.setTexto(texto.getText().toString());
-                    post.setPublico(tipPublico.isChecked());
-                    post.setId(Import.get.randomString());
-                    post.setData(Import.get.Data());
-                    post.setFoto(foto_path);
-                    verificar(post);
-                }
+            if (esporte.getSelectedItemPosition() == 0) {
+                Import.Alert.snakeBar(activity, getResources().getString(R.string.selecione_esporte));
+            } else if (mercado.getSelectedItemPosition() == 0) {
+                Import.Alert.snakeBar(activity, getResources().getString(R.string.selecione_mercado));
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                Post post = new Post();
+                post.setHorario_maximo(horario_maximo.getText().toString());
+                post.setHorario_minimo(horario_minimo.getText().toString());
+                post.setMercado(mercado.getSelectedItem().toString());
+                post.setEsporte(esporte.getSelectedItem().toString());
+                post.setOdd_maxima(odd_max.getText().toString());
+                post.setOdd_minima(odd_min.getText().toString());
+                post.setId_tipster(Import.getFirebase.getId());
+                post.setTitulo(titulo.getText().toString());
+                post.setTexto(texto.getText().toString());
+                post.setPublico(tipPublico.isChecked());
+                post.setId(Import.get.randomString());
+                post.setData(Import.get.Data());
+                post.setFoto(foto_path);
+
+                postar.setEnabled(verificar(post));
             }
         });
 
         //endregion
     }
 
-    private void verificar(Post post) {
+    private boolean verificar(Post post) {
         if (post.getTitulo() == null || post.getTitulo().isEmpty()) {
             Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_titulo_obrigatorio));
             progressBar.setVisibility(View.GONE);
@@ -289,7 +253,9 @@ public class PostActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
         } else {
             post.salvar(activity, progressBar,true);
+            return false;
         }
+        return true;
     }
 
     private int toHour(String valor) {

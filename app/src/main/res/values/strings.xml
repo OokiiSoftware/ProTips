@@ -18,36 +18,43 @@
     <string name="_menos" translatable="false">-</string>
     <string name="email" translatable="false">Email</string>
     <string name="ex_123456" translatable="false">ex: 123456</string>
+    <string name="green" translatable="false">Green</string>
     <string name="pass_hint" translatable="false">***********</string>
     <string name="protips" translatable="false">PROTIPS</string>
+    <string name="punter" translatable="false">Punter</string>
+    <string name="punters" translatable="false">Punters</string>
+    <string name="red" translatable="false">Red</string>
     <string name="tipname" translatable="false">TipName</string>
     <string name="tipster" translatable="false">Tipster</string>
+    <string name="tipsters" translatable="false">Tipsters</string>
     <string name="whats_app" translatable="false">WhatsApp</string>
+    <string name="asc" translatable="false">asc</string>
+    <string name="dsc" translatable="false">dsc</string>
 
     <!--TODO Titulos de cada activity e fragmento-->
-    <string name="titulo_feed" translatable="false">FEED</string>
+    <string name="titulo_perfil">MEU PERFIL</string>
+    <string name="titulo_meus_punters">MEUS PUNTERS</string>
+    <string name="titulo_notificacoes">SOLICITAÇÕES</string>
     <string name="titulo_tipsters">ENCONTRE TIPSTERS</string>
     <string name="titulo_meus_tipsters">MEUS TIPSTERS</string>
-    <string name="titulo_meus_punters">MEUS PUNTERS</string>
+    <string name="titulo_feed" translatable="false">FEED</string>
     <string name="titulo_meus_seguidores">MEUS SEGUIDORES</string>
-    <string name="titulo_notificacoes">SOLICITAÇÕES</string>
-    <string name="titulo_perfil">MEU PERFIL</string>
 
-    <string name="titulo_conversas">CONVERSAS</string>
     <string name="titulo_contatos">CONTATOS</string>
+    <string name="titulo_conversas">CONVERSAS</string>
 
-    <string name="titulo_criar_tip">Criar Tip</string>
     <string name="titulo_batepapo">BATEPAPO</string>
-    <string name="titulo_preferencias">PREFERÊNCIAS</string>
+    <string name="titulo_criar_tip">Criar Tip</string>
     <string name="titulo_edit_user">EDITAR PERFIL</string>
+    <string name="titulo_preferencias">PREFERÊNCIAS</string>
 
     <!--TODO Titulos da Navbar-->
-    <string name="nav_titulo_inicio">Início</string>
-    <string name="nav_titulo_pesquisa" translatable="false">Tipsters</string>
-    <string name="nav_titulo_perfil">Perfil</string>
-    <string name="nav_titulo_notificacoes">Notificações</string>
     <string name="titulo_g_inicio">Inicio</string>
+    <string name="nav_titulo_inicio">Início</string>
+    <string name="nav_titulo_perfil">Perfil</string>
     <string name="titulo_g_solicitacoes">Solicitações</string>
+    <string name="nav_titulo_notificacoes">Notificações</string>
+    <string name="nav_titulo_pesquisa" translatable="false">Tipsters</string>
 
     <!--TODO Menus em geral-->
     <string name="menu_logout">Sair</string>
@@ -60,191 +67,209 @@
     <string name="submenu">Outras opções</string>
 
     <!-- TODO: Palavras -->
+    <string name="aceitar">Aceitar</string>
+    <string name="ajuda">Ajuda</string>
+
+    <string name="baixar">Baixar</string>
+    <string name="bom">Bom</string>
+
     <string name="cadastre_se">Cadastre-se</string>
     <string name="cancelar">Cancelar</string>
+    <string name="categoria">Categoria</string>
     <string name="conta">CONTA</string>
     <string name="criar">CRIAR</string>
     <string name="criar_tip">CRIAR TIP</string>
-    <string name="ou">OU</string>
+
+    <string name="descricao">Descrição..</string>
+
+    <string name="editar">Editar</string>
+    <string name="esporte">Esporte</string>
+    <string name="esportes">Esportes</string>
+    <string name="estado">Estado</string>
+    <string name="excluindo">Excluindo</string>
+    <string name="excluir">Excluir</string>
+
+    <string name="fechar">Fechar</string>
+
+    <string name="horario">Horário</string>
+
+    <string name="imagem">Imagem</string>
+    <string name="informacao">Informação</string>
+
+    <string name="legenda">Legenda</string>
+    <string name="login">LOGIN</string>
+
+    <string name="maximo">Máximo</string>
+    <string name="mercado">Mercado</string>
+    <string name="mercados">Mercados</string>
+    <string name="minimo">Mínimo</string>
+
     <string name="nao">Não</string>
-    <string name="sim">Sim</string>
-    <string name="postar">Postar</string>
-    <string name="salvar">Salvar</string>
-    <string name="voltar">Voltar</string>
+    <string name="nascimento">Nascimento</string>
+    <string name="nome">Nome</string>
+
+    <string name="odd">Odd</string>
     <string name="odd_maxima">Odd Máxima</string>
     <string name="odd_minima">Odd Mínima</string>
-    <string name="senha">Senha</string>
-    <string name="nome">Nome</string>
-    <string name="bom">Bom</string>
-    <string name="ruim">Ruim</string>
-    <string name="legenda">Legenda</string>
-    <string name="titulo">Titulo</string>
-    <string name="mercado">Mercado</string>
-    <string name="imagem">Imagem</string>
-    <string name="descricao">Descrição..</string>
-    <string name="login">LOGIN</string>
-    <string name="usuario">Usuário</string>
-    <string name="telefone">Telefone</string>
-    <string name="nascimento">Nascimento</string>
-    <string name="estado">Estado</string>
-    <string name="esportes">Esportes</string>
-    <string name="esporte">Esporte</string>
-    <string name="mercados">Mercados</string>
-    <string name="esportes_">Esportes +</string>
-    <string name="mercados_">Mercados +</string>
     <string name="ok">OK</string>
-    <string name="odd">Odd</string>
-    <string name="horario">Horário</string>
-    <string name="categoria">Categoria</string>
-    <string name="minimo">Mínimo</string>
-    <string name="maximo">Máximo</string>
-    <string name="seguir">Seguir</string>
-    <string name="privacidade">Privacidade</string>
+    <string name="ou">OU</string>
+
     <string name="pendente">Pendente</string>
-    <string name="remover">Remover</string>
-    <string name="informacao">Informação</string>
-    <string name="aceitar">Aceitar</string>
-    <string name="recusar">Recusar</string>
-    <string name="ajuda">Ajuda</string>
-    <string name="excluir">Excluir</string>
-    <string name="excluindo">Excluindo</string>
-    <string name="solicitar">Solicitar</string>
-    <string name="fechar">Fechar</string>
+    <string name="postar">Postar</string>
     <string name="preferencias">Preferências</string>
-    <string name="editar">Editar</string>
-    <string name="baixar">Baixar</string>
+    <string name="privacidade">Privacidade</string>
+
+    <string name="ruim">Ruim</string>
+    <string name="remover">Remover</string>
+    <string name="recusar">Recusar</string>
+
+    <string name="salvar">Salvar</string>
+    <string name="seguir">Seguir</string>
+    <string name="senha">Senha</string>
+    <string name="sim">Sim</string>
+    <string name="solicitar">Solicitar</string>
+
+    <string name="telefone">Telefone</string>
+    <string name="titulo">Titulo</string>
+
+    <string name="usuario">Usuário</string>
+
+    <string name="voltar">Voltar</string>
 
     <!-- TODO: Textos -->
-    <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
-    <string name="popup_caixa_de_texto">Escreva aqui..</string>
-    <string name="bem_vindo_ao">Bem vindo ao</string>
-    <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
-    <string name="faca_sua_postagem">Faça sua postagem</string>
-    <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
-    <string name="carregando_a_imagem">Carregando a imagem</string>
-    <string name="tipName_obrigatório">TipName obrigatório</string>
-    <string name="TipName_deve_conter_no_mínimo_6_dígitos">TipName deve conter no mínimo 6 dígitos</string>
-    <string name="insira_seu_nome">Insira seu nome</string>
-    <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatória</string>
-    <string name="campo_obrigatório">Campo obrigatório</string>
-
-    <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
-    <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
-    <string name="email_invalido">Este email é inválido</string>
-    <string name="cadastro_email_repetido">Este email já está cadastrado</string>
-
-    <string name="usuario_salvo">Dados Salvos com sucesso</string>
-    <string name="nome_do_tipster">Nome do Tipster</string>
-    <string name="texto_aqui">Texto aqui</string>
-    <string name="tip_voto_bom">Tip marcado como BOM</string>
-    <string name="tip_voto_ruim">Tip marcado como RUIM</string>
-    <string name="post_erro">Ocorreu um erro ao postar seu Tip</string>
-    <string name="more_info">Mais Informações do Tipster</string>
-    <string name="horario_minimo">Horário mínimo indicado</string>
-    <string name="horario_maximo">Horário máximo indicado</string>
-
-    <string name="post_titulo_obrigatorio">O Titulo é obrigatório</string>
-    <string name="post_texto_obrigatorio">A Descrição é obrigatória</string>
-    <string name="post_foto_obrigatorio">A Foto é obrigatória</string>
-    <string name="post_odd_maxima_obrigatorio">Odd Máxima é obrigatória</string>
-    <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
-    <string name="post_esporte_obrigatorio">Selecione o esporte</string>
-    <string name="post_mercado_obrigatorio">Selecione o mercado</string>
-
-    <string name="verifique_seu_email">Por favor verifique seu email</string>
-    <string name="enviar_novo_email">Enviar novo email</string>
-    <string name="enviar_email">Enviar email</string>
-    <string name="email_enviado">Email enviado</string>
-    <string name="dados_pessoais">Dados pessoais</string>
-    <string name="dados_outros">Outros dados</string>
-    <string name="remover_item">Remover este item?</string>
-    <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
-    <string name="quero_ser_um_punter">Quero ser um Punter</string>
-    <string name="idade_minima">A idade mínima é 18 anos</string>
-    <string name="titulo_punters">MEUS PUNTERS</string>
-    <string name="nova_solicitação_punter">Nova solicitação de Punter</string>
-    <string name="punter_aceito">Sua solicitação foi aceita</string>
-    <string name="novo_poste">Novo Tip</string>
-    <string name="novos_postes">Novos Tips</string>
     <string name="seu_nome">Seu nome</string>
     <string name="seu_email">Seu email</string>
-    <string name="seu_tipname">SEU TIPNAME</string>
     <string name="sua_senha">Sua senha</string>
-    <string name="tip_publico">Tip público</string>
+    <string name="novo_poste">Novo Tip</string>
+    <string name="em_analize">Em análise</string>
+    <string name="texto_aqui">Texto aqui</string>
     <string name="postar_tip">POSTAR TIP</string>
+    <string name="tip_publico">Tip público</string>
+    <string name="novos_postes">Novos Tips</string>
+    <string name="seu_tipname">SEU TIPNAME</string>
     <string name="txt_entre_com">Entre com</string>
+    <string name="dados_outros">Outros dados</string>
+    <string name="enviar_email">Enviar email</string>
+    <string name="bem_vindo_ao">Bem vindo ao</string>
+    <string name="email_enviado">Email enviado</string>
+    <string name="dados_pessoais">Dados pessoais</string>
+    <string name="enviar_codigo">Enviar o código</string>
+    <string name="data_incorreta">Data incorreta</string>
+    <string name="insira_seu_nome">Insira seu nome</string>
+    <string name="remover_item">Remover este item?</string>
+    <string name="nome_do_tipster">Nome do Tipster</string>
+    <string name="numero_invalido">Número inválido</string>
     <string name="perfil_usuario_categoria">Sou um</string>
     <string name="confirmar_senha">Confirmar senha</string>
     <string name="login_cancelado">Login Cancelado</string>
-    <string name="registrar_numero">Registrar número</string>
-    <string name="numero_invalido">Número inválido</string>
-    <string name="enviar_codigo">Enviar o código</string>
-    <string name="solicitacao_tipster">Solicitação para ser um Tipster</string>
-    <string name="entre_em_contato_com">"Entre em contato com "</string>
-    <string name="em_analize">Em análise</string>
-    <string name="sem_esporte_registrado">Sem esporte registrado</string>
-    <string name="sem_mercado_registrado">Sem mercado registrado</string>
-    <string name="cancelar_solicitacao">Cancelar solicitação</string>
+    <string name="sem_atualizacao">Sem atualização</string>
+
+    <string name="posts_no_perfil">POSTS NO PERFIL</string>
     <string name="tip_voto_removido">Voto removido</string>
     <string name="recuperar_senha">Recuperar senha</string>
-    <string name="enviar_novo_email_verificacao">Enviar novo email de verificação</string>
-    <string name="email_nao_encontrado">Este email não está cadastrado</string>
-    <string name="sem_atualizacao">Sem atualização</string>
+    <string name="registrar_numero">Registrar número</string>
+    <string name="TipName_invalido">Tipname inválido</string>
+    <string name="tip_voto_bom">Tip marcado como BOM</string>
+    <string name="campo_obrigatório">Campo obrigatório</string>
+    <string name="faca_sua_postagem">Faça sua postagem</string>
+    <string name="popup_caixa_de_texto">Escreva aqui..</string>
+    <string name="tip_voto_ruim">Tip marcado como RUIM</string>
+    <string name="enviar_novo_email">Enviar novo email</string>
+    <string name="email_invalido">Este email é inválido</string>
+    <string name="more_info">Mais Informações do Tipster</string>
+    <string name="idade_minima">A idade mínima é 18 anos</string>
+    <string name="horario_minimo">Horário mínimo indicado</string>
+    <string name="horario_maximo">Horário máximo indicado</string>
+    <string name="selecione_esporte">Selecione um esporte</string>
+    <string name="selecione_mercado">Selecione um mercado</string>
     <string name="salve_primeiro">Salve os dados primeiro</string>
+    <string name="usuario_salvo">Dados Salvos com sucesso</string>
+    <string name="carregando_a_imagem">Carregando a imagem</string>
+    <string name="tipName_obrigatório">TipName obrigatório</string>
+    <string name="quero_ser_um_punter">Quero ser um Punter</string>
+    <string name="punter_aceito">Sua solicitação foi aceita</string>
+    <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
+    <string name="cancelar_solicitacao">Cancelar solicitação</string>
+
+    <string name="post_foto_obrigatorio">A Foto é obrigatória</string>
     <string name="verificar_atualizacao">Verificar atualização</string>
+    <string name="post_erro">Ocorreu um erro ao postar seu Tip</string>
+    <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
+    <string name="post_esporte_obrigatorio">Selecione o esporte</string>
+    <string name="entre_em_contato_com">"Entre em contato com "</string>
+    <string name="post_mercado_obrigatorio">Selecione o mercado</string>
+    <string name="sem_esporte_registrado">Sem esporte registrado</string>
+    <string name="sem_mercado_registrado">Sem mercado registrado</string>
+    <string name="post_titulo_obrigatorio">O Titulo é obrigatório</string>
     <string name="verificando_atualizacao">Verificando atualização</string>
+    <string name="post_texto_obrigatorio">A Descrição é obrigatória</string>
+    <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
+    <string name="solicitacao_punter">Solicitação para ser um Punter</string>
+    <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
+    <string name="verifique_seu_email">Por favor verifique seu email</string>
+    <string name="nova_solicitação_punter">Nova solicitação de Punter</string>
     <string name="atualizacao_disponivel">Nova atualização encontrada</string>
+    <string name="solicitacao_tipster">Solicitação para ser um Tipster</string>
+    <string name="email_nao_encontrado">Este email não está cadastrado</string>
+    <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
+    <string name="post_odd_maxima_obrigatorio">Odd Máxima é obrigatória</string>
+    <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
+    <string name="excluir_post">Deseja excluir este Tip permanentemente?</string>
+    <string name="cadastro_email_repetido">Este email já está cadastrado</string>
+    <string name="nova_solicitação_tipster">Nova solicitação para Tipster</string>
+    <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatória</string>
+
+    <string name="enviar_novo_email_verificacao">Enviar novo email de verificação</string>
+    <string name="permissao_camera_recusada">Você recusou a permissão de uso da camera</string>
+    <string name="TipName_deve_conter_no_mínimo_6_dígitos">TipName deve conter no mínimo 6 dígitos</string>
 
     <!-- TODO: Mensagens de Erro -->
-    <string name="erro_email_enviado">Não foi possivel enviar um email de verificação</string>
-    <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
-    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
-    <string name="erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
-    <string name="erro_foto_salvar">Ocorreu um erro ao salvar essa foto</string>
+    <string name="erro_generico">Ocorreu um erro</string>
+    <string name="erro_de_autencicacao">Erro de autenticação</string>
     <string name="erro_foto_carregar">Erro ao carregar a foto</string>
     <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
-    <string name="erro_de_autencicacao">Erro de autenticação</string>
-    <string name="erro_generico">Ocorreu um erro</string>
-    <string name="erro_de_autencicacao_muitas_tentativas">Muitas tentativas de login. Tente novamente mais tarde</string>
     <string name="erro_baixar_atualizacao">Erro ao baixar atualização</string>
+    <string name="erro_enviar_codigo">Não foi possível enviar o código</string>
+    <string name="erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
+    <string name="erro_foto_salvar">Ocorreu um erro ao salvar essa foto</string>
+    <string name="erro_init_main_activity">Ocorreu um erro, Tentando reiniciar</string>
+    <string name="erro_de_autencicacao_facebook">Erro ao fazer login com facebook</string>
+    <string name="erro_atualizar_numero">Erro ao atualizar número. Tente novamente</string>
+    <string name="erro_email_enviado">Não foi possivel enviar um email de verificação</string>
+    <string name="erro_de_autencicacao_muitas_tentativas">Muitas tentativas de login. Tente novamente mais tarde</string>
 
     <!-- TODO: Mensagens de Aviso -->
     <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
     <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
+    <string name="aviso_recriar_conta_punter">Sua conta será recriada como Punter.</string>
     <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
     <string name="aviso_exluir_conta">Atenção! Ao realizar esta ação sua conta será excluida permanentemente.</string>
-    <string name="aviso_recriar_conta_punter">Sua conta será recriada como Punter.</string>
 
     <!-- TODO: Mensagens de Informação -->
+    <string name="info_numero_registrado">Número registrado com sucesso</string>
+    <string name="info_registrar_codigo">Insira o código no campo abaixo</string>
     <string name="info_privacidade">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
+    <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
     <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Punters. Você pode postar 5 Tips públicas por dia.</string>
     <string name="info_registrar_telefone">Insira seu Número de telefone abaixo e solicite um código via sms. Este serviço poderá ser cobrado pela sua operadora.</string>
-    <string name="info_registrar_codigo">Insira o código no campo abaixo</string>
-    <string name="info_numero_registrado">Número registrado com sucesso</string>
-    <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
-    <string name="TipName_invalido">Tipname inválido</string>
-    <string name="data_incorreta">Data incorreta</string>
-    <string name="solicitacao_punter">Solicitação para ser um Punter</string>
-    <string name="erro_enviar_codigo">Não foi possível enviar o código</string>
-    <string name="erro_atualizar_numero">Erro ao atualizar número. Tente novamente</string>
-    <string name="selecione_esporte">Seleione um esporte</string>
-    <string name="selecione_mercado">Selecione um mercado</string>
-    <string name="nova_solicitação_tipster">Nova solicitação para Tipster</string>
-    <string name="punters">Punters</string>
-    <string name="tipsters">Tipsters</string>
-    <string name="green">Green</string>
-    <string name="red">Red</string>
-    <string name="excluir_post">Deseja excluir este Tip permanentemente?</string>
-    <string name="posts_no_perfil">Posts no perfil</string>
 
     <!-- TODO: Arrays -->
     <string-array name="categoria">
         <item>Apostador</item>
         <item>Tipster</item>
     </string-array>
+
     <string-array name="privacidade">
         <item>Público</item>
         <item>Privado</item>
+    </string-array>
+
+    <string-array name="orderBy">
+        <item>Ranking</item>
+        <item>Nome</item>
+        <item>Green</item>
+        <item>Red</item>
+        <item>Posts</item>
     </string-array>
 
     <string-array name="estado">
@@ -278,18 +303,22 @@
 
     <string-array name="mercado">
         <item>Mercado</item>
-        <item>Escanteios</item>
-        <item>ML</item>
         <item>Empates</item>
+        <item>Escanteios</item>
         <item>Live</item>
+        <item>ML</item>
     </string-array>
 
     <string-array name="esporte">
         <item>Esporte</item>
-        <item>Futebol</item>
-        <item>Voley</item>
         <item>Boxe</item>
+        <item>Futebol</item>
         <item>Galgos</item>
+        <item>Voley</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="titulo_seguindo">SEGUINDO</string>
+    <string name="orderBy">Ondem por:</string>
 
 </resources>

@@ -18,17 +18,18 @@ public class Usuario {
     private Data nascimento;
     private boolean privado;
     private boolean bloqueado;
+    private boolean tipster;
 
     public Usuario() {
         endereco = new Endereco();
         nascimento = new Data();
     }
 
-    public void atualizarNumero(String numero, boolean isTipster) {
-        String child = isTipster ? Constantes.firebase.child.TIPSTERS : Constantes.firebase.child.PUNTERS;
+    public void atualizarNumero(String numero) {
+//        String child = isTipster ? Constantes.firebase.child.TIPSTERS : Constantes.firebase.child.PUNTERS;
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(child)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId())
                 .child(Constantes.firebase.child.DADOS)
                 .child(Constantes.firebase.child.TELEFONE)
@@ -38,18 +39,6 @@ public class Usuario {
 
     public enum Categoria {
         Apostador, Tipster
-    }
-
-    public Punter toPunter() {
-        Punter item = new Punter();
-        item.setDados(this);
-        return item;
-    }
-
-    public Tipster toTipster() {
-        Tipster item = new Tipster();
-        item.setDados(this);
-        return item;
     }
 
     //region gets sets
@@ -120,6 +109,8 @@ public class Usuario {
     }
 
     public Data getNascimento() {
+        if(nascimento == null)
+            nascimento = new Data();
         return nascimento;
     }
 
@@ -149,6 +140,14 @@ public class Usuario {
 
     public void setBloqueado(boolean bloqueado) {
         this.bloqueado = bloqueado;
+    }
+
+    public boolean isTipster() {
+        return tipster;
+    }
+
+    public void setTipster(boolean tipster) {
+        this.tipster = tipster;
     }
 
     //endregion

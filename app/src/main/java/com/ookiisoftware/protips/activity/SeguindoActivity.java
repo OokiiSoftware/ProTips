@@ -13,19 +13,17 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ookiisoftware.protips.R;
-//import com.ookiisoftware.protips.adapter.PunterAdapter;
 import com.ookiisoftware.protips.adapter.UserAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-//import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.User;
 
 import java.util.ArrayList;
 
-public class SeguidoresActivity extends AppCompatActivity {
+public class SeguindoActivity extends AppCompatActivity {
 
     //region Variáveis
-//    private static final String TAG = "SeguidoresActivity";
+//    private static final String TAG = "SeguindoActivity";
 
     private Activity activity;
     private UserAdapter adapter;
@@ -38,7 +36,7 @@ public class SeguidoresActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seguidores);
+        setContentView(R.layout.activity_seguindo);
         activity = this;
         init();
     }
@@ -64,10 +62,10 @@ public class SeguidoresActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setTitle(getResources().getString(R.string.titulo_meus_seguidores));
+            getSupportActionBar().setTitle(getResources().getString(R.string.titulo_seguindo));
         }
 
-        data = new ArrayList<>(Import.get.seguidores.getAll());
+        data = new ArrayList<>(Import.get.seguindo.getAll());
         adapter = new UserAdapter(activity, data) {
             @Override
             public void onClick(View v) {
@@ -95,7 +93,7 @@ public class SeguidoresActivity extends AppCompatActivity {
     private void adapterUpdate() {
         if (data != null) {
             data.clear();
-            data.addAll(Import.get.seguidores.getAll());
+            data.addAll(Import.get.seguindo.getAll());
         }
 
         if (adapter != null)

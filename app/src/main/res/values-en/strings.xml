@@ -37,8 +37,6 @@
     <string name="esportes">Sports</string>
     <string name="esporte">Sport</string>
     <string name="mercados">Markets</string>
-    <string name="esportes_">Sports +</string>
-    <string name="mercados_">Markets +</string>
     <string name="ok">OK</string>
     <string name="odd">Odd</string>
     <string name="horario">Schedule</string>
@@ -94,7 +92,6 @@
     <string name="remover_item">Remove this item?</string>
     <string name="quero_ser_um_tipster">I want to be a Tipster</string>
     <string name="idade_minima">Minimum age is 18 years</string>
-    <string name="titulo_punters">MY PUNTERS</string>
     <string name="nova_solicitação_punter">New Punter Request</string>
     <string name="punter_aceito">Your request has been accepted</string>
     <string name="novo_poste">New Tip</string>
@@ -172,4 +169,17 @@
     <string name="salve_primeiro">Save data first</string>
     <string name="erro_baixar_atualizacao">Error downloading update</string>
     <string name="erro_de_autencicacao_muitas_tentativas">Too many login attempts. Try again later</string>
+    <string name="titulo_meus_tipsters">MY TIPSTERS</string>
+    <string name="titulo_meus_punters">MY PUNTERS</string>
+    <string name="titulo_meus_seguidores">MY FOLLOWERS</string>
+    <string name="TipName_invalido">Invalid Tipname</string>
+    <string name="data_incorreta">Incorrect date</string>
+    <string name="solicitacao_punter">Request to be a Punter</string>
+    <string name="erro_enviar_codigo">Could not send code</string>
+    <string name="erro_atualizar_numero">Error updating number. Try again</string>
+    <string name="selecione_esporte">Select a sport</string>
+    <string name="selecione_mercado">Select a market</string>
+    <string name="nova_solicitação_tipster">New request for Tipster</string>
+    <string name="excluir_post">Do you want to permanently delete this Tip?</string>
+    <string name="posts_no_perfil">PROFILE POSTS</string>
 </resources>

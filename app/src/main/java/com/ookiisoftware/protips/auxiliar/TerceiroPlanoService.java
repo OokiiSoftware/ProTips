@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.GerenciaActivity;
-import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 
 public class TerceiroPlanoService extends Service {
@@ -36,7 +36,7 @@ public class TerceiroPlanoService extends Service {
         try {
             CommandSolicitacoes();
         } catch (Exception e) {
-            Import.Alert.erro(TAG, e);
+            Import.Alert.erro(TAG, "onStartCommand", e);
         }
 
         // START_STICKY serve para executar seu serviço até que você pare ele, é reiniciado automaticamente sempre que termina
@@ -60,27 +60,11 @@ public class TerceiroPlanoService extends Service {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                         try {
-                            String uid = dataSnapshot.getKey();
-                            if (uid != null)
-                                getTipster(uid);
-//                            Tipster item = dataSnapshot.getValue(Tipster.class);
-//                            if (item != null) {
-//                                Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
-//                                if (item_2 == null) {
-//                                    Import.get.tipsters.getAll().add(item);
-//                                    Import.get.tipsters.getAllAux().add(item);
-//                                } else {
-//                                    Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
-//                                    Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
-//                                }
-//                            }
+                            String key = dataSnapshot.getKey();
+                            getTipster(key, true);
                         } catch (Exception ex) {
-                            Import.Alert.erro(TAG, ex);
+                            Import.Alert.erro(TAG, "CommandSolicitacoes: onChildAdded", ex);
                         }
-                        try {
-                            Import.activites.getGerenciaActivity().solicitacoesFragment.adapterUpdate();
-                            Import.activites.getGerenciaActivity().solicitacoesFragment.refreshLayout.setRefreshing(false);
-                        } catch (Exception ignored) {}
                     }
 
                     @Override
@@ -88,11 +72,13 @@ public class TerceiroPlanoService extends Service {
 
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                        String value = dataSnapshot.getKey();
-                        Import.get.tipsters.getAll().remove(Import.get.tipsters.findTipster(value));
-                        Import.get.tipsters.getAllAux().remove(Import.get.tipsters.findTipster(value));
-                        Import.Alert.msg(TAG, "onChildRemoved", value);
-                        Import.activites.getGerenciaActivity().solicitacoesFragment.adapterUpdate();
+                        try {
+                            String key = dataSnapshot.getKey();
+                            Import.get.solicitacao.remove(key);
+                            Import.activites.getGerenciaActivity().notificationsFragment.adapterUpdate();
+                        } catch (Exception ex) {
+                            Import.Alert.erro(TAG, "CommandSolicitacoes: onChildRemoved", ex);
+                        }
                     }
 
                     @Override
@@ -103,28 +89,25 @@ public class TerceiroPlanoService extends Service {
                 });
     }
 
-    private void getTipster(String id) {
+    private void getTipster(String id, boolean seguidorPendente) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
                 .child(id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Tipster item = dataSnapshot.getValue(Tipster.class);
-                        if (item != null) {
-                            Tipster item_2 = Import.get.tipsters.findTipster(item.getDados().getId());
-                            if (item_2 == null) {
-                                Import.get.tipsters.getAll().add(item);
-                                Import.get.tipsters.getAllAux().add(item);
-                            } else {
-                                Import.get.tipsters.getAll().set(Import.get.tipsters.getAll().indexOf(item_2), item);
-                                Import.get.tipsters.getAllAux().set(Import.get.tipsters.getAllAux().indexOf(item_2), item);
-                            }
-                            Import.activites.getGerenciaActivity().solicitacoesFragment.adapterUpdate();
+                        User item = dataSnapshot.getValue(User.class);
+                        if (item == null)
+                            return;
+
+                        if (item.getDados().isTipster()) {
+                            Import.get.tipsters.add(item);
+                        }
+
+                        if (seguidorPendente) {
+                            Import.get.solicitacao.add(item);
                             notificationSolicitacao(item.getDados());
                         }
-                        Import.activites.getGerenciaActivity().solicitacoesFragment.refreshLayout.setRefreshing(false);
                     }
 
                     @Override
@@ -138,7 +121,7 @@ public class TerceiroPlanoService extends Service {
 
     private void notificationSolicitacao(@NonNull Usuario usuario) {
         try {
-            if (Import.activites.getMainActivity().viewPager.getCurrentItem() != Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
+            if (Import.activites.getMainActivity().getPagePosition() != Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
                 String titulo = getResources().getString(R.string.app_name);
                 String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + usuario.getNome();
 
@@ -146,6 +129,9 @@ public class TerceiroPlanoService extends Service {
                 intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
                 int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
                 Import.notificacao(getContext(), intent, channelId, titulo, texto);
+            } else {
+                Import.activites.getGerenciaActivity().notificationsFragment.adapterUpdate();
+                Import.activites.getGerenciaActivity().notificationsFragment.refreshLayout.setRefreshing(false);
             }
         } catch (Exception ignored) {}
     }

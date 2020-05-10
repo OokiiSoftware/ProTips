@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.SeguidoresActivity"></activity>
+        <activity android:name=".activity.SeguindoActivity"></activity>
+        <activity android:name=".activity.SeguidoresActivity" />
         <activity android:name=".activity.PerfilTipsterActivity" />
 
         <meta-data

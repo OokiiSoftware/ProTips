@@ -12,29 +12,36 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PerfilPunterActivity;
-import com.ookiisoftware.protips.adapter.PunterAdapter;
+//import com.ookiisoftware.protips.adapter.PunterAdapter;
+import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
+import com.ookiisoftware.protips.adapter.UserAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.User;
+//import com.ookiisoftware.protips.modelo.Punter;
 
 import java.util.ArrayList;
 
 public class NotificationsFragment extends Fragment {
 
     private RecyclerView recyclerView;
+    public SwipeRefreshLayout refreshLayout;
 
     private Activity activity;
-    private PunterAdapter adapter;
-    private ArrayList<Punter> punters;
+    private UserAdapter adapter;
+    private ArrayList<User> data;
 
     private boolean isTipster;
+    private boolean isGerencia;
 
     public NotificationsFragment() {}
-    public NotificationsFragment(Activity activity) {
+    public NotificationsFragment(Activity activity, boolean isGerencia) {
         this.activity = activity;
+        this.isGerencia = isGerencia;
     }
 
     @Override
@@ -54,21 +61,34 @@ public class NotificationsFragment extends Fragment {
 
     private void Init(View view) {
         recyclerView = view.findViewById(R.id.recycler);
+        refreshLayout = view.findViewById(R.id.swipeRefresh);
 
-        punters = Import.get.tipsters.getPuntersPendentes();
+        refreshLayout.setEnabled(isGerencia);
+
+        data = Import.get.solicitacao.getAll();
         isTipster = Import.getFirebase.isTipster();
 
-        adapter = new PunterAdapter(activity, punters) {
+        adapter = new UserAdapter(activity, data) {
             @Override
             public void onClick(View v) {
                 int position = recyclerView.getChildAdapterPosition(v);
-                Punter item = adapter.getItem(position);
-                Intent intent = new Intent(activity, PerfilPunterActivity.class);
+                User item = adapter.getItem(position);
+                Intent intent;
+                if (item.getDados().isTipster())
+                    intent = new Intent(activity, PerfilTipsterActivity.class);
+                else
+                    intent = new Intent(activity, PerfilPunterActivity.class);
                 intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                intent.putExtra(Constantes.intent.IS_GERENCIA, isGerencia);
                 activity.startActivity(intent);
             }
         };
         recyclerView.setAdapter(adapter);
+
+        refreshLayout.setOnRefreshListener(() -> {
+            adapterUpdate();
+            refreshLayout.setRefreshing(false);
+        });
     }
 
     public void adapterUpdate() {
@@ -86,8 +106,8 @@ public class NotificationsFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                punters.remove(viewHolder.getAdapterPosition());
-                adapter.notifyDataSetChanged();
+//                punters.remove(viewHolder.getAdapterPosition());
+//                adapter.notifyDataSetChanged();
             }
         };
 
@@ -101,66 +121,4 @@ public class NotificationsFragment extends Fragment {
             Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_ACEITO);
     }
 
-    /*public class SingleItemNotificacaoAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-        ArrayList<Usuario> aaaa;
-
-        SingleItemNotificacaoAdapter(ArrayList<Usuario> aaaa) {
-            this.aaaa = aaaa;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_batepapo, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-//            Glide.with(getActivity()).load(usuarioLogado.getImage_uri()).into(holder.img_remetente);
-//            holder.nome_remetente.setText(usuarioLogado.getNome());
-//            holder.email_remetente.setText(usuarioLogado.getEmail());
-
-            {
-                holder.btn_click.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.e(TAG, "Single: " + position);
-                    }
-                });
-                holder.btn_click.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        Log.e(TAG, "Long: " + position);
-                        return false;
-                    }
-                });
-            }// ClickListener();
-        }
-
-        @Override
-        public int getItemCount() {
-            return aaaa != null ? aaaa.size() : 0;
-        }
-    }
-
-    private class ViewHolder extends RecyclerView.ViewHolder {
-        Button btn_click;
-        ImageView img_remetente, icone_nao_lido, email;
-        TextView nome_remetente, email_remetente;
-
-        @SuppressLint("ClickableViewAccessibility")
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            btn_click = itemView.findViewById(R.id.item_batepapo_btn_principal);
-            img_remetente = itemView.findViewById(R.id.item_batepapo_foto);
-            nome_remetente = itemView.findViewById(R.id.item_batepapo_titulo);
-            email_remetente = itemView.findViewById(R.id.item_batepapo_subtitulo);
-            icone_nao_lido = itemView.findViewById(R.id.item_batepapo_ic_msg_lida);
-            email = itemView.findViewById(R.id.item_batepapo_ic_email);
-        }
-
-    }*/
 }

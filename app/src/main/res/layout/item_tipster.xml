@@ -40,7 +40,7 @@
             android:textSize="@dimen/title_size" />
 
         <LinearLayout
-            android:id="@+id/ll_green_red"
+            android:id="@+id/tipster_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nome"

@@ -27,6 +27,7 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PostActivity;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.SeguidoresActivity;
+import com.ookiisoftware.protips.activity.SeguindoActivity;
 import com.ookiisoftware.protips.adapter.PostPerfilAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
@@ -36,6 +37,7 @@ import com.ookiisoftware.protips.modelo.PostPerfil;
 import com.ookiisoftware.protips.modelo.Usuario;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,11 +47,6 @@ public class PerfilFragment extends Fragment {
 //    private static final String TAG = "PerfilFragment";
 
     private Activity activity;
-    private ImageView btn_notificacao;
-    private TextView notification_quant;
-    private RecyclerView recyclerView;
-
-    private Dialog dialog;
     private OnSwipeListener onSwipeListener = new OnSwipeListener() {
         @Override
         public void onTouchUp() {
@@ -64,6 +61,11 @@ public class PerfilFragment extends Fragment {
     private PostPerfilAdapter perfilAdapter;
     private ArrayList<PostPerfil> postPerfils;
     private boolean isTipster;
+
+    private Dialog dialog;
+    private ImageView btn_notificacao;
+    private TextView notification_quant;
+    private RecyclerView recyclerView;
 
     //endregion
 
@@ -91,13 +93,20 @@ public class PerfilFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.REQUEST_PERMISSION_STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri uri = data.getData();
+        if(requestCode == Constantes.REQUEST_PERMISSION_STORANGE && resultCode == RESULT_OK) {
             if (dialog != null) {
-                foto_path = uri.toString();
-                ImageView foto = dialog.findViewById(R.id.iv_foto);
-                Glide.with(activity).load(uri).into(foto);
+                if (data == null || data.getData() == null) {
+                    dialog.dismiss();
+                } else {
+                    Uri uri = data.getData();
+                    foto_path = uri.toString();
+                    ImageView foto = dialog.findViewById(R.id.iv_foto);
+                    Glide.with(activity).load(uri).into(foto);
+                }
             }
+        } else {
+            if (dialog != null)
+                dialog.dismiss();
         }
     }
 
@@ -108,62 +117,27 @@ public class PerfilFragment extends Fragment {
     @SuppressLint("ClickableViewAccessibility")
     private void Init(View view) {
         //region findViewById
-        ImageView img_foto_usuario = view.findViewById(R.id.iv_foto);
+        ImageView foto_user = view.findViewById(R.id.iv_foto);
         TextView txt_tipname = view.findViewById(R.id.tv_tipname);
         TextView txt_nome = view.findViewById(R.id.tv_nome);
         TextView txt_email = view.findViewById(R.id.tv_email);
-//        TextView btm_edit = view.findViewById(R.id.tv_edit);
-        TextView text = view.findViewById(R.id.text);
+        TextView posts_no_perfil = view.findViewById(R.id.tv_posts_no_perfil);
         TextView btn_seguidores = view.findViewById(R.id.tv_seguidores);
-        notification_quant = view.findViewById(R.id.tv_notification_quant);
 
         ImageView btn_newPost = view.findViewById(R.id.iv_new_post);
         ImageView btn_newPostPerfil = view.findViewById(R.id.iv_new_post_perfil);
         ImageView btn_planilha = view.findViewById(R.id.iv_planilha);
         ImageView btn_3_perfil_fragment = view.findViewById(R.id.btn_3_perfil_fragment);
+
         recyclerView = view.findViewById(R.id.recycler);
         btn_notificacao = view.findViewById(R.id.iv_new_punter);
+        notification_quant = view.findViewById(R.id.tv_notification_quant);
         //endregion
 
         //region setValues
 
         isTipster = Import.getFirebase.isTipster();
-
-        Usuario user;
-        if (isTipster) {
-            postPerfils = new ArrayList<>(Import.getFirebase.getTipster().getPost_perfil().values());
-            ArrayList<PostPerfil> data = postPerfils;
-            perfilAdapter = new PostPerfilAdapter(activity, data, true, onSwipeListener) {
-                @Override
-                public void onClick(View v) {
-
-                }
-
-                @Override
-                public boolean onLongClick(View v) {
-                    int position = recyclerView.getChildAdapterPosition(v);
-                    PostPerfil item = postPerfils.get(position);
-                    popupPhoto(item.getFoto());
-                    return super.onLongClick(v);
-                }
-            };
-            recyclerView.setAdapter(perfilAdapter);
-            recyclerView.setOnTouchListener(onSwipeListener);
-
-            user = Import.getFirebase.getTipster().getDados();
-            btn_newPostPerfil.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
-            btn_seguidores.setText(activity.getResources().getString(R.string.punters));
-            text.setVisibility(View.VISIBLE);
-        } else {
-            text.setVisibility(View.GONE);
-            btn_seguidores.setText(activity.getResources().getString(R.string.tipster));
-            btn_newPost.setVisibility(View.GONE);
-            btn_planilha.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.GONE);
-            btn_newPostPerfil.setVisibility(View.GONE);
-            user = Import.getFirebase.getPunter().getDados();
-        }
+        Usuario user = Import.getFirebase.getTipster().getDados();
 
         if (user == null)
             return;
@@ -171,29 +145,47 @@ public class PerfilFragment extends Fragment {
         txt_nome.setText(user.getNome());
         txt_email.setText(user.getEmail());
         txt_tipname.setText(user.getTipname());
-        String uri = user.getFoto();
+        Glide.with(activity).load(user.getFoto()).into(foto_user);
 
-        boolean b = isTipster && !user.isBloqueado();
-        btn_newPost.setEnabled(b);
-        btn_planilha.setEnabled(b);
+        if (isTipster) {
+            postPerfils = new ArrayList<>(Import.getFirebase.getTipster().getPost_perfil().values());
+            Collections.sort(postPerfils, new PostPerfil.orderByDate());
+            perfilAdapter = new PostPerfilAdapter(activity, postPerfils, true, onSwipeListener) {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = recyclerView.getChildAdapterPosition(v);
+                    PostPerfil item = postPerfils.get(position);
+                    popupPhoto(item.getFoto());
+                    recyclerView.suppressLayout(true);
+                    Import.activites.getMainActivity().setPagingEnabled(false);
+                    return super.onLongClick(v);
+                }
+            };
+            recyclerView.setAdapter(perfilAdapter);
+            recyclerView.setOnTouchListener(onSwipeListener);
 
-        Glide.with(activity).load(uri).into(img_foto_usuario);
+            btn_newPostPerfil.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+            btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_punters));
+            posts_no_perfil.setVisibility(View.VISIBLE);
+        } else {
+            posts_no_perfil.setVisibility(View.GONE);
+            btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_tipsters));
+            btn_newPost.setVisibility(View.GONE);
+            btn_planilha.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            btn_newPostPerfil.setVisibility(View.GONE);
+        }
 
         //endregion
 
         //region setListener
-        img_foto_usuario.setOnClickListener(view1 -> {
+        foto_user.setOnClickListener(view1 -> {
             Intent intent = new Intent(activity, PerfilActivity.class);
-            intent.putExtra(Constantes.FRAGMENT, Constantes.FRAGMENT_EDIT);
             startActivity(intent);
         });
 
         if (isTipster) {
-            btn_notificacao.setOnClickListener(v -> {
-                removeNotification();
-                Import.activites.getMainActivity().viewPager.setCurrentItem(Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
-            });
-
             btn_newPost.setOnClickListener(v -> {
                 Intent intent = new Intent(activity, PostActivity.class);
                 startActivity(intent);
@@ -201,11 +193,19 @@ public class PerfilFragment extends Fragment {
 
             btn_newPostPerfil.setOnClickListener(v -> postPerfil());
         }
+        btn_notificacao.setOnClickListener(v -> {
+            removeNotification();
+            Import.activites.getMainActivity().setPagePosition(Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+        });
         btn_3_perfil_fragment.setOnClickListener(v -> {
 
         });
         btn_seguidores.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, SeguidoresActivity.class);
+            Intent intent;
+            if (isTipster)
+                intent = new Intent(activity, SeguidoresActivity.class);
+            else
+                intent = new Intent(activity, SeguindoActivity.class);
             activity.startActivity(intent);
         });
 
@@ -213,7 +213,7 @@ public class PerfilFragment extends Fragment {
     }
 
     public void updateNotificacao() {
-        int quant = Import.get.tipsters.getPuntersPendentes().size();
+        int quant = Import.get.solicitacao.getAll().size();
         if (quant > 0) {
             btn_notificacao.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_sms_2));
             String quantS = "" + quant;
@@ -240,7 +240,7 @@ public class PerfilFragment extends Fragment {
     private void postPerfil() {
         dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.item_post_perfil);
+        dialog.setContentView(R.layout.popup_post_perfil);
         dialog.setCancelable(false);
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -254,26 +254,26 @@ public class PerfilFragment extends Fragment {
         pegarFotoDaGaleria();
         rl.setVisibility(View.VISIBLE);
 
+        foto.setScaleType(ImageView.ScaleType.FIT_CENTER);
         foto.setOnClickListener(v -> pegarFotoDaGaleria());
         cancel.setOnClickListener(v -> dialog.dismiss());
         postar.setOnClickListener(v -> {
-            {
-                PostPerfil post = new PostPerfil();
-                post.setTitulo(titulo.getText().toString());
-                post.setTexto(texto.getText().toString());
-                post.setData(Import.get.Data());
-                post.setId(Criptografia.criptografar(post.getData()));
-                post.setId_tipster(Import.getFirebase.getId());
-                post.setFoto(foto_path);
+            PostPerfil post = new PostPerfil();
+            post.setTitulo(titulo.getText().toString());
+            post.setTexto(texto.getText().toString());
+            post.setData(Import.get.Data());
+            post.setId(Criptografia.criptografar(post.getData()));
+            post.setId_tipster(Import.getFirebase.getId());
+            post.setFoto(foto_path);
 
-                if (post.getFoto() == null || post.getFoto().isEmpty()) {
-                    return;
-                }
-                post.salvar(activity, null, true);
-                postPerfils.add(post);
-                adapterUpdate();
-                dialog.dismiss();
+            if (post.getFoto() == null || post.getFoto().isEmpty()) {
+                return;
             }
+            post.salvar(activity, null, true);
+            postPerfils.add(post);
+            Collections.sort(postPerfils, new PostPerfil.orderByDate());
+            adapterUpdate();
+            dialog.dismiss();
         });
         dialog.setOnDismissListener(dialog -> foto_path = null);
 
@@ -288,25 +288,25 @@ public class PerfilFragment extends Fragment {
     }
 
     private void popupPhoto(String uri) {
-        if (uri == null || uri.isEmpty())
-            return;
-        dialog = new Dialog(activity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.popup_foto);
-        dialog.setOnDismissListener(dialog -> {
-            recyclerView.suppressLayout(false);
-            Import.activites.getMainActivity().viewPager.setPagingEnabled(true);
-        });
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
-        recyclerView.suppressLayout(true);
-        Import.activites.getMainActivity().viewPager.setPagingEnabled(false);
+        try {
+            if (uri == null || uri.isEmpty())
+                return;
+            dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.popup_foto);
+            dialog.setOnDismissListener(dialog -> {
+                recyclerView.suppressLayout(false);
+                Import.activites.getMainActivity().setPagingEnabled(true);
+            });
+            if (dialog.getWindow() != null)
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
 
-        ImageView foto = dialog.findViewById(R.id.iv_foto);
-        foto.setVisibility(View.VISIBLE);
-        Glide.with(activity).load(uri).into(foto);
-        foto.requestLayout();
+            ImageView foto = dialog.findViewById(R.id.iv_foto);
+            foto.setVisibility(View.VISIBLE);
+            Glide.with(activity).load(uri).into(foto);
+            foto.requestLayout();
+        } catch (Exception ignored) {}
     }
 
     //endregion

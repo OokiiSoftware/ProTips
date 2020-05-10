@@ -5,22 +5,33 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.PostAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 
+import java.util.Comparator;
+
 public class PostPerfil {
 
+    //region Variáveis
     private String id;
     private String foto;
     private String titulo;
     private String texto;
     private String data;
     private String id_tipster;
+    //endregion
 
-    public PostPerfil() {}
+    //region Métodos
 
     public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
         if (isFotoLocal) {
@@ -34,8 +45,6 @@ public class PostPerfil {
                                 if (task.getResult() != null) {
                                     setFoto(task.getResult().toString());
                                     salvar();
-                                    activity.finish();
-                                    Import.activites.getMainActivity().perfilFragment.adapterUpdate();
                                 }
                             });
                     }).addOnFailureListener(e -> {
@@ -53,12 +62,55 @@ public class PostPerfil {
         DatabaseReference reference = Import.getFirebase.getReference();
         reference
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
                 .child(id)
                 .child(Constantes.firebase.child.POSTES_PERFIL)
                 .child(Criptografia.criptografar(getData()))
                 .setValue(this);
+
+        Import.getFirebase.getTipster().getPost_perfil().put(getId(), this);
+        Import.activites.getMainActivity().perfilFragment.adapterUpdate();
     }
+
+    public void excluir(final PostAdapter adapter) {
+        String id = getId_tipster();
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(id)
+                .child(Constantes.firebase.child.POSTES_PERFIL);
+
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                ref.child(Criptografia.criptografar(getData())).removeValue();
+
+                Import.getFirebase.getStorage()
+                        .child(Constantes.firebase.child.POSTES_PERFIL)
+                        .child(getId()).delete();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Post item = dataSnapshot.getValue(Post.class);
+                if (item != null && item.getId().equals(getId())) {
+                    Import.getFirebase.getTipster().getPost_perfil().remove(getId());
+                    adapter.notifyDataSetChanged();
+                }
+                ref.removeEventListener(this);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        ref.addChildEventListener(eventListener);
+    }
+
+    //endregion
 
     //region gets sets
 
@@ -111,5 +163,11 @@ public class PostPerfil {
     }
 
     //endregion
+
+    public static class orderByDate implements Comparator<PostPerfil> {
+        public int compare(PostPerfil left, PostPerfil right) {
+            return right.getData().compareTo(left.getData());
+        }
+    }
 
 }

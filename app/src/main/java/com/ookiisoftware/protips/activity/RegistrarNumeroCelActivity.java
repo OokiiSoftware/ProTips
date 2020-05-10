@@ -132,10 +132,10 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                boolean isTipster = Import.getFirebase.isTipster();
+//                                boolean isTipster = Import.getFirebase.isTipster();
                                 Usuario usuario = Import.getFirebase.getUsuario();
                                 if (usuario != null)
-                                    usuario.atualizarNumero(numero, isTipster);
+                                    usuario.atualizarNumero(numero);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

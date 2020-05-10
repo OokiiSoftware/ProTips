@@ -18,7 +18,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.PostAdapter;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Post;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
@@ -27,14 +26,14 @@ public class FeedFragment extends Fragment {
     //region Variáveis
 
 //    private static final String TAG = "InicioFragment";
-    private RecyclerView recyclerView;
-    private TextView novos_postes;
 
     private Activity activity;
+    private PostAdapter adapter;
     private boolean scrollInTop;
 
-    private PostAdapter adapter;
     public SwipeRefreshLayout refreshLayout;
+    private RecyclerView recyclerView;
+    private TextView novos_postes;
 
     //endregion
 
@@ -48,44 +47,20 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
-        Init(view);
+        init(view);
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     //endregion
 
     //region Métodos
 
-    private void Init(View view) {
+    private void init(View view) {
         recyclerView = view.findViewById(R.id.recycler);
         refreshLayout = view.findViewById(R.id.swipeRefresh);
         novos_postes = view.findViewById(R.id.tv_novos_postes);
 
-        final boolean isTipster = Import.getFirebase.isTipster();
-
-        if (isTipster) {
-            for (Post item : Import.getFirebase.getTipster().getPostes().values())
-                if (!Import.get.tipsters.postes().contains(item))
-                    Import.get.tipsters.postes().add(item);
-            refreshLayout.setEnabled(false);
-        } else {
-            refreshLayout.setOnRefreshListener(() -> {
-                Import.activites.getMainActivity().feedUpdate();
-                haveNewPostes(false);
-            });
-        }
-
-        adapter = new PostAdapter(activity, Import.get.tipsters.postes()) {
+        adapter = new PostAdapter(activity, Import.get.seguindo.getPostes()) {
             @Override
             @SuppressLint("ClickableViewAccessibility")
             public boolean onTouch(View v, MotionEvent event) {
@@ -95,14 +70,14 @@ public class FeedFragment extends Fragment {
                             if (viewTouch.getScale() > 1) {
                                 recyclerView.suppressLayout(true);
                                 refreshLayout.setEnabled(false);
-                                Import.activites.getMainActivity().viewPager.setPagingEnabled(false);
+                                Import.activites.getMainActivity().setPagingEnabled(false);
                             }
                             break;
                         }
                         case MotionEvent.ACTION_UP: {
                             recyclerView.suppressLayout(false);
-                            refreshLayout.setEnabled(!isTipster);
-                            Import.activites.getMainActivity().viewPager.setPagingEnabled(true);
+                            refreshLayout.setEnabled(true);
+                            Import.activites.getMainActivity().setPagingEnabled(true);
                             break;
                         }
                     }
@@ -120,6 +95,11 @@ public class FeedFragment extends Fragment {
                     scrollInTop = getCurrentItem() <= 3;
                 }
             }
+        });
+
+        refreshLayout.setOnRefreshListener(() -> {
+            Import.activites.getMainActivity().feedUpdate();
+            haveNewPostes(false);
         });
 
         novos_postes.setOnClickListener(v -> {

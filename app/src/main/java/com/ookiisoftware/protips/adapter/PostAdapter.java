@@ -25,7 +25,7 @@ import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
-import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.User;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -59,7 +59,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
     @SuppressLint("ClickableViewAccessibility")
     public void onBindViewHolder(@NonNull final Holder holder, final int position) {
         final Post item = data.get(position);
-        final String myId = Import.getFirebase.getId();
+        final String meuId = Import.getFirebase.getId();
         final MenuItem menuItem = holder.toolbar.getMenu().findItem(R.id.menu_excluir);
         String _data = Import.reorder(item.getData());
         holder.data.setText(_data);
@@ -73,37 +73,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         holder.horario_min.setText(item.getHorario_minimo());
         holder.horario_max.setText(item.getHorario_maximo());
 
-        if (item.getBom().containsValue(myId))
-            holder.bom.setTextColor(activity.getResources().getColor(R.color.amarelo));
-        else
-            holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light));
-        if (item.getRuim().containsValue(myId))
-            holder.ruim.setTextColor(activity.getResources().getColor(R.color.amarelo));
-        else
-            holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
-
         //region path foto
-        String id_Tipster = item.getId_tipster();
+        String userId = item.getId_tipster();
         Uri path = null;
         String foto_post = item.getFoto();
-        if (Objects.equals(id_Tipster, myId)) {
+        if (Objects.equals(userId, meuId)) {
             path = Import.getFirebase.getFoto();
-            holder.tipster.setText(Import.getFirebase.getUser().getDisplayName());
+            holder.userName.setText(Import.getFirebase.getUser().getDisplayName());
         } else {
-            Tipster tipster = Import.get.tipsters.findTipster(id_Tipster);
+            User tipster = Import.get.tipsters.get(userId);
             if (tipster != null) {
                 path = Uri.parse(tipster.getDados().getFoto());
-                holder.tipster.setText(tipster.getDados().getNome());
+                holder.userName.setText(tipster.getDados().getNome());
             }
-        }
-        //endregion
-
-        if (Import.getFirebase.isTipster()) {
-            holder.green_red.setVisibility(View.VISIBLE);
-            menuItem.setVisible(true);
-        } else {
-            menuItem.setVisible(false);
-            holder.green_red.setVisibility(View.GONE);
         }
 
         if (path != null)
@@ -111,35 +93,50 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         if (foto_post != null)
             Glide.with(activity).load(foto_post).into(holder.foto_post);
 
+        //endregion
+
+        if (Objects.equals(meuId, userId)) {
+            holder.green_red.setVisibility(View.VISIBLE);
+            menuItem.setVisible(true);
+
+            if (item.getBom().containsValue(meuId))
+                holder.bom.setTextColor(activity.getResources().getColor(R.color.amarelo));
+            else
+                holder.bom.setTextColor(activity.getResources().getColor(R.color.text_light));
+            if (item.getRuim().containsValue(meuId))
+                holder.ruim.setTextColor(activity.getResources().getColor(R.color.amarelo));
+            else
+                holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
+        } else {
+            menuItem.setVisible(false);
+            holder.green_red.setVisibility(View.GONE);
+        }
+
         //region setListener
         holder.bom.setOnClickListener(v -> {
-            {
-                if (item.getBom().containsValue(myId)) {
-                    item.removeBom(myId);
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
-                } else {
-                    item.addBom(myId);
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_bom));
-                }
-                notifyItemChanged(position);
+            if (item.getBom().containsValue(meuId)) {
+                item.removeBom(meuId);
+                Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+            } else {
+                item.addBom(meuId);
+                Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_bom));
             }
+            notifyItemChanged(position);
         });
         holder.ruim.setOnClickListener(v -> {
-            {
-                if (item.getRuim().containsValue(myId)) {
-                    item.removeRuim(myId);
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
-                } else {
-                    item.addRuim(myId);
-                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_ruim));
-                }
-                notifyItemChanged(position);
+            if (item.getRuim().containsValue(meuId)) {
+                item.removeRuim(meuId);
+                Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_removido));
+            } else {
+                item.addRuim(meuId);
+                Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.tip_voto_ruim));
             }
+            notifyItemChanged(position);
         });
 
         holder.toolbar.setOnClickListener(v -> {
             Intent intent;
-            if (Objects.equals(item.getId_tipster(), Import.getFirebase.getId())) {
+            if (Objects.equals(item.getId_tipster(), meuId)) {
                 intent = new Intent(activity, PerfilActivity.class);
             } else {
                 intent = new Intent(activity, PerfilTipsterActivity.class);
@@ -154,21 +151,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
                 dialog.setMessage(activity.getResources().getString(R.string.excluir_post));
                 dialog.setPositiveButton(activity.getResources().getString(R.string.ok), (dialog1, which) -> {
                     item.excluir(PostAdapter.this);
-                    holder.tipster.setText(activity.getResources().getString(R.string.excluindo));
+                    holder.userName.setText(activity.getResources().getString(R.string.excluindo));
                 });
                 dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), null);
                 dialog.show();
             }
             return false;
         });
-        /*menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem _item) {
-                item.excluir(PostAdapter.this);
-                holder.tipster.setText(activity.getResources().getString(R.string.excluindo));
-                return false;
-            }
-        });*/
+
         holder.foto_post.setOnTouchListener(this);
         //endregion
 
@@ -202,7 +192,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         TextView odd_max;
         TextView horario_min;
         TextView horario_max;
-        TextView texto, data, tipster, bom, ruim;
+        TextView texto, data, userName, bom, ruim;
 
         Holder(@NonNull View itemView) {
             super(itemView);
@@ -217,10 +207,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
 
             foto_user = itemView.findViewById(R.id.iv_foto);
             foto_post = itemView.findViewById(R.id.ivt_foto_post);
-            green_red = itemView.findViewById(R.id.ll_green_red);
+            green_red = itemView.findViewById(R.id.tipster_container);
             texto = itemView.findViewById(R.id.tv_texto);
             data = itemView.findViewById(R.id.tv_data);
-            tipster = itemView.findViewById(R.id.tv_tipster);
+            userName = itemView.findViewById(R.id.tv_tipster);
             bom = itemView.findViewById(R.id.tv_bom);
             ruim = itemView.findViewById(R.id.tv_ruim);
         }

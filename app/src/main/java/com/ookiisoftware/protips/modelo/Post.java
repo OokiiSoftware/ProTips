@@ -5,12 +5,6 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.PostAdapter;
@@ -18,6 +12,7 @@ import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class Post {
@@ -45,6 +40,8 @@ public class Post {
         ruim = new HashMap<>();
     }
 
+    //region Métodos
+
     public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
         if (isFotoLocal) {
             Import.getFirebase.getStorage()
@@ -58,9 +55,6 @@ public class Post {
                                     setFoto(task.getResult().toString());
                                     salvar();
                                     activity.finish();
-                                    Import.get.tipsters.postes().add(Post.this);
-                                    Import.getFirebase.getTipster().getPostes().put(getId(), Post.this);
-                                    Import.activites.getMainActivity().feedFragment.adapterUpdate();
                                 }
                             });
                     }).addOnFailureListener(e -> {
@@ -74,20 +68,21 @@ public class Post {
 
     private void salvar() {
         String id = getId_tipster() == null ? Import.getFirebase.getId() : getId_tipster();
-        DatabaseReference reference = Import.getFirebase.getReference();
-        reference
+        Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
                 .child(id)
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
                 .setValue(this);
+
+        Import.get.seguindo.add(this);
+        Import.getFirebase.getTipster().getPostes().put(getId(), this);
     }
 
     public void addBom(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -104,7 +99,7 @@ public class Post {
     public void addRuim(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -121,7 +116,7 @@ public class Post {
     public void removeBom(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -134,7 +129,7 @@ public class Post {
     public void removeRuim(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -146,44 +141,26 @@ public class Post {
 
     public void excluir(final PostAdapter adapter) {
         String id = getId_tipster();
-        final DatabaseReference ref = Import.getFirebase.getReference()
+        DatabaseReference ref = Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
                 .child(id)
                 .child(Constantes.firebase.child.POSTES);
 
-        ChildEventListener eventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ref.child(Criptografia.criptografar(getData())).removeValue();
+        ref.child(Criptografia.criptografar(getData()))
+                .removeValue()
+                .addOnSuccessListener(aVoid -> {
 
-                Import.getFirebase.getStorage()
-                        .child(Constantes.firebase.child.POSTES)
-                        .child(getId()).delete();
-            }
+                    Import.getFirebase.getStorage()
+                            .child(Constantes.firebase.child.POSTES)
+                            .child(getId()).delete();
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Post item = dataSnapshot.getValue(Post.class);
-                if (item != null && item.getId().equals(getId())) {
-                    Import.get.tipsters.postes().remove(Post.this);
+                    Import.get.seguindo.remove(this);
                     Import.getFirebase.getTipster().getPostes().remove(getId());
                     adapter.notifyDataSetChanged();
-                }
-                ref.removeEventListener(this);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        ref.addChildEventListener(eventListener);
+        });
     }
+
+    //endregion
 
     //region gets sets
 
@@ -313,4 +290,9 @@ public class Post {
 
     //endregion
 
+    public static class sortByDate implements Comparator<Post> {
+        public int compare(Post left, Post right) {
+            return right.getData().compareTo(left.getData());
+        }
+    }
 }

@@ -34,22 +34,29 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.LoginActivity;
 import com.ookiisoftware.protips.modelo.Activites;
-import com.ookiisoftware.protips.modelo.Punter;
+//import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.Post;
-import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
@@ -219,17 +226,17 @@ public class Import {
 
     public static void reiniciarApp(Activity activity) {
         limparDados();
+        Import.getFirebase.deleteTipster(activity);
+        Import.getFirebase.setUser(activity, (User) null, false);
         activity.finishAffinity();
         irProLogin(activity);
     }
 
     private static void limparDados() {
-        get.tipsters.setPostes(new ArrayList<>());
-        get.tipsters.setPuntersPendentes(new ArrayList<>());
-        get.tipsters.setTipsters(new ArrayList<>());
-        get.tipsters.setTipstersAux(new ArrayList<>());
-        get.punter.setPunters(new ArrayList<>());
-        get.punter.setPuntersAux(new ArrayList<>());
+        get.seguindo.resetAll();
+        get.tipsters.resetAll();
+        get.seguidores.resetAll();
+        get.solicitacao.resetAll();
     }
 
     //endregion
@@ -292,98 +299,241 @@ public class Import {
             }
         }
 
-        public static class myComparator implements Comparator<Post> {
-            public int compare(Post left, Post right) {
-                return right.getData().compareTo(left.getData());
-            }
-        }
-
         public static class tipsters {
-            private static ArrayList<Punter> puntersPendentes = new ArrayList<>();
-            private static ArrayList<Tipster> tipstersAux = new ArrayList<>();
-            private static ArrayList<Tipster> tipsters = new ArrayList<>();
+            private static ArrayList<User> usersAux = new ArrayList<>();
+            private static ArrayList<User> users = new ArrayList<>();
             private static ArrayList<Post> postes = new ArrayList<>();
 
-            // Esse Auxiliar serve para restaurar a lista principal no momento
-            // de pesquisa onde a lista principal 'tipsters' sofre uma Clear()
-            public static ArrayList<Punter> getPuntersPendentes() {
-                return puntersPendentes;
+            public static ArrayList<User> getAllAux() {
+                return usersAux;
             }
-            public static ArrayList<Tipster> getAllAux() {
-                return tipstersAux;
-            }
-            public static ArrayList<Tipster> getAll() {
-                return tipsters;
+            public static ArrayList<User> getAll() {
+                return users;
             }
 
-            static void setPuntersPendentes(ArrayList<Punter> value) {
-                puntersPendentes = value;
-            }
-
-            static void setTipstersAux(ArrayList<Tipster> value) {
-                tipstersAux = value;
-            }
-
-            public static void setTipsters(ArrayList<Tipster> value) {
-                tipsters = value;
-            }
-
-            static void setPostes(ArrayList<Post> value) {
-                postes = value;
-            }
-
-            public static ArrayList<Post> postes () {
-                Collections.sort(postes, new myComparator());
+            public static ArrayList<Post> getPostes () {
                 return postes;
             }
 
-            public static Tipster findTipster(String value) {
-                for (Tipster i : getAll())
-                    if (i.getDados().getId().equals(value))
-                        return i;
+            public static void remove(String key) {
+                User item = findUser(key);
+                users.remove(item);
+                usersAux.remove(item);
+            }
+            public static void remove(Post post) {
+                postes.remove(post);
+            }
+
+            public static void add(User user) {
+                User item = findUser(user.getDados().getId());
+                if (item == null) {
+                    users.add(user);
+                    usersAux.add(user);
+                } else {
+                    users.set(users.indexOf(item), user);
+                    usersAux.set(usersAux.indexOf(item), user);
+                }
+                Collections.sort(users, new User.sortByMedia());
+            }
+            public static void add(Post post) {
+                Post item = null;
+                for (Post p : postes)
+                    if (p.getId().equals(post.getId())) {
+                        item = p;
+                        break;
+                    }
+                if (item == null) {
+                    postes.add(post);
+                    Collections.sort(postes, new Post.sortByDate());
+                }
+            }
+            public static void addAll(HashMap<String, Post> posts) {
+                postes.addAll(posts.values());
+                Collections.sort(postes, new Post.sortByDate());
+            }
+
+            public static User get(String key) {
+                return findUser(key);
+            }
+
+            private static User findUser(String key) {
+                for (User p : users)
+                    if (p.getDados().getId().equals(key)) {
+                        return p;
+                    }
                 return null;
             }
 
-            public static Punter findPuntersPendentes(String value) {
-                for (Punter i : getPuntersPendentes())
-                    if (i.getDados().getId().equals(value))
-                        return i;
-                return null;
-            }
-
-            public static Post findPost(String value) {
-                for (Post i : postes())
-                    if (i.getId().equals(value))
-                        return i;
-                return null;
+            private static void resetAll() {
+                usersAux.clear();
+                users.clear();
+                postes.clear();
             }
         }
+        public static class seguindo {
+            private static ArrayList<User> usersAux = new ArrayList<>();
+            private static ArrayList<User> users = new ArrayList<>();
+            private static ArrayList<Post> postes = new ArrayList<>();
 
-        public static class punter {
-            private static ArrayList<Punter> punters = new ArrayList<>();
-            private static ArrayList<Punter> puntersAux = new ArrayList<>();
-
-            public static ArrayList<Punter> getAllAux () {
-                return puntersAux;
+            public static ArrayList<User> getAllAux() {
+                return usersAux;
             }
-            public static ArrayList<Punter> getAll() {
-                return punters;
-            }
-
-            public static void setPunters(ArrayList<Punter> value) {
-                punters = value;
-            }
-            static void setPuntersAux(ArrayList<Punter> value) {
-                puntersAux = value;
+            public static ArrayList<User> getAll() {
+                return users;
             }
 
-            public static Punter find(String value) {
-                for (Punter i : getAll())
-                    if (i.getDados().getId().equals(value))
-                        return i;
+            public static ArrayList<Post> getPostes () {
+                return postes;
+            }
+
+            public static void remove(String key) {
+                User item = findUser(key);
+                users.remove(item);
+                usersAux.remove(item);
+            }
+            public static void remove(Post post) {
+                postes.remove(findPost(post.getId()));
+            }
+
+            public static void add(User user) {
+                User item = findUser(user.getDados().getId());
+                if (item == null) {
+                    users.add(user);
+                    usersAux.add(user);
+                } else {
+                    users.set(users.indexOf(item), user);
+                    usersAux.set(usersAux.indexOf(item), user);
+                }
+                Collections.sort(users, new User.sortByMedia());
+            }
+            public static void add(Post post) {
+                Post item = null;
+                for (Post p : postes)
+                    if (p.getId().equals(post.getId())) {
+                        item = p;
+                        break;
+                    }
+                if (item == null) {
+                    postes.add(post);
+                    Collections.sort(postes, new Post.sortByDate());
+                }
+            }
+            public static void addAll(HashMap<String, Post> posts) {
+                for (Post p : posts.values()) {
+                    Post i = findPost(p.getId());
+                    if (i == null)
+                        postes.add(p);
+                }
+                Collections.sort(postes, new Post.sortByDate());
+            }
+
+            public static User get(String key) {
+                return findUser(key);
+            }
+
+            private static User findUser(String key) {
+                for (User p : users)
+                    if (p.getDados().getId().equals(key)) {
+                        return p;
+                    }
+                return null;
+            }
+            private static Post findPost(String key) {
+                for (Post p : postes)
+                    if (p.getId().equals(key))
+                        return p;
+                    return null;
+            }
+
+            private static void resetAll() {
+                usersAux.clear();
+                users.clear();
+                postes.clear();
+            }
+        }
+        public static class seguidores {
+            private static ArrayList<User> usersAux = new ArrayList<>();
+            private static ArrayList<User> users = new ArrayList<>();
+
+            public static ArrayList<User> getAllAux() {
+                return usersAux;
+            }
+            public static ArrayList<User> getAll() {
+                return users;
+            }
+
+            public static void remove(String key) {
+                User item = findUser(key);
+                users.remove(item);
+                usersAux.remove(item);
+            }
+
+            public static void add(User user) {
+                User item = findUser(user.getDados().getId());
+                if (item == null) {
+                    users.add(user);
+                    usersAux.add(user);
+                } else {
+                    users.set(users.indexOf(item), user);
+                    usersAux.set(usersAux.indexOf(item), user);
+                }
+                Collections.sort(users, new User.sortByMedia());
+            }
+
+            public static User get(String key) {
+                return findUser(key);
+            }
+
+            private static User findUser(String key) {
+                for (User p : users)
+                    if (p.getDados().getId().equals(key)) {
+                        return p;
+                    }
                 return null;
             }
 
+            private static void resetAll() {
+                usersAux.clear();
+                users.clear();
+            }
+        }
+        public static class solicitacao {
+            private static ArrayList<User> users = new ArrayList<>();
+
+            public static ArrayList<User> getAll() {
+                return users;
+            }
+
+            public static void remove(String key) {
+                User item = findUser(key);
+                users.remove(item);
+            }
+
+            public static void add(User user) {
+                User item = findUser(user.getDados().getId());
+                if (item == null) {
+                    users.add(user);
+                } else {
+                    users.set(users.indexOf(item), user);
+                }
+                Collections.sort(users, new User.sortByMedia());
+            }
+
+            public static User get(String key) {
+                return findUser(key);
+            }
+
+            private static User findUser(String key) {
+                for (User p : users)
+                    if (p.getDados().getId().equals(key)) {
+                        return p;
+                    }
+                return null;
+            }
+
+            private static void resetAll() {
+                users.clear();
+            }
         }
     }
 
@@ -439,10 +589,12 @@ public class Import {
     public static class getFirebase {
         private static FirebaseAuth firebaseAuth;
         private static DatabaseReference firebase;
-        private static Punter punter;
-        private static Tipster tipster;
+//        private static Punter punter;
+        private static User tipster;
 
         private static StorageReference firebaseStorage;
+
+        //region get
 
         public static DatabaseReference getReference() {
             if(firebase == null)
@@ -478,61 +630,62 @@ public class Import {
             return getUser().getEmail();
         }
 
-        public static void setUser(Context context, Punter user) {
-            if (user != null) {
-                SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
-                editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
-                editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
-                editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
+//        public static Punter getPunter() {
+//            return punter;
+//        }
 
-                editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
-                editor.apply();
-            }
-
-            punter = user;
-        }
-
-        public static void setUser(Context context, Tipster user) {
-            if (user != null) {
-                SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString(Constantes.user.logado.NOME, user.getDados().getNome());
-                editor.putString(Constantes.user.logado.EMAIL, user.getDados().getEmail());
-                editor.putString(Constantes.user.logado.TIPNAME, user.getDados().getId());
-                editor.putString(Constantes.user.logado.FOTO, user.getDados().getFoto());
-
-                editor.putBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
-                editor.apply();
-            }
-
-            tipster = user;
-        }
-
-        public static Punter getPunter() {
-            return punter;
-        }
-
-        public static Tipster getTipster() {
+        public static User getTipster() {
             return tipster;
         }
 
         public static Usuario getUsuario() {
-            if (isTipster())
+//            if (isTipster())
                 return getTipster().getDados();
-            else if (getPunter() != null)
-                return getPunter().getDados();
-            return null;
-        }
-
-        public static boolean isTipster() {
-            return tipster != null;
+//            else if (getPunter() != null)
+//                return getPunter().getDados();
+//            return null;
         }
 
         public static String getUltinoEmail(Context context) {
             SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
             return pref.getString(Constantes.user.logado.ULTIMO_EMAIL, "");
+        }
+
+        public static boolean isTipster() {
+            if (getTipster() == null)
+                return false;
+            return getTipster().getDados().isTipster();
+        }
+
+        public static boolean isGerente(Activity activity) {
+            return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Constantes.presset.IS_GERENTE, false);
+        }
+
+        //endregion
+
+        //region set
+
+        /*public static void setUser(Context context, Punter user, boolean save) {
+            if (save) {
+
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+
+                create(context, Constantes.files.PUNTER_JSON, json);
+            }
+
+            punter = user;
+        }*/
+
+        public static void setUser(Context context, User user, boolean save) {
+            if (save) {
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+
+                create(context, Constantes.files.USER_JSON, json);
+            }
+
+            tipster = user;
         }
 
         public static void setUltinoEmail(Context context, String email) {
@@ -547,9 +700,60 @@ public class Import {
             editor.apply();
         }
 
-        public static boolean isGerente(Activity activity) {
-            return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Constantes.presset.IS_GERENTE, false);
+        //endregion
+
+//        public static void deletePunter(Context context) {
+//            context.deleteFile(Constantes.files.PUNTER_JSON);
+//        }
+
+        public static void deleteTipster(Context context) {
+            context.deleteFile(Constantes.files.USER_JSON);
         }
+
+        public static void saveUser(Context context) {
+            setUser(context, getTipster(), true);
+//            if (isTipster()) {
+//            } else {
+//                setUser(context, getPunter(), true);
+//            }
+        }
+
+        public static String read(Context context, String fileName) {
+            try {
+                FileInputStream fis = context.openFileInput(fileName);
+                InputStreamReader isr = new InputStreamReader(fis);
+                BufferedReader bufferedReader = new BufferedReader(isr);
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+                return sb.toString();
+            } catch (IOException fileNotFound) {
+                return null;
+            }
+        }
+
+        private static boolean create(Context context, String fileName, String jsonString){
+            try {
+                FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                if (jsonString != null) {
+                    fos.write(jsonString.getBytes());
+                }
+                fos.close();
+                return true;
+            } catch (IOException fileNotFound) {
+                Alert.erro(TAG, "create", fileNotFound);
+                return false;
+            }
+        }
+
+        public static boolean isFilePresent(Context context, String fileName) {
+            String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
+            File file = new File(path);
+            return file.exists();
+        }
+
     }
 
 }

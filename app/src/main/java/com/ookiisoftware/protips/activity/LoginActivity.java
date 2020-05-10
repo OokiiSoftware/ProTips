@@ -33,10 +33,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.modelo.Punter;
-import com.ookiisoftware.protips.modelo.Tipster;
+//import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 import com.ookiisoftware.protips.auxiliar.Import;
 
@@ -45,22 +46,21 @@ public class LoginActivity extends AppCompatActivity {
     //region Variáveis
 
     private static final String TAG = "LoginActivity";
-    private FirebaseAuth firebaseAuth;
-    private CallbackManager callbackManagerFacebook;
     private static final int RC_SIGN_IN = 101;
     private static final int RC_SIGN_IN_FACEBOOK = 64206;
 
-    //================= Elementos do Layout
+    private FirebaseAuth firebaseAuth;
+    private CallbackManager callbackManagerFacebook;
+    private GoogleSignInClient mGoogleSignInClient;
+    private Activity activity;
+
+    //Elementos do Layout
     private EditText et_email;
     private EditText et_senha;
+    private TextView enviar_email;
     private TextView recuperarSenha;
     private ProgressBar progressBar;
     private LinearLayout splashScreen;
-    TextView enviar_email;
-    //=====================================
-
-    private GoogleSignInClient mGoogleSignInClient;
-    private Activity activity;
 
     //endregion
 
@@ -93,7 +93,8 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(activity, GerenciaActivity.class);
                     startIntent(intent);
                 } else
-                    VerificarLoginPunter();
+                    verificarJsons();
+//                    VerificarLoginPunter();
             } else {
                 et_email.setEnabled(true);
                 et_senha.setEnabled(true);
@@ -244,7 +245,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
                     Import.Alert.msg(TAG, "LoginComToken", "Sucesso");
-                    VerificarLoginPunter();
+                    VerificarLoginTipster();
                 })
                 .addOnFailureListener(e -> {
                     Import.Alert.erro(TAG, "LoginComToken", e);
@@ -263,15 +264,18 @@ public class LoginActivity extends AppCompatActivity {
         usuario.setSenha(senha);
         LoginComEmailESenha(usuario);
     }
-    private void LoginComEmailESenha(final Usuario usuario) {
+
+    private void LoginComEmailESenha(@NonNull final Usuario usuario) {
         firebaseAuth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user == null) {
                         progressBar.setVisibility(View.INVISIBLE);
                     } else {
-                        if (user.isEmailVerified())
-                            VerificarLoginPunter();
+                        if (user.isEmailVerified()) {
+                            Import.getFirebase.setUltinoEmail(activity, user.getEmail());
+                            VerificarLoginTipster();
+                        }
                         else
                             emailNaoVerificado(user);
                     }
@@ -280,18 +284,18 @@ public class LoginActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.INVISIBLE);
                     Import.Alert.erro(TAG, "LoginComEmailESenha", e);
                     if (e.getMessage() != null)
-                    switch (e.getMessage()) {
-                        case "The password is invalid or the user does not have a password.":
-                            Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
-                            recuperarSenha.setVisibility(View.VISIBLE);
-                            break;
-                        case "There is no user record corresponding to this identifier. The user may have been deleted.":
-                            Import.Alert.toast(activity, getResources().getString(R.string.email_nao_encontrado));
-                            break;
-                        default:
-                            Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
-                            break;
-                    }
+                        switch (e.getMessage()) {
+                            case "The password is invalid or the user does not have a password.":
+                                Import.Alert.toast(activity, getResources().getString(R.string.usuário_senha_incorretos));
+                                recuperarSenha.setVisibility(View.VISIBLE);
+                                break;
+                            case "There is no user record corresponding to this identifier. The user may have been deleted.":
+                                Import.Alert.toast(activity, getResources().getString(R.string.email_nao_encontrado));
+                                break;
+                            default:
+                                Import.Alert.toast(activity, getResources().getString(R.string.erro_de_autencicacao));
+                                break;
+                        }
                 });
     }
 
@@ -312,6 +316,7 @@ public class LoginActivity extends AppCompatActivity {
             Import.Alert.toast(activity, getResources().getString(R.string.verifique_seu_email));
         }
     }
+
     private void enviarNovoEmail(final FirebaseUser user) {
         user.sendEmailVerification().addOnCompleteListener(task -> {
             if (task.isSuccessful())
@@ -322,7 +327,25 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void VerificarLoginPunter() {
+    private void verificarJsons() {
+        Intent intent = new Intent(activity, MainActivity.class);
+        Gson gson = new Gson();
+        /*if (Import.getFirebase.isFilePresent(activity, Constantes.files.PUNTER_JSON)) {
+            Punter user = gson.fromJson(Import.getFirebase.read(activity, Constantes.files.PUNTER_JSON), Punter.class);
+            Import.getFirebase.setUser(activity, user, false);
+
+            startIntent(intent);
+        } else */
+        if (Import.getFirebase.isFilePresent(activity, Constantes.files.USER_JSON)) {
+            User user = gson.fromJson(Import.getFirebase.read(activity, Constantes.files.USER_JSON), User.class);
+            Import.getFirebase.setUser(activity, user, false);
+            startIntent(intent);
+        } else {
+            VerificarLoginTipster();
+        }
+    }
+
+    /*private void VerificarLoginPunter() {
         Import.getFirebase.setGerencia(activity, false);
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
@@ -341,7 +364,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (item.getDados().isBloqueado())
                                 throw new Exception();
 
-                            Import.getFirebase.setUser(activity, item);
+                            Import.getFirebase.setUser(activity, item, true);
                             startIntent(intent);
                         } catch (Exception ex){
                             VerificarLoginTipster();
@@ -351,12 +374,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
-    }
-    public void VerificarLoginTipster() {
+    }*/
+
+    private void VerificarLoginTipster() {
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.TIPSTERS)
+//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(Import.getFirebase.getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -364,11 +388,11 @@ public class LoginActivity extends AppCompatActivity {
                         try {
                             if (dataSnapshot.getValue() == null)
                                 throw new Exception();
-                            Tipster item = dataSnapshot.getValue(Tipster.class);
+                            User item = dataSnapshot.getValue(User.class);
                             if (item == null)
                                 throw new Exception();
 
-                            Import.getFirebase.setUser(activity, item);
+                            Import.getFirebase.setUser(activity, item, true);
                         } catch (Exception ex){
                             intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
                         } finally {
@@ -382,8 +406,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void startIntent(Intent intent){
-        Import.getFirebase.setUltinoEmail(this, Import.getFirebase.getEmail());
-
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         finish();

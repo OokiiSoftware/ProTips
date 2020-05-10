@@ -14,8 +14,8 @@ import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Punter;
-import com.ookiisoftware.protips.modelo.Tipster;
+//import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 
 public class PerfilPunterActivity extends AppCompatActivity {
@@ -23,20 +23,10 @@ public class PerfilPunterActivity extends AppCompatActivity {
     //region Variáveis
     private static final String TAG = "PerfilPunterActivity";
 
-//    private TextAdapter mercadosAdapter;
-//    private TextAdapter esportesAdapter;
-
-//    private HashMap<String, String> mercados;
-//    private HashMap<String, Esporte> esportes;
-
     private Activity activity;
-//    private Tipster tipster;
-    private Punter punter;
+    private User user;
     private Usuario usuario;
     private int acao;
-//    private Tipster.Acao acao;
-//    private boolean userIsTipster;
-//    private boolean isGerencia;
     //endregion
 
     //region Overrides
@@ -64,25 +54,30 @@ public class PerfilPunterActivity extends AppCompatActivity {
         final LinearLayout email_container = findViewById(R.id.ll_email_container);
         final LinearLayout telefone_container = findViewById(R.id.ll_telefone_container);
         final Button btn_voltar = findViewById(R.id.cancelar);
-        final Button btn_aceitar = findViewById(R.id.salvar);
+        final Button btn_aceitar = findViewById(R.id.tv_salvar);
         final Button btn_recusar = findViewById(R.id.btn_2);
         //endregion
 
         //region Bundle
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String idUser = bundle.getString(Constantes.intent.USER_ID, null);
-            if (idUser == null) {
+            String userId = bundle.getString(Constantes.intent.USER_ID, null);
+            if (userId == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
                 Import.Alert.erro(TAG, "Init", "idUser == null");
                 onBackPressed();
                 return;
             }
-            punter = Import.get.punter.find(idUser);
-            if (punter == null)
-                punter = Import.get.tipsters.findPuntersPendentes(idUser);
-            if (punter != null)
-                usuario = punter.getDados();
+
+            user = Import.get.seguidores.get(userId);
+            if (user == null)
+                user = Import.get.seguindo.get(userId);
+            if (user == null)
+                user = Import.get.solicitacao.get(userId);
+            if (user == null)
+                user = Import.get.tipsters.get(userId);
+            if (user != null)
+                usuario = user.getDados();
         }
 
         if (usuario == null) {
@@ -123,15 +118,15 @@ public class PerfilPunterActivity extends AppCompatActivity {
                 telefone_container.setVisibility(View.VISIBLE);
         }
 
-        final Tipster eu = Import.getFirebase.getTipster();
+        final User eu = Import.getFirebase.getTipster();
         if (Import.getFirebase.isTipster()) {
-            if (eu.getPuntersPendentes().containsValue(usuario.getId())) {
+            if (eu.getSeguidoresPendentes().containsValue(usuario.getId())) {
                 btn_aceitar.setVisibility(View.VISIBLE);
                 btn_recusar.setVisibility(View.VISIBLE);
                 btn_aceitar.setText(getResources().getString(R.string.aceitar));
                 btn_recusar.setText(getResources().getString(R.string.recusar));
                 acao = R.string.aceitar;
-            } else if (eu.getPunters().containsKey(usuario.getId())) {
+            } else if (eu.getSeguidores().containsKey(usuario.getId())) {
                 btn_aceitar.setVisibility(View.VISIBLE);
                 btn_aceitar.setText(getResources().getString(R.string.remover));
                 acao = R.string.remover;
@@ -146,8 +141,8 @@ public class PerfilPunterActivity extends AppCompatActivity {
         //region setListener
 
         btn_recusar.setOnClickListener(v -> {
-            Import.getFirebase.getTipster().removerSolicitacao(punter.getDados().getId());
-            Import.get.tipsters.getPuntersPendentes().remove(punter);
+            Import.getFirebase.getTipster().removerSolicitacao(user.getDados().getId());
+            Import.get.solicitacao.remove(user.getDados().getId());
             btn_aceitar.setVisibility(View.GONE);
             btn_recusar.setVisibility(View.GONE);
         });
@@ -156,14 +151,15 @@ public class PerfilPunterActivity extends AppCompatActivity {
                 switch (acao) {
                     case R.string.aceitar: {
                         btn_aceitar.setText(getResources().getString(R.string.remover));
-                        eu.addPunter(punter);
+                        eu.aceitarSeguidor(user);
+                        btn_recusar.setVisibility(View.GONE);
                         acao = R.string.remover;
                         break;
                     }
                     case R.string.remover: {
                         btn_aceitar.setVisibility(View.GONE);
                         btn_recusar.setVisibility(View.GONE);
-                        eu.removerPunter(punter);
+                        eu.removerSeguidor(user);
                     }
                 }
             } catch (Exception e) {

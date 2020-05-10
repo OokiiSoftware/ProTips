@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,36 +17,47 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
-import com.ookiisoftware.protips.adapter.TipsterAdapter;
+import com.ookiisoftware.protips.adapter.UserAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Tipster;
+import com.ookiisoftware.protips.modelo.User;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class TipstersFragment extends Fragment {
 
     //region Variáveis
 //    private static final String TAG = "TipstersFragment";
 
-//    final private ArrayList<Tipster> tipsters;
     private Activity activity;
-    private TipsterAdapter tipsterAdapter;
-//    private PunterAdapter punterAdapter;
+    private UserAdapter userAdapter;
+    private ArrayList<User> data;
 
-
+    private Spinner sp_order;
+    private CheckBox cb_order;
     public SwipeRefreshLayout refreshLayout;
+
+    private boolean isGerencia;
+
     //endregion
 
     public TipstersFragment(){}
-    public TipstersFragment(Activity activity) {
+    public TipstersFragment(Activity activity, boolean isGerencia) {
         this.activity = activity;
-//        tipsters = Import.get.tipsters.getAll();
+        this.isGerencia = isGerencia;
     }
 
+    //region Overrides
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tipsters, container, false);
         init(view);
         return view;
     }
+
+    //endregion
 
     //region Métodos
 
@@ -51,34 +65,76 @@ public class TipstersFragment extends Fragment {
         //region findViewById
         final RecyclerView recyclerView = view.findViewById(R.id.recycler);
         refreshLayout = view.findViewById(R.id.swipeRefresh);
+        sp_order = view.findViewById(R.id.sp_order);
+        cb_order = view.findViewById(R.id.cb_order);
         //endregion
 
-        refreshLayout.setOnRefreshListener(() -> Import.activites.getMainActivity().feedUpdate());
-
-        tipsterAdapter = new TipsterAdapter(activity, Import.get.tipsters.getAll()) {
+        data = Import.get.tipsters.getAll();
+        userAdapter = new UserAdapter(activity, data) {
             @Override
             public void onClick(View v) {
                 int position = recyclerView.getChildAdapterPosition(v);
-                Tipster item = tipsterAdapter.getItem(position);
+                User item = userAdapter.getItem(position);
 
                 Intent intent = new Intent(activity, PerfilTipsterActivity.class);
                 intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                intent.putExtra(Constantes.intent.IS_GERENCIA, isGerencia);
                 activity.startActivity(intent);
             }
         };
-        recyclerView.setAdapter(tipsterAdapter);
+        recyclerView.setAdapter(userAdapter);
 
+        refreshLayout.setOnRefreshListener(() -> {
+            if (isGerencia)
+                Import.activites.getGerenciaActivity().feedUpdate();
+            else
+                Import.activites.getMainActivity().feedUpdate();
+        });
+
+        sp_order.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                boolean asc = cb_order.isChecked();
+                ordenar(position, asc);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        cb_order.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            ordenar(sp_order.getSelectedItemPosition(), isChecked);
+        });
+    }
+
+    private void ordenar(int position, boolean asc) {
+        switch (position) {
+            case 0:
+                Collections.sort(data, new User.sortByMedia(asc));
+                break;
+            case 1:
+                Collections.sort(data, new User.sortByNome(asc));
+                break;
+            case 2:
+                Collections.sort(data, new User.sortByGreen(asc));
+                break;
+            case 3:
+                Collections.sort(data, new User.sortByRed(asc));
+                break;
+            case 4:
+                Collections.sort(data, new User.sortByPostCount(asc));
+                break;
+        }
+        adapterUpdate();
     }
 
     public void adapterUpdate() {
-        if (tipsterAdapter != null)
-            tipsterAdapter.notifyDataSetChanged();
+        if (userAdapter != null)
+            userAdapter.notifyDataSetChanged();
     }
 
-    public TipsterAdapter getTipsterAdapter() {
-        return tipsterAdapter;
+    public UserAdapter getUserAdapter() {
+        return userAdapter;
     }
-
 
     //endregion
 }

@@ -26,4 +26,5 @@
     <dimen name="drawable_paddind">5dp</dimen>
 
     <dimen name="toolbar_height">60dp</dimen>
+    <dimen name="edittext_padding">15dp</dimen>
 </resources>
