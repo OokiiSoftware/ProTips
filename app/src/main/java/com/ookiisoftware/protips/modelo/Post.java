@@ -17,10 +17,12 @@ import java.util.HashMap;
 
 public class Post {
 
+    private static final String TAG = "Post";
     //region Variáveis
     private String id;
     private String id_tipster;
     private String titulo;
+    private String link;
     private String texto;
     private String foto;
     private String odd_maxima;
@@ -44,23 +46,29 @@ public class Post {
 
     public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
         if (isFotoLocal) {
-            Import.getFirebase.getStorage()
-                    .child(Constantes.firebase.child.POSTES)
-                    .child(getId())
-                    .putFile(Uri.parse(getFoto()))
-                    .addOnSuccessListener(taskSnapshot -> {
-                        if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
-                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(task -> {
-                                if (task.getResult() != null) {
-                                    setFoto(task.getResult().toString());
-                                    salvar();
-                                    activity.finish();
-                                }
-                            });
-                    }).addOnFailureListener(e -> {
-                        Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
-                        progressBar.setVisibility(View.GONE);
-                    });
+            try {
+                Import.getFirebase.getStorage()
+                        .child(Constantes.firebase.child.POSTES)
+                        .child(getId())
+                        .putFile(Uri.parse(getFoto()))
+                        .addOnSuccessListener(taskSnapshot -> {
+                            if (taskSnapshot.getMetadata() != null && taskSnapshot.getMetadata().getReference() != null)
+                                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(task -> {
+                                    if (task.getResult() != null) {
+                                        setFoto(task.getResult().toString());
+                                        salvar();
+                                        activity.finish();
+                                    }
+                                });
+                        }).addOnFailureListener(e -> {
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
+                    progressBar.setVisibility(View.GONE);
+                });
+
+            } catch (Exception e) {
+                Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
+                Import.Alert.erro(TAG, "", e);
+            }
         } else {
             salvar();
         }
@@ -286,6 +294,14 @@ public class Post {
 
     public void setPublico(boolean publico) {
         this.publico = publico;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     //endregion

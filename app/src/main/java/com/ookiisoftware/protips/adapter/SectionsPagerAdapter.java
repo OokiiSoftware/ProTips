@@ -24,7 +24,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     //region Variáveis
 
     @StringRes
-    private static final int[] TAB_TITULOS_MAIN_ACTIVITY = new int[]{R.string.titulo_feed, R.string.titulo_tipsters,  R.string.titulo_perfil, R.string.titulo_notificacoes};
+    private static final int[] TAB_TITULOS_MAIN_ACTIVITY = new int[]{R.string.titulo_feed, R.string.titulo_filiados,  R.string.titulo_perfil, R.string.titulo_notificacoes};
     @StringRes
     private static final int[] TAB_TITULOS_GERENCIA = new int[]{R.string.titulo_g_inicio, R.string.titulo_g_solicitacoes};
     @StringRes

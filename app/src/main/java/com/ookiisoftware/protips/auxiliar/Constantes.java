@@ -14,7 +14,7 @@ import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
 
-    public static final int APP_VERSAO = 10;
+    static final int APP_VERSAO = 14;
 
     //===================== Conversas
     public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
@@ -48,8 +48,7 @@ public class Constantes {
             public static final String PERFIL = "perfil";
             public static final String POSTES = "postes";
             public static final String POSTES_PERFIL = "post_perfil";
-//            public static final String TIPSTERS = "tipsters";
-//            public static final String PUNTERS = "punters";
+
             public static final String SEGUIDORES_PENDENTES = "seguidoresPendentes";
             public static final String TELEFONE = "telefone";
 

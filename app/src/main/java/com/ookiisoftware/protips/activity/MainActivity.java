@@ -1,14 +1,11 @@
 package com.ookiisoftware.protips.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ProgressBar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -28,6 +25,7 @@ import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.modelo.Activites;
+import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.User;
 
 import androidx.annotation.NonNull;
@@ -42,7 +40,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.ArrayList;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener {
@@ -100,6 +97,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onStart();
         inPrimeiroPlano = true;
         refAllTipsters.addChildEventListener(eventAllTipsters);
+
+        if (Import.getFirebase.isTipster())
+            baixarEsportes();
     }
 
     @Override
@@ -145,13 +145,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawer.openDrawer(GravityCompat.START, true);
-                break;
-            case R.id.menu_verificar_atualizacao:
-                verificar_atualizacao();
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            drawer.openDrawer(GravityCompat.START, true);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -178,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Import.logOut(activity);
                 break;
             }
+            case R.id.menu_verificar_atualizacao:
+                Import.verificar_atualizacao(activity);
+                break;
         }
 
         return true;
@@ -307,6 +305,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    private void baixarEsportes() {
+        Import.getFirebase.getReference()
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        try {
+                            Esporte item = dataSnapshot.getValue(Esporte.class);
+                            if (item == null) {
+                                throw new Exception("item == null");
+                            } else {
+                                Import.get.setEsporte(item);
+                            }
+                        } catch (Exception e) {
+                            Import.get.setEsporte(new Esporte());
+                            Import.Alert.erro(TAG, "getEsportes", e);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
+    }
+
     private void getAllTipsters() {
         refAllTipsters = Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO);
@@ -391,75 +412,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public boolean isInPrimeiroPlano() {
         return inPrimeiroPlano;
-    }
-
-    private void verificar_atualizacao() {
-        final Dialog dialog = new Dialog(activity);
-        dialog.setTitle(getResources().getString(R.string.verificando_atualizacao));
-        final ProgressBar progressBar = new ProgressBar(activity);
-        dialog.setContentView(progressBar);
-
-        final DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.VERSAO);
-
-        final ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Long> values = new ArrayList<>();
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    Long item = data.getValue(Long.class);
-                    if (item != null) {
-                        values.add(item);
-                    }
-                }
-                if (values.size() > 0) {
-                    final long ultima = values.get(values.size() -1);
-                    if (ultima > Constantes.APP_VERSAO) {
-                        dialog.dismiss();
-                        final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                        dialog.setTitle(getResources().getString(R.string.atualizacao_disponivel));
-                        dialog.setPositiveButton(getResources().getString(R.string.baixar), (dialog1, which) -> {
-                            String appName = "protips_" + ultima + ".apk";
-                            Import.Alert.toast(activity, "aguarde");
-                            Import.Alert.msg(TAG, "verificar_atualizacao", appName);
-                            Import.getFirebase.getStorage()
-                                    .child(Constantes.firebase.child.APP)
-                                    .child(appName)
-                                    .getDownloadUrl()
-                                    .addOnSuccessListener(uri -> {
-                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                        startActivity(intent);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Import.Alert.erro(TAG, "verificar_atualizacao", e);
-                                        atualizacao_erro();
-                                    });
-                        });
-                        dialog.show();
-                    } else {
-                        sem_atualizacao();
-                    }
-                } else {
-                    sem_atualizacao();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-
-            private void atualizacao_erro() {
-                Import.Alert.toast(activity, "erro ao baixar");
-            }
-
-            private void sem_atualizacao() {
-                Import.Alert.toast(activity, "sem atualização");
-                dialog.dismiss();
-            }
-        };
-
-        ref.addListenerForSingleValueEvent(eventListener);
-        dialog.setOnDismissListener(dialog12 -> ref.removeEventListener(eventListener));
-        dialog.show();
     }
 
     private void atualizarMeusDados() {

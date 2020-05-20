@@ -4,8 +4,8 @@
     <string name="preferencias">Preferences</string>
     <string name="editar">Edit</string>
     <string name="seu_tipname">YOUR TIPNAME</string>
-    <string name="titulo_tipsters">FIND TIPSTERS</string>
-    <string name="titulo_notificacoes">REQUESTS</string>
+    <string name="titulo_filiados">FIND TIPSTERS</string>
+    <string name="titulo_notificacoes">NOTIFICATIONS</string>
     <string name="titulo_perfil">MY PROFILE</string>
     <string name="titulo_conversas">CONVERSATIONS</string>
     <string name="titulo_contatos">CONTACTS</string>
@@ -92,8 +92,7 @@
     <string name="remover_item">Remove this item?</string>
     <string name="quero_ser_um_tipster">I want to be a Tipster</string>
     <string name="idade_minima">Minimum age is 18 years</string>
-    <string name="nova_solicitação_punter">New Punter Request</string>
-    <string name="punter_aceito">Your request has been accepted</string>
+    <string name="filiado_aceito">Your request has been accepted</string>
     <string name="novo_poste">New Tip</string>
     <string name="novos_postes">New Tips</string>
     <string name="seu_nome">Your name</string>
@@ -117,7 +116,6 @@
     <string name="aviso_tipname_repetido">This TipName already exists. Try another</string>
     <string name="aviso_cadastro_senhas_diferentes">The confirmation password is different</string>
     <string name="info_privacidade">With your public profile other people will be able to see your email and phone</string>
-    <string name="info_tip_publico">A public Tip can be seen by people who are not on your Punter list. You can post 5 public Tips per day.</string>
     <string name="nome">Name</string>
     <string name="senha">Password</string>
     <string name="odd_minima">Minimum Odd</string>
@@ -149,8 +147,7 @@
     <string name="sem_esporte_registrado">No registered sport</string>
     <string name="sem_mercado_registrado">No registered market</string>
     <string name="aviso_exluir_conta">Attention! By performing this action your account will be permanently deleted.</string>
-    <string name="quero_ser_um_punter">I want to be a Punter</string>
-    <string name="aviso_recriar_conta_punter">Your account will be recreated as Punter.</string>
+    <string name="quero_ser_um_filiado">I want to be a Affiliate</string>
     <string name="cancelar_solicitacao">Cancel request</string>
     <string name="tip_voto_removido">Vote removed</string>
     <string name="enviar_email">Send email</string>
@@ -170,16 +167,23 @@
     <string name="erro_baixar_atualizacao">Error downloading update</string>
     <string name="erro_de_autencicacao_muitas_tentativas">Too many login attempts. Try again later</string>
     <string name="titulo_meus_tipsters">MY TIPSTERS</string>
-    <string name="titulo_meus_punters">MY PUNTERS</string>
+    <string name="titulo_meus_filiados">MY AFFILIATES</string>
     <string name="titulo_meus_seguidores">MY FOLLOWERS</string>
     <string name="TipName_invalido">Invalid Tipname</string>
     <string name="data_incorreta">Incorrect date</string>
-    <string name="solicitacao_punter">Request to be a Punter</string>
     <string name="erro_enviar_codigo">Could not send code</string>
     <string name="erro_atualizar_numero">Error updating number. Try again</string>
     <string name="selecione_esporte">Select a sport</string>
     <string name="selecione_mercado">Select a market</string>
     <string name="nova_solicitação_tipster">New request for Tipster</string>
     <string name="excluir_post">Do you want to permanently delete this Tip?</string>
-    <string name="posts_no_perfil">PROFILE POSTS</string>
+    <string name="posts_no_perfil">MY PROFILE</string>
+    <string name="orderBy">Order by:</string>
+    <string name="titulo_seguindo">FOLLOWING</string>
+    <string name="solicitacao_filiado">Application to become an Affiliate</string>
+    <string name="nova_solicitação_filiado">New Affiliate Request</string>
+    <string name="aviso_recriar_conta_filiado">Your account will be recreated as an Affiliate.</string>
+    <string name="info_tip_publico">A public Tip can be seen by people who are not on your Affiliate list. You can post 5 public Tips per day.</string>
+    <string name="abrir_link">Open link</string>
+    <string name="erro_abrir_link">Error opening link</string>
 </resources>

@@ -15,25 +15,33 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
+import com.ookiisoftware.protips.adapter.SpinnerStringAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.Post;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PostActivity extends AppCompatActivity {
 
     //region Variáveis
 
-//    private static final String TAG = "PostActivity";
+    private static final String TAG = "PostActivity";
     private static final String TITULO = "354354";
     private static final String TEXTO = "34534";
     private static final String ODD_MAX = "7564";
@@ -51,18 +59,23 @@ public class PostActivity extends AppCompatActivity {
     private ImageView foto;
     private ProgressBar progressBar;
 
+    private EditText link;
     private EditText titulo;
     private EditText texto;
     private EditText odd_max;
     private EditText odd_min;
-    private EditText horario_minimo;
-    private EditText horario_maximo;
+    private EditText horario_min;
+    private EditText horario_max;
     private CheckBox tipPublico;
 
     private TextView textLength;
 
     private Spinner esporte;
     private Spinner mercado;
+
+    private Esporte _esportes;
+    private List<String> mercados = new LinkedList<>();
+    private List<String> esportes = new LinkedList<>();
 
     //endregion
 
@@ -73,7 +86,7 @@ public class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         activity = this;
-        Init();
+        init();
     }
 
     @Override
@@ -83,8 +96,8 @@ public class PostActivity extends AppCompatActivity {
         outState.putString(TEXTO, texto.getText().toString());
         outState.putString(ODD_MAX, odd_max.getText().toString());
         outState.putString(ODD_MIN, odd_min.getText().toString());
-        outState.putString(HOTARIO_MIN, horario_minimo.getText().toString());
-        outState.putString(HOTARIO_MAX, horario_maximo.getText().toString());
+        outState.putString(HOTARIO_MIN, horario_min.getText().toString());
+        outState.putString(HOTARIO_MAX, horario_max.getText().toString());
 
         outState.putInt(ESPORTE, esporte.getSelectedItemPosition());
         outState.putInt(MERCADO, mercado.getSelectedItemPosition());
@@ -104,8 +117,8 @@ public class PostActivity extends AppCompatActivity {
         texto.setText(savedInstanceState.getString(TEXTO));
         odd_max.setText(savedInstanceState.getString(ODD_MAX));
         odd_min.setText(savedInstanceState.getString(ODD_MIN));
-        horario_minimo.setText(savedInstanceState.getString(HOTARIO_MIN));
-        horario_maximo.setText(savedInstanceState.getString(HOTARIO_MAX));
+        horario_min.setText(savedInstanceState.getString(HOTARIO_MIN));
+        horario_max.setText(savedInstanceState.getString(HOTARIO_MAX));
 
         esporte.setSelection(savedInstanceState.getInt(ESPORTE));
         esporte.setSelection(savedInstanceState.getInt(MERCADO));
@@ -133,18 +146,19 @@ public class PostActivity extends AppCompatActivity {
 
     //region Métodos
 
-    private void Init () {
+    private void init() {
         //region findViewById
         foto = findViewById(R.id.iv_foto);
         progressBar = findViewById(R.id.progressBar);
         tipPublico = findViewById(R.id.cb_tip_publico);
 
         titulo = findViewById(R.id.et_titulo);
+        link = findViewById(R.id.et_link);
         texto = findViewById(R.id.et_texto);
         odd_max = findViewById(R.id.et_odd_max);
         odd_min = findViewById(R.id.et_odd_min);
-        horario_minimo = findViewById(R.id.et_horario_min);
-        horario_maximo = findViewById(R.id.et_horario_max);
+        horario_min = findViewById(R.id.et_horario_min);
+        horario_max = findViewById(R.id.et_horario_max);
 
         textLength = findViewById(R.id.tv_popup_length);
         TextView postar = findViewById(R.id.tv_postar);
@@ -155,6 +169,8 @@ public class PostActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         //endregion
 
+        _esportes = Import.get.esporte();
+
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getResources().getString(R.string.titulo_criar_tip));
@@ -162,7 +178,37 @@ public class PostActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
+        esportes.addAll(_esportes.getEsportes().keySet());
+        Collections.sort(esportes, new Esporte.sortByNome());
+        if (esportes.size() > 0) {
+            HashMap<String, String> item = _esportes.getEsportes().get(esportes.get(0));
+            if (item != null) {
+                mercados.addAll(item.values());
+                Import.Alert.msg(TAG, "init", "mercados.size(): " + mercados.size());
+            }
+        }
+        Import.Alert.msg(TAG, "init", "esportes.size(): " + esportes.size());
+        SpinnerAdapter esporteAdapter = new SpinnerStringAdapter(activity, android.R.layout.simple_spinner_item, esportes);
+        esporte.setAdapter(esporteAdapter);
+
         //region setListener
+
+        esporte.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, String> item = _esportes.getEsportes().get(esportes.get(position));
+                if (item != null) {
+                    mercados.clear();
+                    mercados.addAll(item.values());
+                    Collections.sort(mercados, new Esporte.sortByNome());
+                    SpinnerAdapter mercadoAdapter = new SpinnerStringAdapter(activity, android.R.layout.simple_spinner_item, mercados);
+                    mercado.setAdapter(mercadoAdapter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         texto.addTextChangedListener(new TextWatcher() {
             @Override
@@ -170,30 +216,33 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    if (s.charAt(start) == '\n')
+                        texto.getText().delete(start, start + 1);
+                } catch (Exception e) {
+                    Import.Alert.erro("Post", "onTextChanged", e);
+                }
+
                 String valor = texto.getText().length() + "/200";
                 textLength.setText(valor);
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-//                if (texto.getLayout() != null && texto.getLayout().getLineCount() > 7) {
-//                    texto.getText().delete(texto.getText().length() - 1, texto.getText().length());
-//                }
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         foto.setOnClickListener(v -> pegarFotoDaGaleria());
 
-        horario_minimo.setOnClickListener(v -> {
-            final int hora = toHour(horario_minimo.getText().toString());
-            final int min = toMinute(horario_minimo.getText().toString());
-            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_minimo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+        horario_min.setOnClickListener(v -> {
+            final int hora = toHour(horario_min.getText().toString());
+            final int min = toMinute(horario_min.getText().toString());
+            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_min.setText(dateToString(hourOfDay, minute)), hora, min, true);
             dialog.show();
         });
-        horario_maximo.setOnClickListener(v -> {
-            final int hora = toHour(horario_maximo.getText().toString());
-            final int min = toMinute(horario_maximo.getText().toString());
-            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_maximo.setText(dateToString(hourOfDay, minute)), hora, min, true);
+        horario_max.setOnClickListener(v -> {
+            final int hora = toHour(horario_max.getText().toString());
+            final int min = toMinute(horario_max.getText().toString());
+            TimePickerDialog dialog = new TimePickerDialog(activity, (view, hourOfDay, minute) -> horario_max.setText(dateToString(hourOfDay, minute)), hora, min, true);
             dialog.show();
         });
 
@@ -207,29 +256,24 @@ public class PostActivity extends AppCompatActivity {
         });
 
         postar.setOnClickListener(view -> {
-            if (esporte.getSelectedItemPosition() == 0) {
-                Import.Alert.snakeBar(activity, getResources().getString(R.string.selecione_esporte));
-            } else if (mercado.getSelectedItemPosition() == 0) {
-                Import.Alert.snakeBar(activity, getResources().getString(R.string.selecione_mercado));
-            } else {
-                progressBar.setVisibility(View.VISIBLE);
-                Post post = new Post();
-                post.setHorario_maximo(horario_maximo.getText().toString());
-                post.setHorario_minimo(horario_minimo.getText().toString());
-                post.setMercado(mercado.getSelectedItem().toString());
-                post.setEsporte(esporte.getSelectedItem().toString());
-                post.setOdd_maxima(odd_max.getText().toString());
-                post.setOdd_minima(odd_min.getText().toString());
-                post.setId_tipster(Import.getFirebase.getId());
-                post.setTitulo(titulo.getText().toString());
-                post.setTexto(texto.getText().toString());
-                post.setPublico(tipPublico.isChecked());
-                post.setId(Import.get.randomString());
-                post.setData(Import.get.Data());
-                post.setFoto(foto_path);
+            progressBar.setVisibility(View.VISIBLE);
+            Post post = new Post();
+            post.setHorario_maximo(horario_max.getText().toString());
+            post.setHorario_minimo(horario_min.getText().toString());
+            post.setMercado(mercado.getSelectedItem().toString());
+            post.setEsporte(esporte.getSelectedItem().toString());
+            post.setOdd_maxima(odd_max.getText().toString());
+            post.setOdd_minima(odd_min.getText().toString());
+            post.setId_tipster(Import.getFirebase.getId());
+            post.setTitulo(titulo.getText().toString());
+            post.setTexto(texto.getText().toString());
+            post.setLink(link.getText().toString());
+            post.setPublico(tipPublico.isChecked());
+            post.setId(Import.get.randomString());
+            post.setData(Import.get.Data());
+            post.setFoto(foto_path);
 
-                postar.setEnabled(verificar(post));
-            }
+            postar.setEnabled(verificar(post));
         });
 
         //endregion

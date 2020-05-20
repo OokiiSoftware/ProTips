@@ -60,7 +60,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
     public void onBindViewHolder(@NonNull final Holder holder, final int position) {
         final Post item = data.get(position);
         final String meuId = Import.getFirebase.getId();
-        final MenuItem menuItem = holder.toolbar.getMenu().findItem(R.id.menu_excluir);
+        final String link = item.getLink();
+        final MenuItem menuItemExcluir = holder.toolbar.getMenu().findItem(R.id.menu_excluir);
+        final MenuItem menuItemLink = holder.toolbar.getMenu().findItem(R.id.menu_link);
         String _data = Import.reorder(item.getData());
         holder.data.setText(_data);
         holder.texto.setText(item.getTexto());
@@ -97,7 +99,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
 
         if (Objects.equals(meuId, userId)) {
             holder.green_red.setVisibility(View.VISIBLE);
-            menuItem.setVisible(true);
+            menuItemExcluir.setVisible(true);
 
             if (item.getBom().containsValue(meuId))
                 holder.bom.setTextColor(activity.getResources().getColor(R.color.amarelo));
@@ -108,9 +110,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
             else
                 holder.ruim.setTextColor(activity.getResources().getColor(R.color.text_light));
         } else {
-            menuItem.setVisible(false);
+            menuItemExcluir.setVisible(false);
             holder.green_red.setVisibility(View.GONE);
         }
+
+        menuItemLink.setVisible(link != null && !link.isEmpty());
 
         //region setListener
         holder.bom.setOnClickListener(v -> {
@@ -145,16 +149,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
             activity.startActivity(intent);
         });
         holder.toolbar.setOnMenuItemClickListener(_item -> {
-            if (_item.getItemId() == R.id.menu_excluir) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                dialog.setTitle(activity.getResources().getString(R.string.excluir));
-                dialog.setMessage(activity.getResources().getString(R.string.excluir_post));
-                dialog.setPositiveButton(activity.getResources().getString(R.string.ok), (dialog1, which) -> {
-                    item.excluir(PostAdapter.this);
-                    holder.userName.setText(activity.getResources().getString(R.string.excluindo));
-                });
-                dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), null);
-                dialog.show();
+            switch (_item.getItemId()) {
+                case R.id.menu_excluir: {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                    dialog.setTitle(activity.getResources().getString(R.string.excluir));
+                    dialog.setMessage(activity.getResources().getString(R.string.excluir_post));
+                    dialog.setPositiveButton(activity.getResources().getString(R.string.ok), (dialog1, which) -> {
+                        item.excluir(PostAdapter.this);
+                        holder.userName.setText(activity.getResources().getString(R.string.excluindo));
+                    });
+                    dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), null);
+                    dialog.show();
+                    break;
+                }
+                case R.id.menu_link: {
+                    Import.abrirLink(activity, link);
+                    break;
+                }
             }
             return false;
         });

@@ -105,6 +105,9 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
                 Import.logOut(activity);
                 break;
             }
+            case R.id.menu_verificar_atualizacao:
+                Import.verificar_atualizacao(activity);
+                break;
         }
         return false;
     }

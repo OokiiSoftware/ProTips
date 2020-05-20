@@ -166,7 +166,7 @@ public class PerfilFragment extends Fragment {
 
             btn_newPostPerfil.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
-            btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_punters));
+            btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_filiados));
             posts_no_perfil.setVisibility(View.VISIBLE);
         } else {
             posts_no_perfil.setVisibility(View.GONE);

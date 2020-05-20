@@ -32,7 +32,7 @@ public class SQLiteConversa extends SQLiteOpenHelper {
     private final String LIDO = "lido";
 
     public SQLiteConversa(@Nullable Context context) {
-        super(context, Import.getSQLiteDatabaseName(context), null, VERSAO_BANCO);
+        super(context, Import.get.SQLiteDatabaseName(context), null, VERSAO_BANCO);
     }
 
     @Override

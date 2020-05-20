@@ -1,6 +1,8 @@
 package com.ookiisoftware.protips.auxiliar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -19,9 +21,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -30,8 +34,12 @@ import com.facebook.login.LoginManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
@@ -39,6 +47,7 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.LoginActivity;
 import com.ookiisoftware.protips.modelo.Activites;
 //import com.ookiisoftware.protips.modelo.Punter;
+import com.ookiisoftware.protips.modelo.Esporte;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
@@ -64,8 +73,88 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Import {
     private static final String TAG = "Import";
+    public static Activites activites;
 
     //region Métodos
+
+    public static void verificar_atualizacao(Activity activity) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.setTitle(activity.getResources().getString(R.string.verificando_atualizacao));
+        final ProgressBar progressBar = new ProgressBar(activity);
+        dialog.setContentView(progressBar);
+
+        final DatabaseReference ref = Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.VERSAO);
+
+        final ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Long> values = new ArrayList<>();
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    Long item = data.getValue(Long.class);
+                    if (item != null) {
+                        values.add(item);
+                    }
+                }
+                if (values.size() > 0) {
+                    final long ultima = values.get(values.size() -1);
+                    if (ultima > Constantes.APP_VERSAO) {
+                        dialog.dismiss();
+                        final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                        dialog.setTitle(activity.getResources().getString(R.string.atualizacao_disponivel));
+                        dialog.setPositiveButton(activity.getResources().getString(R.string.baixar), (dialog1, which) -> {
+                            String appName = "protips_" + ultima + ".apk";
+                            Import.Alert.toast(activity, "aguarde");
+                            Import.Alert.msg(TAG, "verificar_atualizacao", appName);
+                            Import.getFirebase.getStorage()
+                                    .child(Constantes.firebase.child.APP)
+                                    .child(appName)
+                                    .getDownloadUrl()
+                                    .addOnSuccessListener(uri -> {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                        activity.startActivity(intent);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Import.Alert.erro(TAG, "verificar_atualizacao", e);
+                                        atualizacao_erro();
+                                    });
+                        });
+                        dialog.show();
+                    } else {
+                        sem_atualizacao();
+                    }
+                } else {
+                    sem_atualizacao();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+
+            private void atualizacao_erro() {
+                Import.Alert.toast(activity, "erro ao baixar");
+            }
+
+            private void sem_atualizacao() {
+                Import.Alert.toast(activity, "sem atualização");
+                dialog.dismiss();
+            }
+        };
+
+        ref.addListenerForSingleValueEvent(eventListener);
+        dialog.setOnDismissListener(dialog12 -> ref.removeEventListener(eventListener));
+        dialog.show();
+    }
+
+    public static void abrirLink(Activity activity, String url) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            Alert.erro(TAG, "abrirLink", e);
+            Alert.toast(activity, activity.getResources().getString(R.string.erro_abrir_link));
+        }
+    }
 
     public static String splitData(String data){
         String[] dataUltimaMensagem = data.split(" ");// yyyy-MM-dd HH:mm:ss:SSS
@@ -151,22 +240,14 @@ public class Import {
         String[] titulo_da_pagina = title.toString().split(" ");
         if (titulo_da_pagina.length > 1) {
             text_1.setText(titulo_da_pagina[0]);
-            text_1.setTypeface(Import.getFonteNormal(activity));
+            text_1.setTypeface(Import.get.FonteNormal(activity));
             text_2.setText(titulo_da_pagina[1]);
-            text_2.setTypeface(Import.getFonteBold(activity));
+            text_2.setTypeface(Import.get.FonteBold(activity));
         } else {
             text_1.setText(titulo_da_pagina[0]);
-            text_1.setTypeface(Import.getFonteBold(activity));
+            text_1.setTypeface(Import.get.FonteBold(activity));
             text_2.setText("");
         }
-    }
-
-    private static Typeface getFonteNormal(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
-    }
-
-    private static Typeface getFonteBold(Context context){
-        return Typeface.createFromAsset(context.getAssets(), "bebasneue_bold.otf");
     }
 
     /*public static boolean SalvarMensagemNoDispositivo(Context context, Mensagem mensagem) {
@@ -195,11 +276,6 @@ public class Import {
         refTemp.removeValue();
     }*/
 
-    public static String getSQLiteDatabaseName(Context context){
-        SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-        return pref.getString(Constantes.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
-    }
-
     public static boolean hasPermissions(Context context, String... permissions) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {
@@ -215,6 +291,7 @@ public class Import {
         limparDados();
         getFirebase.getAuth().signOut();
         LoginManager.getInstance().logOut();
+        getFirebase.setGerencia(activity, false);
         irProLogin(activity);
     }
 
@@ -241,11 +318,31 @@ public class Import {
 
     //endregion
 
-    public static Activites activites;
-
     public static class get {
         private static Random random = new Random();
+        private static Esporte esporte;
         private static Locale locale = new Locale("pt", "BR");
+
+        public static void setEsporte(Esporte esporte) {
+            get.esporte = esporte;
+        }
+
+        private static Typeface FonteNormal(Context context){
+            return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
+        }
+
+        private static Typeface FonteBold(Context context){
+            return Typeface.createFromAsset(context.getAssets(), "bebasneue_bold.otf");
+        }
+
+        public static String SQLiteDatabaseName(Context context){
+            SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
+            return pref.getString(Constantes.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
+        }
+
+        public static Esporte esporte() {
+            return esporte;
+        }
 
         public static String randomString() {
             StringBuilder builder = new StringBuilder();
@@ -587,9 +684,10 @@ public class Import {
     }
 
     public static class getFirebase {
-        private static FirebaseAuth firebaseAuth;
-        private static DatabaseReference firebase;
-//        private static Punter punter;
+        private static FirebaseAuth auth;
+        private static DatabaseReference reference;
+        private static FirebaseInstanceId instanceId;
+
         private static User tipster;
 
         private static StorageReference firebaseStorage;
@@ -597,15 +695,15 @@ public class Import {
         //region get
 
         public static DatabaseReference getReference() {
-            if(firebase == null)
-                firebase = FirebaseDatabase.getInstance().getReference();
-            return firebase;
+            if(reference == null)
+                reference = FirebaseDatabase.getInstance().getReference();
+            return reference;
         }
 
         public static FirebaseAuth getAuth() {
-            if(firebaseAuth == null)
-                firebaseAuth = FirebaseAuth.getInstance();
-            return firebaseAuth;
+            if(auth == null)
+                auth = FirebaseAuth.getInstance();
+            return auth;
         }
 
         public static StorageReference getStorage() {

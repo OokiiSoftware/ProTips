@@ -9,6 +9,9 @@
             android:icon="@drawable/ic_chat"
             android:visible="false"
             android:title="@string/menu_batepapo" />
+        <item
+            android:id="@+id/menu_verificar_atualizacao"
+            android:title="@string/verificar_atualizacao"/>
     </group>
 
     <item android:title="@string/submenu">

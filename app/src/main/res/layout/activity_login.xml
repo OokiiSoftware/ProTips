@@ -64,7 +64,7 @@
             android:textColorHint="@color/colorPrimary"
             android:textColor="@color/colorPrimaryDark"
             android:inputType="textPassword"
-            android:hint="@string/pass_hint"
+            android:hint="@string/senha"
             android:drawableStart="@drawable/ic_lock"
             android:drawablePadding="10dp"
             android:importantForAutofill="no"

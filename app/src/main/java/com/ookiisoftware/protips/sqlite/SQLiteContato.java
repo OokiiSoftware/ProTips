@@ -30,7 +30,7 @@ public class SQLiteContato extends SQLiteOpenHelper {
     private final String CATEGORIA = "categoria";
 
     public SQLiteContato(@Nullable Context context) {
-        super(context, Import.getSQLiteDatabaseName(context), null, VERSAO_BANCO);
+        super(context, Import.get.SQLiteDatabaseName(context), null, VERSAO_BANCO);
     }
 
     @Override

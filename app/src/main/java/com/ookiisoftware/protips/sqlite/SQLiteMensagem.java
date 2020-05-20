@@ -31,7 +31,7 @@ public class SQLiteMensagem extends SQLiteOpenHelper {
     private final String ARQUIVO = "arquivo";
 
     public SQLiteMensagem(@Nullable Context context) {
-        super(context, Import.getSQLiteDatabaseName(context), null, VERSAO_BANCO);
+        super(context, Import.get.SQLiteDatabaseName(context), null, VERSAO_BANCO);
     }
 
     @Override

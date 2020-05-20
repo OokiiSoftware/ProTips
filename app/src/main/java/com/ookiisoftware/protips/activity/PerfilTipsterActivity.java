@@ -76,8 +76,10 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         final TextView telefone = findViewById(R.id.tv_telefone);
         final TextView seguidores = findViewById(R.id.tv_seguidores);
         final TextView info = findViewById(R.id.tv_info);
-        final TextView btn_seguir = findViewById(R.id.tv_salvar);
+        final TextView btn_seguir = findViewById(R.id.tv_seguir);
         final TextView btn_recusar = findViewById(R.id.tv_recusar);
+        final TextView btn_remover = findViewById(R.id.tv_remover);
+        final TextView btn_aceitar = findViewById(R.id.tv_aceitar);
         TabLayout tabs = findViewById(R.id.tabs);
 
         refreshLayout = findViewById(R.id.swipeRefresh);
@@ -114,13 +116,15 @@ public class PerfilTipsterActivity extends AppCompatActivity {
             //endregion
         }
 
+        final User eu = Import.getFirebase.getTipster();
+
         //region setValues
 
         nome.setText(usuario.getNome());
         email.setText(usuario.getEmail());
         tipName.setText(usuario.getTipname());
         telefone.setText(usuario.getTelefone());
-        String seguidoresS = getResources().getString(R.string.punters) + ": " + user.getSeguidores().size();
+        String seguidoresS = getResources().getString(R.string.filiados) + ": " + user.getSeguidores().size();
         seguidores.setText(seguidoresS);
         Glide.with(activity).load(usuario.getFoto()).into(foto);
 
@@ -129,29 +133,35 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         else
             info.setText(usuario.getInfo());
 
+        btn_remover.setVisibility(View.GONE);
+        btn_aceitar.setVisibility(View.GONE);
+        btn_recusar.setVisibility(View.GONE);
+        btn_seguir.setVisibility(View.GONE);
+
         if (isGerencia) {
-            btn_seguir.setVisibility(View.VISIBLE);
             if (usuario.isBloqueado()) {
-                btn_seguir.setText(getResources().getString(R.string.aceitar));
+                btn_aceitar.setVisibility(View.VISIBLE);
                 btn_recusar.setVisibility(View.VISIBLE);
-                acao = R.string.aceitar;
             } else {
-                btn_seguir.setText(getResources().getString(R.string.remover));
-                acao = R.string.remover;
+                btn_remover.setVisibility(View.VISIBLE);
             }
         } else {
-
-            btn_seguir.setVisibility(View.VISIBLE);
-
             if (user.getSeguidoresPendentes().containsValue(meuId)) {
+                btn_seguir.setVisibility(View.VISIBLE);
                 btn_seguir.setText(getResources().getString(R.string.pendente));
                 acao = R.string.pendente;
-            } else if (Import.getFirebase.getTipster().getSeguindo().containsKey(user.getDados().getId())) {
-                btn_seguir.setText(getResources().getString(R.string.remover));
-                acao = R.string.remover;
+            } else if (eu.getSeguindo().containsKey(user.getDados().getId())) {
+                btn_remover.setVisibility(View.VISIBLE);
+                btn_seguir.setVisibility(View.GONE);
             } else {
+                btn_seguir.setVisibility(View.VISIBLE);
                 btn_seguir.setText(getResources().getString(R.string.seguir));
                 acao = R.string.seguir;
+            }
+
+            if (eu.getSeguidoresPendentes().containsValue(user.getDados().getId())) {
+                btn_aceitar.setVisibility(View.VISIBLE);
+                btn_recusar.setVisibility(View.VISIBLE);
             }
 
             if (usuario.isPrivado()) {
@@ -208,48 +218,58 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         btn_recusar.setOnClickListener(v -> {
             if (isGerencia) {
                 user.solicitarSerTipsterCancelar();
+            } else {
+                eu.removerSolicitacao(user.getDados().getId());
+                Import.get.solicitacao.remove(user.getDados().getId());
+
+                btn_recusar.setVisibility(View.GONE);
             }
-            btn_seguir.setVisibility(View.GONE);
             btn_recusar.setVisibility(View.GONE);
+            btn_aceitar.setVisibility(View.GONE);
+        });
+        btn_aceitar.setOnClickListener(view -> {
+            try {
+                if (isGerencia) {
+                    user.solicitarSerTipsterCancelar();
+                    user.habilitarTipster(true);
+                } else {
+                    eu.aceitarSeguidor(user);
+                }
+                btn_recusar.setVisibility(View.GONE);
+                btn_aceitar.setVisibility(View.GONE);
+            } catch (Exception e) {
+                Import.Alert.erro(TAG, "btn_aceitar.setOnClickListener", e);
+            }
+        });
+
+        btn_remover.setOnClickListener(view -> {
+            try {
+                if (isGerencia) {
+                    user.bloquear();
+                } else {
+                    user.removerSeguidor(eu);
+                    btn_seguir.setVisibility(View.VISIBLE);
+                    acao = R.string.seguir;
+                }
+                btn_remover.setVisibility(View.GONE);
+            } catch (Exception e) {
+                Import.Alert.erro(TAG, "btn_seguir.setOnClickListener", e);
+            }
         });
         btn_seguir.setOnClickListener(view -> {
             try {
-                if (isGerencia) {
-                    switch (acao) {
-                        case R.string.remover: {
-                            user.bloquear();
-                            btn_seguir.setVisibility(View.GONE);
-                            break;
-                        }
-                        case R.string.aceitar: {
-
-                            user.solicitarSerTipsterCancelar();
-                            user.habilitarTipster(true);
-
-                            btn_seguir.setText(getResources().getString(R.string.remover));
-                            btn_recusar.setVisibility(View.GONE);
-                            break;
-                        }
+                switch (acao) {
+                    case R.string.seguir: {
+                        btn_seguir.setText(getResources().getString(R.string.pendente));
+                        user.addSolicitacao(meuId);
+                        acao = R.string.pendente;
+                        break;
                     }
-                } else {
-                    switch (acao) {
-                        case R.string.seguir: {
-                            btn_seguir.setText(getResources().getString(R.string.pendente));
-                            user.addSolicitacao(meuId);
-                            acao = R.string.pendente;
-                            break;
-                        }
-                        case R.string.remover: {
-                            user.removerSeguidor(Import.getFirebase.getTipster());
-                            acao = R.string.seguir;
-                            btn_seguir.setText(getResources().getString(R.string.seguir));
-                        }
-                        case R.string.pendente: {
-                            user.removerSolicitacao(meuId);
-                            btn_seguir.setText(getResources().getString(R.string.seguir));
-                            acao = R.string.seguir;
-                            break;
-                        }
+                    case R.string.pendente: {
+                        user.removerSolicitacao(meuId);
+                        btn_seguir.setText(getResources().getString(R.string.seguir));
+                        acao = R.string.seguir;
+                        break;
                     }
                 }
             } catch (Exception e) {

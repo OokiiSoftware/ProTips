@@ -138,6 +138,8 @@ public class User {
                 .child(Constantes.firebase.child.SEGUINDO)
                 .child(id)
                 .removeValue();
+
+        getSeguindo().remove(id);
     }
 
     public void aceitarSeguidor(@NonNull User user) {

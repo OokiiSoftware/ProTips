@@ -62,7 +62,6 @@
                 android:drawableStart="@drawable/ic_person"
                 android:drawablePadding="@dimen/drawable_paddind"
                 android:gravity="center"
-                android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/nome"
                 android:textSize="@dimen/text_size"
@@ -75,7 +74,6 @@
                 android:layout_marginTop="3dp"
                 android:drawableStart="@drawable/ic_email"
                 android:drawablePadding="@dimen/drawable_paddind"
-                android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/email"
                 android:textSize="@dimen/text_size"
@@ -88,7 +86,6 @@
                 android:layout_marginTop="3dp"
                 android:drawableStart="@drawable/ic_website"
                 android:drawablePadding="@dimen/drawable_paddind"
-                android:maxLength="18"
                 android:maxLines="1"
                 android:text="@string/tipname"
                 android:textSize="@dimen/text_size"
@@ -103,7 +100,7 @@
                 android:maxLines="1"
                 android:paddingVertical="5dp"
                 android:paddingHorizontal="7dp"
-                android:text="@string/punters"
+                android:text="@string/filiados"
                 android:textSize="@dimen/text_size"
                 style="@style/EditText.Login" />
 

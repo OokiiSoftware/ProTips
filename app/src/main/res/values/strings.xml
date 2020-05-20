@@ -18,11 +18,11 @@
     <string name="_menos" translatable="false">-</string>
     <string name="email" translatable="false">Email</string>
     <string name="ex_123456" translatable="false">ex: 123456</string>
+    <string name="filiado" translatable="false">Filiado</string>
+    <string name="filiados" translatable="false">Filiados</string>
     <string name="green" translatable="false">Green</string>
-    <string name="pass_hint" translatable="false">***********</string>
+    <string name="link" translatable="false">Link</string>
     <string name="protips" translatable="false">PROTIPS</string>
-    <string name="punter" translatable="false">Punter</string>
-    <string name="punters" translatable="false">Punters</string>
     <string name="red" translatable="false">Red</string>
     <string name="tipname" translatable="false">TipName</string>
     <string name="tipster" translatable="false">Tipster</string>
@@ -33,12 +33,13 @@
 
     <!--TODO Titulos de cada activity e fragmento-->
     <string name="titulo_perfil">MEU PERFIL</string>
-    <string name="titulo_meus_punters">MEUS PUNTERS</string>
-    <string name="titulo_notificacoes">SOLICITAÇÕES</string>
-    <string name="titulo_tipsters">ENCONTRE TIPSTERS</string>
+    <string name="titulo_meus_filiados">MEUS FILIADOS</string>
+    <string name="titulo_notificacoes">NOTIFICAÇÕES</string>
+    <string name="titulo_filiados">ENCONTRE TIPSTERS</string>
     <string name="titulo_meus_tipsters">MEUS TIPSTERS</string>
     <string name="titulo_feed" translatable="false">FEED</string>
     <string name="titulo_meus_seguidores">MEUS SEGUIDORES</string>
+    <string name="titulo_seguindo">SEGUINDO</string>
 
     <string name="titulo_contatos">CONTATOS</string>
     <string name="titulo_conversas">CONVERSAS</string>
@@ -138,10 +139,12 @@
 
     <!-- TODO: Textos -->
     <string name="seu_nome">Seu nome</string>
+    <string name="orderBy">Ondem por:</string>
     <string name="seu_email">Seu email</string>
     <string name="sua_senha">Sua senha</string>
     <string name="novo_poste">Novo Tip</string>
     <string name="em_analize">Em análise</string>
+    <string name="abrir_link">Abrir link</string>
     <string name="texto_aqui">Texto aqui</string>
     <string name="postar_tip">POSTAR TIP</string>
     <string name="tip_publico">Tip público</string>
@@ -164,7 +167,7 @@
     <string name="login_cancelado">Login Cancelado</string>
     <string name="sem_atualizacao">Sem atualização</string>
 
-    <string name="posts_no_perfil">POSTS NO PERFIL</string>
+    <string name="posts_no_perfil">MEU PERFIL</string>
     <string name="tip_voto_removido">Voto removido</string>
     <string name="recuperar_senha">Recuperar senha</string>
     <string name="registrar_numero">Registrar número</string>
@@ -186,8 +189,8 @@
     <string name="usuario_salvo">Dados Salvos com sucesso</string>
     <string name="carregando_a_imagem">Carregando a imagem</string>
     <string name="tipName_obrigatório">TipName obrigatório</string>
-    <string name="quero_ser_um_punter">Quero ser um Punter</string>
-    <string name="punter_aceito">Sua solicitação foi aceita</string>
+    <string name="quero_ser_um_filiado">Quero ser um Filiado</string>
+    <string name="filiado_aceito">Sua solicitação foi aceita</string>
     <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
     <string name="cancelar_solicitacao">Cancelar solicitação</string>
 
@@ -204,13 +207,13 @@
     <string name="verificando_atualizacao">Verificando atualização</string>
     <string name="post_texto_obrigatorio">A Descrição é obrigatória</string>
     <string name="cadastro_senha_fraca">Digite uma senha mais forte</string>
-    <string name="solicitacao_punter">Solicitação para ser um Punter</string>
     <string name="cadastro_realizado">Cadastro realizado com sucesso</string>
     <string name="verifique_seu_email">Por favor verifique seu email</string>
-    <string name="nova_solicitação_punter">Nova solicitação de Punter</string>
     <string name="atualizacao_disponivel">Nova atualização encontrada</string>
+    <string name="solicitacao_filiado">Solicitação para ser um Filiado</string>
     <string name="solicitacao_tipster">Solicitação para ser um Tipster</string>
     <string name="email_nao_encontrado">Este email não está cadastrado</string>
+    <string name="nova_solicitação_filiado">Nova solicitação de Filiado</string>
     <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
     <string name="post_odd_maxima_obrigatorio">Odd Máxima é obrigatória</string>
     <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
@@ -225,6 +228,7 @@
 
     <!-- TODO: Mensagens de Erro -->
     <string name="erro_generico">Ocorreu um erro</string>
+    <string name="erro_abrir_link">Erro ao abrir o link</string>
     <string name="erro_de_autencicacao">Erro de autenticação</string>
     <string name="erro_foto_carregar">Erro ao carregar a foto</string>
     <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
@@ -241,7 +245,7 @@
     <!-- TODO: Mensagens de Aviso -->
     <string name="aviso_salvar_dados">Você deve salvar antes de sair</string>
     <string name="aviso_tipname_repetido">Este TipName já existe. Tente outro</string>
-    <string name="aviso_recriar_conta_punter">Sua conta será recriada como Punter.</string>
+    <string name="aviso_recriar_conta_filiado">Sua conta será recriada como Filiado.</string>
     <string name="aviso_cadastro_senhas_diferentes">A senha de confirmação está diferente</string>
     <string name="aviso_exluir_conta">Atenção! Ao realizar esta ação sua conta será excluida permanentemente.</string>
 
@@ -250,15 +254,10 @@
     <string name="info_registrar_codigo">Insira o código no campo abaixo</string>
     <string name="info_privacidade">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
     <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
-    <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Punters. Você pode postar 5 Tips públicas por dia.</string>
+    <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Filiados. Você pode postar 5 Tips públicas por dia.</string>
     <string name="info_registrar_telefone">Insira seu Número de telefone abaixo e solicite um código via sms. Este serviço poderá ser cobrado pela sua operadora.</string>
 
     <!-- TODO: Arrays -->
-    <string-array name="categoria">
-        <item>Apostador</item>
-        <item>Tipster</item>
-    </string-array>
-
     <string-array name="privacidade">
         <item>Público</item>
         <item>Privado</item>
@@ -266,7 +265,7 @@
 
     <string-array name="orderBy">
         <item>Ranking</item>
-        <item>Nome</item>
+        <item>Name</item>
         <item>Green</item>
         <item>Red</item>
         <item>Posts</item>
@@ -311,14 +310,29 @@
 
     <string-array name="esporte">
         <item>Esporte</item>
-        <item>Boxe</item>
+        <item>Badminton</item>
+        <item>Baisebol</item>
+        <item>Basquete</item>
+        <item>Boxe/MMA</item>
+        <item>Ciclismo</item>
+        <item>Corrida de Cavalos</item>
+        <item>Corrida de Galgos</item>
+        <item>Cricket</item>
+        <item>Dardos</item>
         <item>Futebol</item>
-        <item>Galgos</item>
-        <item>Voley</item>
+        <item>Futebol Americano</item>
+        <item>Golfe</item>
+        <item>Handbol</item>
+        <item>Hóquei no Gelo</item>
+        <item>Loto</item>
+        <item>Rugby League</item>
+        <item>Rugby Union</item>
+        <item>Sinuca</item>
+        <item>Speedway</item>
+        <item>Tênis</item>
+        <item>Tênis de Mesa</item>
+        <item>Trolting</item>
+        <item>Voleybol</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="titulo_seguindo">SEGUINDO</string>
-    <string name="orderBy">Ondem por:</string>
 
 </resources>

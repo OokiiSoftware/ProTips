@@ -11,9 +11,4 @@
         android:icon="@drawable/ic_share"
         android:title="@string/nav_titulo_pesquisa" />
 
-    <item
-        android:id="@+id/nav_menu_perfil"
-        android:icon="@drawable/ic_perfil"
-        android:title="@string/nav_titulo_perfil" />
-
 </menu>

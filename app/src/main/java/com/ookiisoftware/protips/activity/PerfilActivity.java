@@ -172,9 +172,9 @@ public class PerfilActivity extends AppCompatActivity {
         if (!isPrimeiroLogin) {
             if (isTipster) {
                 categoria.setText(getResources().getString(R.string.tipster));
-                queroSerTipster.setText(getResources().getString(R.string.quero_ser_um_punter));
+                queroSerTipster.setText(getResources().getString(R.string.quero_ser_um_filiado));
             } else {
-                categoria.setText(getResources().getString(R.string.punter));
+                categoria.setText(getResources().getString(R.string.filiado));
                 categoria.setSelection(0);
             }
             if (usuario != null) {
@@ -242,7 +242,7 @@ public class PerfilActivity extends AppCompatActivity {
             if (Import.getFirebase.getUsuario() == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.salve_primeiro));
             } else {
-                if (Objects.equals(queroSerTipster.getText().toString(), getResources().getString(R.string.quero_ser_um_punter)))
+                if (Objects.equals(queroSerTipster.getText().toString(), getResources().getString(R.string.quero_ser_um_filiado)))
                     QueroSerPunter();
                 else {
                     QueroSerTipster(!currentUser.getDados().isBloqueado());
@@ -386,10 +386,10 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void QueroSerPunter() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle(getResources().getString(R.string.solicitacao_punter));
+        dialog.setTitle(getResources().getString(R.string.solicitacao_filiado));
 
         String msg = getResources().getString(R.string.aviso_exluir_conta);
-        msg += "\n" + getResources().getString(R.string.aviso_recriar_conta_punter);
+        msg += "\n" + getResources().getString(R.string.aviso_recriar_conta_filiado);
 
         dialog.setMessage(msg);
         dialog.setNeutralButton(getResources().getString(R.string.cancelar), null);
