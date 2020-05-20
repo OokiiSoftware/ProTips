@@ -91,22 +91,22 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".auxiliar.NotificacaoRecebida">
+        <receiver android:name=".auxiliar.notification.NotificacaoRecebida">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".auxiliar.MessagingService"
+            android:name=".auxiliar.notification.MessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name=".auxiliar.SegundoPlanoService" />
-        <service android:name=".auxiliar.TerceiroPlanoService" />
+        <service android:name=".auxiliar.notification.SegundoPlanoService" />
+        <service android:name=".auxiliar.notification.TerceiroPlanoService" />
     </application>
 
 </manifest>

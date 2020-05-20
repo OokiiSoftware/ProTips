@@ -20,7 +20,7 @@ public class SQLiteContato extends SQLiteOpenHelper {
 
 //    private static final String TAG = "SQLiteContato";
 
-    private static final int VERSAO_BANCO = Constantes.SQLITE_BANCO_DE_DADOS_VERSAO;
+    private static final int VERSAO_BANCO = Constantes.sqlite.SQLITE_BANCO_DE_DADOS_VERSAO;
     private static final String TABELA_CONTATOS = "contatos";
 
     private final String ID = "id";

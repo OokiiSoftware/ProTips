@@ -7,8 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -19,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
@@ -147,7 +143,7 @@ public class ConversasFragment extends Fragment {
             holder.data.setText(Import.splitData(conversas.get(position).getData()));
 
             {
-                if(conversas.get(position).getLido() == Constantes.CONVERSA_MENSAGEM_LIDA)
+                if(conversas.get(position).getLido() == Constantes.user.conversa.MENSAGEM_LIDA)
                     holder.img_msg_lida.setVisibility(View.INVISIBLE);
                 else
                     holder.img_msg_lida.setVisibility(View.VISIBLE);
@@ -158,8 +154,8 @@ public class ConversasFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), ConversaActivity.class);
-                        intent.putExtra(Constantes.CONVERSA_CONTATO_ID, conversas.get(position).getId());
-                        intent.putExtra(Constantes.CONVERSA_CONTATO_NOME, conversas.get(position).getNome_contato());
+                        intent.putExtra(Constantes.intent.USER_ID, conversas.get(position).getId());
+                        intent.putExtra(Constantes.intent.USER_NOME, conversas.get(position).getNome_contato());
                         startActivity(intent);
                     }
                 });

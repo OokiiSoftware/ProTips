@@ -135,7 +135,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.REQUEST_PERMISSION_STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             foto_path = uri.toString();
             Glide.with(activity).load(uri).into(foto);
@@ -231,7 +231,7 @@ public class PostActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        foto.setOnClickListener(v -> pegarFotoDaGaleria());
+        foto.setOnClickListener(v -> Import.get.fotoDaGaleria(activity));
 
         horario_min.setOnClickListener(v -> {
             final int hora = toHour(horario_min.getText().toString());
@@ -312,13 +312,6 @@ public class PostActivity extends AppCompatActivity {
 
     private String dateToString(int hourOfDay, int minute) {
         return hourOfDay + ":" + minute + " h";
-    }
-
-    private void pegarFotoDaGaleria() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, Constantes.REQUEST_PERMISSION_STORANGE);
     }
 
     //endregion

@@ -80,9 +80,9 @@ public class ConversaActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
-            usuarioDestino.setId(bundle.getString(Constantes.CONVERSA_CONTATO_ID));
-            usuarioDestino.setNome(bundle.getString(Constantes.CONVERSA_CONTATO_NOME));
-            usuarioDestino.setFoto(bundle.getString(Constantes.CONVERSA_CONTATO_FOTO));
+            usuarioDestino.setId(bundle.getString(Constantes.intent.USER_ID));
+            usuarioDestino.setNome(bundle.getString(Constantes.intent.USER_NOME));
+            usuarioDestino.setFoto(bundle.getString(Constantes.intent.USER_FOTO));
 
             usuarioDestino.setId(Criptografia.criptografar(usuarioDestino.getId()));
         }
@@ -95,7 +95,7 @@ public class ConversaActivity extends AppCompatActivity {
             SQLiteConversa db = new SQLiteConversa(this);
             Conversa conversa = new Conversa();
             conversa.setId(usuarioDestino.getId());
-            conversa.setLido(Constantes.CONVERSA_MENSAGEM_LIDA);
+            conversa.setLido(Constantes.user.conversa.MENSAGEM_LIDA);
 //            db.update(this, conversa);
 
         }// Atualizar o banco de dados ao entrar na conversa, coloca a msg como lida
@@ -227,7 +227,7 @@ public class ConversaActivity extends AppCompatActivity {
         mensagem.setId_conversa(usuarioDestino.getId());
         mensagem.setData_de_envio(data_de_envio);
         mensagem.setMensagem(texto);
-        mensagem.setStatus(Constantes.CONVERSA_MENSAGEM_NAO_ENVIADA);
+        mensagem.setStatus(Constantes.user.conversa.MENSAGEM_NAO_ENVIADA);
         mensagem.setArquivo(0);
 
 //        if (Import.SalvarMensagemNoDispositivo(this, mensagem))
@@ -242,7 +242,7 @@ public class ConversaActivity extends AppCompatActivity {
             conversa.setUltima_msg(mensagem.getMensagem());// C
             conversa.setData(mensagem.getData_de_envio());
             conversa.setFoto(usuarioDestino.getFoto());
-            conversa.setLido(Constantes.CONVERSA_MENSAGEM_LIDA);
+            conversa.setLido(Constantes.user.conversa.MENSAGEM_LIDA);
 
 //            Import.SalvarConversaNoDispositivo(this, conversa);
 //            mensagem.setId_conversa(usuarioLogadoId);
@@ -340,15 +340,15 @@ public class ConversaActivity extends AppCompatActivity {
                     paramsData.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     paramsData.addRule(RelativeLayout.END_OF, R.id.item_conversa_layout_geral);
                     switch (mensagems.get(position).getStatus()){
-                        case Constantes.CONVERSA_MENSAGEM_NAO_ENVIADA:{
+                        case Constantes.user.conversa.MENSAGEM_NAO_ENVIADA:{
                             holder.data.setTextColor(getResources().getColor(R.color.vermelho));
                             break;
                         }
-                        case Constantes.CONVERSA_MENSAGEM_ENVIADA:{
+                        case Constantes.user.conversa.MENSAGEM_ENVIADA:{
                             holder.data.setTextColor(getResources().getColor(R.color.amareloDark));
                             break;
                         }
-                        case Constantes.CONVERSA_MENSAGEM_LIDA:{
+                        case Constantes.user.conversa.MENSAGEM_LIDA:{
                             holder.data.setTextColor(getResources().getColor(R.color.verde));
                             break;
                         }

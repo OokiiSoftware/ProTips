@@ -223,10 +223,10 @@ public class ContatosFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), ConversaActivity.class);
-                        intent.putExtra(Constantes.CONVERSA_CONTATO_ID, contatos.get(position).getId());
-                        intent.putExtra(Constantes.CONVERSA_CONTATO_NOME, contatos.get(position).getNome());
-//                        intent.putExtra(Config.CONVERSA_CONTATO_EMAIL, contatos.get(position).getEmail());
-                        intent.putExtra(Constantes.CONVERSA_CONTATO_FOTO, contatos.get(position).getImage_uri());
+                        intent.putExtra(Constantes.intent.USER_ID, contatos.get(position).getId());
+                        intent.putExtra(Constantes.intent.USER_NOME, contatos.get(position).getNome());
+//                        intent.putExtra(Config.user.conversa.CONVERSA_CONTATO_EMAIL, contatos.get(position).getEmail());
+                        intent.putExtra(Constantes.intent.USER_FOTO, contatos.get(position).getImage_uri());
                         startActivity(intent);
                     }
                 });

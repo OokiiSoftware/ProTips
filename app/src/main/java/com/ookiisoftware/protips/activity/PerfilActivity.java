@@ -100,8 +100,8 @@ public class PerfilActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case Constantes.REQUEST_PERMISSION_STORANGE:
-            case Constantes.REQUEST_PERMISSION_CAMERA: {
+            case Constantes.permissions.STORANGE:
+            case Constantes.permissions.CAMERA: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     AbrirCropView();
                 } else {
@@ -210,7 +210,7 @@ public class PerfilActivity extends AppCompatActivity {
         foto.setOnClickListener(view -> {
             String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
             if (!Import.hasPermissions(activity, PERMISSIONS)) {
-                ActivityCompat.requestPermissions(activity, PERMISSIONS, Constantes.REQUEST_PERMISSION_STORANGE);
+                ActivityCompat.requestPermissions(activity, PERMISSIONS, Constantes.permissions.STORANGE);
             } else {
                 if (uploadTask != null && uploadTask.isInProgress()) {
                     foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));

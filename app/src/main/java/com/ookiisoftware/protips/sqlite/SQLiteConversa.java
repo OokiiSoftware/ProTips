@@ -21,7 +21,7 @@ public class SQLiteConversa extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLiteConversa";
 
-    private static final int VERSAO_BANCO = Constantes.SQLITE_BANCO_DE_DADOS_VERSAO;
+    private static final int VERSAO_BANCO = Constantes.sqlite.SQLITE_BANCO_DE_DADOS_VERSAO;
     private static final String TABELA_CONVERSAS = "conversas";
 
     private final String CONTATO_ID = "id_contato";

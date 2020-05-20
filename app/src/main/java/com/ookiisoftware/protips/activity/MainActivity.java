@@ -19,7 +19,8 @@ import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.auxiliar.SegundoPlanoService;
+import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
+import com.ookiisoftware.protips.auxiliar.notification.SegundoPlanoService;
 import com.ookiisoftware.protips.fragment.FeedFragment;
 import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
@@ -262,6 +263,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         action_bar_titulo_1 = findViewById(R.id.action_bar_titulo_1);
         action_bar_titulo_2 = findViewById(R.id.action_bar_titulo_2);
         //endregion
+
+        MyNotificationManager.criarChannelNotification(activity);
 
         //region NavigationView
         navigationView.setNavigationItemSelectedListener(this);

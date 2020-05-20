@@ -20,7 +20,7 @@ public class SQLiteMensagem extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLiteMensagem";
 
-    private static final int VERSAO_BANCO = Constantes.SQLITE_BANCO_DE_DADOS_VERSAO;
+    private static final int VERSAO_BANCO = Constantes.sqlite.SQLITE_BANCO_DE_DADOS_VERSAO;
     private static final String TABELA_MENSAGENS = "mensagens";
 
     private final String ID = "id";

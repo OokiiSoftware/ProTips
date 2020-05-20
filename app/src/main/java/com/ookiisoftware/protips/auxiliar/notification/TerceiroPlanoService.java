@@ -1,4 +1,4 @@
-package com.ookiisoftware.protips.auxiliar;
+package com.ookiisoftware.protips.auxiliar.notification;
 
 import android.app.Service;
 import android.content.Context;
@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.GerenciaActivity;
+import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 
@@ -121,14 +123,18 @@ public class TerceiroPlanoService extends Service {
 
     private void notificationSolicitacao(@NonNull Usuario usuario) {
         try {
+            boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             if (Import.activites.getMainActivity().getPagePosition() != Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
                 String titulo = getResources().getString(R.string.app_name);
                 String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + usuario.getNome();
 
-                Intent intent = new Intent(getContext(), GerenciaActivity.class);
-                intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
-                int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
-                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+                Intent intent = null;
+                if (!inPrimeiroPlano) {
+                    intent = new Intent(getContext(), GerenciaActivity.class);
+                    intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
+                }
+//                int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
+                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
             } else {
                 Import.activites.getGerenciaActivity().notificationsFragment.adapterUpdate();
                 Import.activites.getGerenciaActivity().notificationsFragment.refreshLayout.setRefreshing(false);

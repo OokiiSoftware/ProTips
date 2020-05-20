@@ -1,4 +1,4 @@
-package com.ookiisoftware.protips.auxiliar;
+package com.ookiisoftware.protips.auxiliar.notification;
 
 import android.app.Service;
 import android.content.Context;
@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.MainActivity;
+import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
@@ -292,6 +294,7 @@ public class SegundoPlanoService extends Service {
 
     private void notificationPunterPendente(@NonNull Usuario usuario) {
         try {
+            boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
                 case Constantes.classes.fragments.pagerPosition.NOTIFICATIONS:
                     Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
@@ -303,10 +306,13 @@ public class SegundoPlanoService extends Service {
                     String titulo = getResources().getString(R.string.app_name);
                     String texto = getResources().getString(R.string.nova_solicitação_filiado) + "\n" + usuario.getNome();
 
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
-                    int channelId = Constantes.notification.id.NOVO_PUNTER_PENDENTE;
-                    Import.notificacao(getContext(), intent, channelId, titulo, texto);
+                    Intent intent = null;
+                    if (!inPrimeiroPlano) {
+                        intent = new Intent(getContext(), MainActivity.class);
+                        intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+                    }
+//                    int channelId = Constantes.notification.id.NOVO_PUNTER_PENDENTE;
+                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
                     break;
                 }
             }
@@ -315,6 +321,7 @@ public class SegundoPlanoService extends Service {
 
     private void notificationPunterAceito(@NonNull Usuario usuario) {
         try {
+            boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
                 case Constantes.classes.fragments.pagerPosition.PERFIL:
                     Import.activites.getMainActivity().perfilFragment.updateNotificacao();
@@ -324,9 +331,11 @@ public class SegundoPlanoService extends Service {
                     String titulo = getResources().getString(R.string.app_name);
                     String texto = getResources().getString(R.string.filiado_aceito) + "\n" + getResources().getString(R.string.tipster) + ": " + usuario.getNome();
 
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    int channelId = Constantes.notification.id.NOVO_PUNTER_ACEITO;
-                    Import.notificacao(getContext(), intent, channelId, titulo, texto);
+                    Intent intent = null;
+                    if (!inPrimeiroPlano)
+                        intent = new Intent(getContext(), MainActivity.class);
+//                    int channelId = Constantes.notification.id.NOVO_PUNTER_ACEITO;
+                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
                     break;
                 }
             }
@@ -335,9 +344,9 @@ public class SegundoPlanoService extends Service {
 
     private void notificationNewPost(@NonNull User usuario, @NonNull Post post) {
         try {
+            boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             if (Import.activites.getMainActivity().getPagePosition() == Constantes.classes.fragments.pagerPosition.FEED &&
-//                    verifyApplicationRunning(getContext()) &&
-                    Import.activites.getMainActivity().isInPrimeiroPlano()) {
+                    inPrimeiroPlano) {
                 Import.activites.getMainActivity().feedFragment.haveNewPostes(true);
             } else  {
                 String titulo = getResources().getString(R.string.app_name);
@@ -347,9 +356,11 @@ public class SegundoPlanoService extends Service {
                 texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
                 texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
 
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                int channelId = Constantes.notification.id.NOVO_POST;
-                Import.notificacao(getContext(), intent, channelId, titulo, texto);
+                Intent intent = null;
+                if (!inPrimeiroPlano)
+                    intent = new Intent(getContext(), MainActivity.class);
+//                int channelId = Constantes.notification.id.NOVO_POST;
+                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
             }
         } catch (Exception ignored) {}
     }

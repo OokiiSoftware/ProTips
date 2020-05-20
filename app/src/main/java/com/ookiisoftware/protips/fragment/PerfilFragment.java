@@ -93,7 +93,7 @@ public class PerfilFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.REQUEST_PERMISSION_STORANGE && resultCode == RESULT_OK) {
+        if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK) {
             if (dialog != null) {
                 if (data == null || data.getData() == null) {
                     dialog.dismiss();
@@ -251,11 +251,11 @@ public class PerfilFragment extends Fragment {
         final RelativeLayout rl = dialog.findViewById(R.id.rl_1);
         final Button postar = dialog.findViewById(R.id.ok_button);
         final Button cancel = dialog.findViewById(R.id.cancel_button);
-        pegarFotoDaGaleria();
+        Import.get.fotoDaGaleria(activity);
         rl.setVisibility(View.VISIBLE);
 
         foto.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        foto.setOnClickListener(v -> pegarFotoDaGaleria());
+        foto.setOnClickListener(v -> Import.get.fotoDaGaleria(activity));
         cancel.setOnClickListener(v -> dialog.dismiss());
         postar.setOnClickListener(v -> {
             PostPerfil post = new PostPerfil();
@@ -278,13 +278,6 @@ public class PerfilFragment extends Fragment {
         dialog.setOnDismissListener(dialog -> foto_path = null);
 
         dialog.show();
-    }
-
-    private void pegarFotoDaGaleria() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, Constantes.REQUEST_PERMISSION_STORANGE);
     }
 
     private void popupPhoto(String uri) {

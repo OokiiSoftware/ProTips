@@ -1,71 +1,16 @@
 package com.ookiisoftware.protips.auxiliar;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.view.View;
 
 import com.ookiisoftware.protips.BuildConfig;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.activity.BatepapoActivity;
-import com.ookiisoftware.protips.activity.MainActivity;
 
 public class Constantes {
 
     static final int APP_VERSAO = 14;
-
-    //===================== Conversas
-    public static final String CONVERSA_CONTATO_ID = "conversa_contato_id";
-    public static final String CONVERSA_CONTATO_NOME = "conversa_contato_nome";
-    public static final String CONVERSA_CONTATO_EMAIL = "conversa_contato_email";
-    public static final String CONVERSA_CONTATO_FOTO = "conversa_contato_foto";
-
-    public static final int CONVERSA_MENSAGEM_LIDA = 2;
-    public static final int CONVERSA_MENSAGEM_ENVIADA = 1;
-    public static final int CONVERSA_MENSAGEM_NAO_ENVIADA = 0;
-
-    public static class files {
-//        public static final String PUNTER_JSON = "4646753466.json";
-        public static final String USER_JSON = "46434567.json";
-    }
-
-    public static class formats {
-        public static final String TELEFONE = "+NN (NN) NNNNN-NNNN";
-        public static final String CPF = "NNN.NNN.NNN-NN";
-        public static final String DATA = "NN/NN/NNNN";
-    }
-
-    public static class firebase {
-        public static class child {
-            public static final String IDENTIFICADOR = "identificadores";
-            public static final String USUARIO = "usuarios";
-            public static final String CONTATO = "contatos";
-            public static final String DADOS = "dados";
-            public static final String CONVERSAS = "conversas";
-
-            public static final String PERFIL = "perfil";
-            public static final String POSTES = "postes";
-            public static final String POSTES_PERFIL = "post_perfil";
-
-            public static final String SEGUIDORES_PENDENTES = "seguidoresPendentes";
-            public static final String TELEFONE = "telefone";
-
-            public static final String SOLICITACAO_NOVO_TIPSTER = "solicitacao_novo_tipster";
-            public static final String SEGUIDORES = "seguidores";
-            public static final String SEGUINDO = "seguindo";
-            public static final String BOM = "bom";
-            public static final String RUIM = "ruim";
-            public static final String ESPORTES = "esportes";
-            public static final String MERCADOS = "mercados";
-            public static final String BLOQUEADO = "bloqueado";
-            public static final String ADMINISTRADORES = "administradores";
-            public static final String VERSAO = "versao";
-            public static final String APP = "app";
-            public static final String TIPSTER = "tipster";
-        }
-    }
 
     public static class user {
         public static class logado {
@@ -84,16 +29,40 @@ public class Constantes {
             public static final String INFO = "usuario_logado_categoria";
         }
         public static class conversa {
-
+            public static final int MENSAGEM_LIDA = 2;
+            public static final int MENSAGEM_ENVIADA = 1;
+            public static final int MENSAGEM_NAO_ENVIADA = 0;
         }
+    }
+
+    public static class files {
+//        public static final String PUNTER_JSON = "4646753466.json";
+        public static final String USER_JSON = "46434567.json";
     }
 
     public static class intent {
         public static final String PRIMEIRO_LOGIN = "primeiroLogin";
         public static final String USER_ID = "user_id";
+        public static final String USER_NOME = "user_id";
+        public static final String USER_FOTO = "user_id";
         public static final String PAGE_SELECT = "page_select";
         public static final String EMAIL = "email";
         public static final String IS_GERENCIA = "is_gerencia";
+        public static final String URL_LINK = "url_link";
+    }
+
+    public static class sqlite {
+        public static final int SQLITE_BANCO_DE_DADOS_VERSAO = 1;
+        public static final String SQLITE_BANCO_DE_DADOS = "protips_db";
+        public static final String SQLITE_TABELA_CONVERSAS = "conversas";
+
+        public static final String SQLITE_TABELA_MENSAGENS = "mensagens";
+    }
+
+    public static class formats {
+        public static final String TELEFONE = "+NN (NN) NNNNN-NNNN";
+        public static final String CPF = "NNN.NNN.NNN-NN";
+        public static final String DATA = "NN/NN/NNNN";
     }
 
     public static class presset {
@@ -129,30 +98,47 @@ public class Constantes {
         }
     }
 
-    //============================== SQLite
-    public static final int SQLITE_BANCO_DE_DADOS_VERSAO = 1;
-    public static final String SQLITE_BANCO_DE_DADOS = "protips_db" ;
-    public static final String SQLITE_TABELA_CONVERSAS = "conversas";
+    public static class firebase {
+        public static class child {
+            public static final String IDENTIFICADOR = "identificadores";
+            public static final String USUARIO = "usuarios";
+            public static final String CONTATO = "contatos";
+            public static final String DADOS = "dados";
+            public static final String CONVERSAS = "conversas";
 
-    public static final String SQLITE_TABELA_MENSAGENS = "mensagens";
+            public static final String PERFIL = "perfil";
+            public static final String POSTES = "postes";
+            public static final String POSTES_PERFIL = "post_perfil";
 
+            public static final String SEGUIDORES_PENDENTES = "seguidoresPendentes";
+            public static final String TELEFONE = "telefone";
 
-    //=============================================== Permissões
-    public static final int REQUEST_PERMISSION_STORANGE = 101;
-    public static final int REQUEST_PERMISSION_CAMERA = 102;
+            public static final String SOLICITACAO_NOVO_TIPSTER = "solicitacao_novo_tipster";
+            public static final String SEGUIDORES = "seguidores";
+            public static final String SEGUINDO = "seguindo";
+            public static final String BOM = "bom";
+            public static final String RUIM = "ruim";
+            public static final String ESPORTES = "esportes";
+            public static final String MERCADOS = "mercados";
+            public static final String BLOQUEADO = "bloqueado";
+            public static final String ADMINISTRADORES = "administradores";
+            public static final String VERSAO = "versao";
+            public static final String APP = "app";
+            public static final String TIPSTER = "tipster";
+        }
+    }
 
-    //================================= Eventos de deslize e cliques
-    @SuppressLint("StaticFieldLeak")
-    public static View item_clicado;
-
-    public static boolean SELECIONAR_ITEM;
-
-    public static final int LONGCLICK = 300;
-    public static final int DOUBLETAP = 500;
-    public static final int SWIPE_RADIO_LIMITE = 10;
-    public static final int SWIPE_RANGE_LIMITE = 10;
+    public static class permissions {
+        public static final int STORANGE = 101;
+        public static final int CAMERA = 102;
+    }
 
     public static class notification {
+
+        public static final String CHANNEL_ID_DEFAULT = "channel_id_default";
+        public static final String CHANNEL_ID_UPDATE_APP = "channel_id_update_app";
+        public static final String CHANNEL_NOME = "channel_nome";
+        public static final String CHANNEL_DESCRICAO = "channel_descricao";
 
         public static class id {
             public static final int NOVO_PUNTER_PENDENTE = 235345;
@@ -173,5 +159,11 @@ public class Constantes {
                 + BuildConfig.APPLICATION_ID +  "/" + R.raw.notification_sound);
         public static final Uri SOUND_DEFAULT = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     }
-    //=======================================
+
+    //================================= Eventos de deslize e cliques
+    public static final int LONGCLICK = 300;
+    public static final int DOUBLETAP = 500;
+    public static final int SWIPE_RADIO_LIMITE = 10;
+    public static final int SWIPE_RANGE_LIMITE = 10;
+
 }

@@ -177,55 +177,6 @@ public class Import {
         return reborn;
     }
 
-    static void notificacao(Context context, Intent intent, int id, String titulo, String texto) {
-        try {
-            Import.Alert.msg(TAG, "Notificacao", titulo, texto);
-            String CHANNEL_ID = "tips";
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            RemoteViews notificacaoSimples = new RemoteViews(context.getPackageName(), R.layout.notification_simples);
-            RemoteViews notificacaoExpandida = new RemoteViews(context.getPackageName(), R.layout.notification_expandida);
-
-            notificacaoExpandida.setOnClickPendingIntent(R.id.notification_titulo, pendingIntent);
-
-            notificacaoSimples.setTextViewText(R.id.notification_titulo, titulo);
-            notificacaoExpandida.setTextViewText(R.id.notification_titulo, titulo);
-            notificacaoSimples.setTextViewText(R.id.notification_subtitulo, texto);
-            notificacaoExpandida.setTextViewText(R.id.notification_texto, texto);
-            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (manager == null)
-                return;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, titulo, NotificationManager.IMPORTANCE_DEFAULT);
-
-                //Roxo (notification_light_color)
-                channel.setLightColor(Color.rgb(80, 0, 255));
-                channel.setDescription(texto);
-                channel.setSound(Constantes.notification.SOUND_DEFAULT, Constantes.notification.audioAttributes);
-                channel.setVibrationPattern(Constantes.notification.VIBRATION);
-
-                manager = context.getSystemService(NotificationManager.class);
-                if (manager == null)
-                    return;
-                manager.createNotificationChannel(channel);
-            }
-            Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_notification_icon_dark)
-                    .setCustomContentView(notificacaoSimples)
-                    .setCustomBigContentView(notificacaoExpandida)
-                    .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                    .setContentIntent(pendingIntent)
-                    .setSound(Constantes.notification.SOUND_DEFAULT)
-                    .setVibrate(Constantes.notification.VIBRATION)
-                    .setAutoCancel(true)
-                    .build();
-
-            manager.notify(id, notification);
-        } catch (Exception ignored) {}
-    }
-
     public static void notificacaoCancel(Activity activity, int id) {
         try {
             String ns = Context.NOTIFICATION_SERVICE;
@@ -327,6 +278,12 @@ public class Import {
             get.esporte = esporte;
         }
 
+        public static void fotoDaGaleria(Activity activity) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            activity.startActivityForResult(intent, Constantes.permissions.STORANGE);
+        }
         private static Typeface FonteNormal(Context context){
             return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
         }
@@ -337,7 +294,7 @@ public class Import {
 
         public static String SQLiteDatabaseName(Context context){
             SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-            return pref.getString(Constantes.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
+            return pref.getString(Constantes.sqlite.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
         }
 
         public static Esporte esporte() {
