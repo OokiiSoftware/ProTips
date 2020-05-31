@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -19,6 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +31,7 @@ import com.ookiisoftware.protips.activity.PostActivity;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.SeguidoresActivity;
 import com.ookiisoftware.protips.activity.SeguindoActivity;
+import com.ookiisoftware.protips.adapter.CustomNestedScrollView;
 import com.ookiisoftware.protips.adapter.PostPerfilAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
@@ -35,6 +39,7 @@ import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.OnSwipeListener;
 import com.ookiisoftware.protips.modelo.PostPerfil;
 import com.ookiisoftware.protips.modelo.Usuario;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,10 +49,11 @@ import static android.app.Activity.RESULT_OK;
 public class PerfilFragment extends Fragment {
 
     //region Variáveis
-//    private static final String TAG = "PerfilFragment";
+    private static final String TAG = "PerfilFragment";
 
     private Activity activity;
     private OnSwipeListener onSwipeListener = new OnSwipeListener() {
+
         @Override
         public void onTouchUp() {
             if (dialog != null)
@@ -66,6 +72,7 @@ public class PerfilFragment extends Fragment {
     private ImageView btn_notificacao;
     private TextView notification_quant;
     private RecyclerView recyclerView;
+    private CustomNestedScrollView scrollView;
 
     //endregion
 
@@ -92,21 +99,35 @@ public class PerfilFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK) {
-            if (dialog != null) {
+        if (dialog != null) {
+            final ImageView foto = dialog.findViewById(R.id.iv_foto);
+//            final ConstraintLayout constraintLayout = dialog.findViewById(R.id.constraint);
+
+            if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK) {
+                Import.Alert.d(TAG, "onActivityResult", "resultCode == RESULT_OK");
                 if (data == null || data.getData() == null) {
                     dialog.dismiss();
                 } else {
                     Uri uri = data.getData();
                     foto_path = uri.toString();
-                    ImageView foto = dialog.findViewById(R.id.iv_foto);
                     Glide.with(activity).load(uri).into(foto);
                 }
             }
-        } else {
-            if (dialog != null)
-                dialog.dismiss();
+            else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK && result != null && result.getUri() != null) {
+                    foto_path = result.getUri().toString();
+                    Glide.with(activity).asBitmap().load(foto_path).into(foto);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    if (result != null)
+                        Import.Alert.e(TAG, "onActivityResult", result.getError().getMessage());
+                    Import.Alert.toast(activity, getResources().getString(R.string.erro_foto_salvar));
+                }
+            } else {
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -130,6 +151,7 @@ public class PerfilFragment extends Fragment {
         ImageView btn_3_perfil_fragment = view.findViewById(R.id.btn_3_perfil_fragment);
 
         recyclerView = view.findViewById(R.id.recycler);
+        scrollView = view.findViewById(R.id.scrollView);
         btn_notificacao = view.findViewById(R.id.iv_new_punter);
         notification_quant = view.findViewById(R.id.tv_notification_quant);
         //endregion
@@ -152,11 +174,26 @@ public class PerfilFragment extends Fragment {
             Collections.sort(postPerfils, new PostPerfil.orderByDate());
             perfilAdapter = new PostPerfilAdapter(activity, postPerfils, true, onSwipeListener) {
                 @Override
+                public void onClick(View v) {
+                    int position = recyclerView.getChildAdapterPosition(v);
+
+                    if (perfilAdapter.isMyPost(position)) {
+                        Toolbar toolbar = v.findViewById(R.id.toolbar);
+                        if (toolbar.getVisibility() == View.VISIBLE)
+                            toolbar.setVisibility(View.GONE);
+                        else
+                            toolbar.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
                 public boolean onLongClick(View v) {
                     int position = recyclerView.getChildAdapterPosition(v);
                     PostPerfil item = postPerfils.get(position);
                     popupPhoto(item.getFoto());
+                    scrollView.setScrollingEnabled(false);
                     recyclerView.suppressLayout(true);
+
                     Import.activites.getMainActivity().setPagingEnabled(false);
                     return super.onLongClick(v);
                 }
@@ -226,8 +263,13 @@ public class PerfilFragment extends Fragment {
     }
 
     public void adapterUpdate() {
-        if (perfilAdapter != null)
+        if (perfilAdapter != null) {
+            if (postPerfils != null) {
+                postPerfils.clear();
+                postPerfils.addAll(Import.getFirebase.getTipster().getPost_perfil().values());
+            }
             perfilAdapter.notifyDataSetChanged();
+        }
     }
 
     private void removeNotification() {
@@ -242,8 +284,8 @@ public class PerfilFragment extends Fragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_post_perfil);
         dialog.setCancelable(false);
-        if (dialog.getWindow() != null)
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        if (dialog.getWindow() != null)
+//            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         final EditText titulo = dialog.findViewById(R.id.et_titulo);
         final EditText texto = dialog.findViewById(R.id.et_texto);
@@ -251,11 +293,10 @@ public class PerfilFragment extends Fragment {
         final RelativeLayout rl = dialog.findViewById(R.id.rl_1);
         final Button postar = dialog.findViewById(R.id.ok_button);
         final Button cancel = dialog.findViewById(R.id.cancel_button);
-        Import.get.fotoDaGaleria(activity);
+        Import.abrirCropView(activity, this, 0);
         rl.setVisibility(View.VISIBLE);
 
-        foto.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        foto.setOnClickListener(v -> Import.get.fotoDaGaleria(activity));
+        foto.setOnClickListener(v -> Import.abrirCropView(activity, this, 0));
         cancel.setOnClickListener(v -> dialog.dismiss());
         postar.setOnClickListener(v -> {
             PostPerfil post = new PostPerfil();
@@ -288,6 +329,7 @@ public class PerfilFragment extends Fragment {
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.popup_foto);
             dialog.setOnDismissListener(dialog -> {
+                scrollView.setScrollingEnabled(true);
                 recyclerView.suppressLayout(false);
                 Import.activites.getMainActivity().setPagingEnabled(true);
             });

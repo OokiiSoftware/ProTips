@@ -56,7 +56,6 @@ public class Data {
 
     public boolean valido() {
         boolean b= (dia > 0 && dia <= 31) && (mes > 0 && mes <= 12) && ano >= 1900;
-        Import.Alert.msg("Data: valido", dia + "/" + mes + "/" + ano, "" + b);
         return b;
     }
 

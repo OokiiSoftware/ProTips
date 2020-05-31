@@ -38,7 +38,7 @@ public class TerceiroPlanoService extends Service {
         try {
             CommandSolicitacoes();
         } catch (Exception e) {
-            Import.Alert.erro(TAG, "onStartCommand", e);
+            Import.Alert.e(TAG, "onStartCommand", e);
         }
 
         // START_STICKY serve para executar seu serviço até que você pare ele, é reiniciado automaticamente sempre que termina
@@ -65,7 +65,7 @@ public class TerceiroPlanoService extends Service {
                             String key = dataSnapshot.getKey();
                             getTipster(key, true);
                         } catch (Exception ex) {
-                            Import.Alert.erro(TAG, "CommandSolicitacoes: onChildAdded", ex);
+                            Import.Alert.e(TAG, "CommandSolicitacoes: onChildAdded", ex);
                         }
                     }
 
@@ -79,7 +79,7 @@ public class TerceiroPlanoService extends Service {
                             Import.get.solicitacao.remove(key);
                             Import.activites.getGerenciaActivity().notificationsFragment.adapterUpdate();
                         } catch (Exception ex) {
-                            Import.Alert.erro(TAG, "CommandSolicitacoes: onChildRemoved", ex);
+                            Import.Alert.e(TAG, "CommandSolicitacoes: onChildRemoved", ex);
                         }
                     }
 
@@ -134,7 +134,7 @@ public class TerceiroPlanoService extends Service {
                     intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
                 }
 //                int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
-                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
+//                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
             } else {
                 Import.activites.getGerenciaActivity().notificationsFragment.adapterUpdate();
                 Import.activites.getGerenciaActivity().notificationsFragment.refreshLayout.setRefreshing(false);

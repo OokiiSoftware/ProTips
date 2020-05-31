@@ -108,9 +108,11 @@
 
     </LinearLayout>
 
-    <ScrollView
+    <com.ookiisoftware.protips.adapter.CustomNestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -273,6 +275,6 @@
 
         </TableLayout>
 
-    </ScrollView>
+    </com.ookiisoftware.protips.adapter.CustomNestedScrollView>
 
 </LinearLayout>

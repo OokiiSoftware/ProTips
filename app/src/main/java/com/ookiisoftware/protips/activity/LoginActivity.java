@@ -82,11 +82,11 @@ public class LoginActivity extends AppCompatActivity {
             progressBar.setVisibility(View.INVISIBLE);
             et_email.setEnabled(true);
             et_senha.setEnabled(true);
-            Import.Alert.msg(TAG, "onStart", "currentUser == null");
+            Import.Alert.d(TAG, "onStart", "currentUser == null");
         } else {
             progressBar.setVisibility(View.VISIBLE);
             splashScreen.setVisibility(View.VISIBLE);
-            Import.Alert.msg(TAG, "onStart", "auto login");
+            Import.Alert.d(TAG, "onStart", "auto login");
             if (user.isEmailVerified() && Import.get.hasConection(activity)) {
                 boolean isGerente = Import.getFirebase.isGerente(activity);
                 if (isGerente) {
@@ -94,14 +94,13 @@ public class LoginActivity extends AppCompatActivity {
                     startIntent(intent);
                 } else
                     verificarJsons();
-//                    VerificarLoginPunter();
             } else {
                 et_email.setEnabled(true);
                 et_senha.setEnabled(true);
                 splashScreen.setVisibility(View.GONE);
                 progressBar.setVisibility(View.INVISIBLE);
                 emailNaoVerificado(user);
-                Import.Alert.msg(TAG, "onStart", "email não verificado", "ou sem conexão com a internet");
+                Import.Alert.d(TAG, "onStart", "email não verificado", "ou sem conexão com a internet");
             }
         }
     }
@@ -109,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Import.Alert.msg(TAG, "requestCode", requestCode + "");
+        Import.Alert.d(TAG, "requestCode", requestCode + "");
         // Resultado retornado ao iniciar o Intent de GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -120,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Falha no login do Google, atualize a interface do usuário adequadamente
-                Import.Alert.erro(TAG, "onActivityResult", e);
+                Import.Alert.e(TAG, "onActivityResult", e);
             }
         }
         // Passe o resultado da atividade de volta ao SDK do Facebook
@@ -244,11 +243,11 @@ public class LoginActivity extends AppCompatActivity {
     private void LoginComToken(AuthCredential credential) {
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
-                    Import.Alert.msg(TAG, "LoginComToken", "Sucesso");
+                    Import.Alert.d(TAG, "LoginComToken", "Sucesso");
                     VerificarLoginTipster();
                 })
                 .addOnFailureListener(e -> {
-                    Import.Alert.erro(TAG, "LoginComToken", e);
+                    Import.Alert.e(TAG, "LoginComToken", e);
                     progressBar.setVisibility(View.INVISIBLE);
                     if (e.getMessage() != null)
                         if (e.getMessage().contains("The supplied auth credential is malformed or has expired."))
@@ -282,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.INVISIBLE);
-                    Import.Alert.erro(TAG, "LoginComEmailESenha", e);
+                    Import.Alert.e(TAG, "LoginComEmailESenha", e);
                     if (e.getMessage() != null)
                         switch (e.getMessage()) {
                             case "The password is invalid or the user does not have a password.":
@@ -322,7 +321,7 @@ public class LoginActivity extends AppCompatActivity {
             if (task.isSuccessful())
                 Import.Alert.snakeBar(activity, getResources().getString(R.string.email_enviado));
         }).addOnFailureListener(e -> {
-            Import.Alert.erro(TAG, "enviarNovoEmail", e);
+            Import.Alert.e(TAG, "enviarNovoEmail", e);
             Import.Alert.toast(activity, getResources().getString(R.string.erro_email_enviado));
         });
     }
@@ -345,42 +344,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /*private void VerificarLoginPunter() {
-        Import.getFirebase.setGerencia(activity, false);
-        final Intent intent = new Intent(activity, MainActivity.class);
-        Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
-                .child(Constantes.firebase.child.PUNTERS)
-                .child(Import.getFirebase.getId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        try {
-                            if (dataSnapshot.getValue() == null)
-                                throw new Exception();
-                            Punter item = dataSnapshot.getValue(Punter.class);
-                            if (item == null)
-                                throw new Exception();
-                            if (item.getDados().isBloqueado())
-                                throw new Exception();
-
-                            Import.getFirebase.setUser(activity, item, true);
-                            startIntent(intent);
-                        } catch (Exception ex){
-                            VerificarLoginTipster();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
-    }*/
-
     private void VerificarLoginTipster() {
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(Import.getFirebase.getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

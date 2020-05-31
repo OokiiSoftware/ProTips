@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="2dp"
     android:orientation="vertical">
 
@@ -15,31 +15,46 @@
         android:padding="@dimen/edittext_padding"
         android:hint="@string/titulo"
         android:textSize="@dimen/title_size"
-        android:background="@color/brancoDark"
         android:textAlignment="center"
         android:inputType="textPersonName"
         android:importantForAutofill="no"/>
+
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/brancoDark"
+        android:minHeight="200dp">
+
+        <ImageView
+            android:id="@+id/iv_foto"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
     <ImageView
         android:id="@+id/iv_foto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_download"
-        android:background="@color/text_dark"
-        android:minHeight="200dp"
-
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:minHeight="200dp"/>
 
     <EditText
         android:id="@+id/et_texto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/brancoDark"
         android:padding="@dimen/edittext_padding"
         android:hint="@string/legenda"
         android:textSize="@dimen/title_size"
@@ -50,7 +65,6 @@
         android:id="@+id/rl_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/text_dark"
         android:visibility="gone"
         android:padding="@dimen/login_item_margin">
 

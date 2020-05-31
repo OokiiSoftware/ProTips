@@ -82,11 +82,11 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="25dp"
-        android:src="@drawable/ic_enter"
+        android:src="@drawable/ic_enter_dark"
         android:tint="@color/colorAccent"
         android:contentDescription="@null"/>
 

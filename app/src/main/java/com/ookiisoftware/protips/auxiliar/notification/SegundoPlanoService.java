@@ -47,7 +47,7 @@ public class SegundoPlanoService extends Service {
             CommandPunterPendenteAceito();
             CommandPostes();
         } catch (Exception e) {
-            Import.Alert.erro(TAG, e);
+            Import.Alert.e(TAG, e);
         }
 
         // START_STICKY serve para executar seu serviço até que você pare ele, é reiniciado automaticamente sempre que termina
@@ -57,7 +57,7 @@ public class SegundoPlanoService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Import.Alert.msg(TAG, "onDestroy", "----");
+        Import.Alert.d(TAG, "onDestroy", "----");
     }
 
     //endregion
@@ -82,13 +82,15 @@ public class SegundoPlanoService extends Service {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
+                try {
+                    String key = dataSnapshot.getValue(String.class);
+                    if (key == null)
+                        return;
 
-                boolean b = !Import.getFirebase.getTipster().getSeguidoresPendentes().containsKey(key);
-                getSeguidorPendente(key, b);
-                Import.getFirebase.getTipster().getSeguidoresPendentes().put(key, key);
+                    boolean b = !Import.getFirebase.getTipster().getSeguidoresPendentes().containsKey(key);
+                    getSeguidorPendente(key, b);
+                    Import.getFirebase.getTipster().getSeguidoresPendentes().put(key, key);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -96,14 +98,14 @@ public class SegundoPlanoService extends Service {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
-
-                Import.getFirebase.getTipster().getSeguidoresPendentes().remove(key);
-
-                Import.get.solicitacao.remove(key);
                 try {
+                    String key = dataSnapshot.getValue(String.class);
+                    if (key == null)
+                        return;
+
+                    Import.getFirebase.getTipster().getSeguidoresPendentes().remove(key);
+
+                    Import.get.solicitacao.remove(key);
                     Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
                     Import.activites.getMainActivity().perfilFragment.updateNotificacao();
                 } catch (Exception ignored) {}
@@ -128,13 +130,15 @@ public class SegundoPlanoService extends Service {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
+                try {
+                    final String key = dataSnapshot.getValue(String.class);
+                    if (key == null)
+                        return;
 
-                boolean b = !Import.getFirebase.getTipster().getSeguidores().containsKey(key);
-                getSeguidor(key, b);
-                Import.getFirebase.getTipster().getSeguidores().put(key, key);
+                    boolean b = !Import.getFirebase.getTipster().getSeguidores().containsKey(key);
+                    getSeguidor(key, b);
+                    Import.getFirebase.getTipster().getSeguidores().put(key, key);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -142,9 +146,11 @@ public class SegundoPlanoService extends Service {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getValue(String.class);
-                Import.getFirebase.getTipster().getSeguidores().remove(key);
-                Import.get.seguidores.remove(key);
+                try {
+                    String key = dataSnapshot.getValue(String.class);
+                    Import.getFirebase.getTipster().getSeguidores().remove(key);
+                    Import.get.seguidores.remove(key);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -166,14 +172,16 @@ public class SegundoPlanoService extends Service {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
+                try {
+                    final String key = dataSnapshot.getValue(String.class);
+                    if (key == null)
+                        return;
 
-                boolean b = !Import.getFirebase.getTipster().getSeguindo().containsKey(key);
-                getSeguindo(key, b);
-                Import.getFirebase.getTipster().getSeguindo().put(key, key);
-                postAddChildEventList(key);
+                    boolean b = !Import.getFirebase.getTipster().getSeguindo().containsKey(key);
+                    getSeguindo(key, b);
+                    Import.getFirebase.getTipster().getSeguindo().put(key, key);
+                    postAddChildEventList(key);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -181,12 +189,14 @@ public class SegundoPlanoService extends Service {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String key = dataSnapshot.getValue(String.class);
-                if (key == null)
-                    return;
+                try {
+                    String key = dataSnapshot.getValue(String.class);
+                    if (key == null)
+                        return;
 
-                Import.get.seguindo.remove(key);
-                Import.getFirebase.getTipster().getSeguindo().remove(key);
+                    Import.get.seguindo.remove(key);
+                    Import.getFirebase.getTipster().getSeguindo().remove(key);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -292,7 +302,7 @@ public class SegundoPlanoService extends Service {
 
     //region notifications
 
-    private void notificationPunterPendente(@NonNull Usuario usuario) {
+    private void notificationPunterPendente1(@NonNull Usuario usuario) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
@@ -312,14 +322,14 @@ public class SegundoPlanoService extends Service {
                         intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
                     }
 //                    int channelId = Constantes.notification.id.NOVO_PUNTER_PENDENTE;
-                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
+//                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
                     break;
                 }
             }
         } catch (Exception ignored) {}
     }
 
-    private void notificationPunterAceito(@NonNull Usuario usuario) {
+    private void notificationPunterAceito1(@NonNull Usuario usuario) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
@@ -335,7 +345,7 @@ public class SegundoPlanoService extends Service {
                     if (!inPrimeiroPlano)
                         intent = new Intent(getContext(), MainActivity.class);
 //                    int channelId = Constantes.notification.id.NOVO_PUNTER_ACEITO;
-                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
+//                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
                     break;
                 }
             }
@@ -352,7 +362,7 @@ public class SegundoPlanoService extends Service {
                 String titulo = getResources().getString(R.string.app_name);
                 String texto = getResources().getString(R.string.novo_poste) + ": " + usuario.getDados().getNome();
                 texto += "\n" + getResources().getString(R.string.esporte) + ": " + post.getEsporte();
-                texto += "\n" + getResources().getString(R.string.mercado) + ": " + post.getMercado();
+                texto += "\n" + getResources().getString(R.string.mercado) + ": " + post.getLinha();
                 texto += "\n" + getResources().getString(R.string.odd) + ": " + post.getOdd_minima() + " - " + post.getOdd_maxima();
                 texto += "\n" + getResources().getString(R.string.horario) + ": " + post.getHorario_minimo() + " - " + post.getHorario_maximo();
 
@@ -360,7 +370,7 @@ public class SegundoPlanoService extends Service {
                 if (!inPrimeiroPlano)
                     intent = new Intent(getContext(), MainActivity.class);
 //                int channelId = Constantes.notification.id.NOVO_POST;
-                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
+//                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
             }
         } catch (Exception ignored) {}
     }
@@ -389,6 +399,45 @@ public class SegundoPlanoService extends Service {
 
     //region gets
 
+    private void getSeguidor(String key, boolean notificationVisible) {
+        try {
+            User item = Import.get.tipsters.get(key);
+            if (item == null) {
+                getTipster(key, SEGUIDORES, notificationVisible);
+            } else {
+//            if (notificationVisible)
+//                notificationPunterAceito(item.getDados());
+                Import.get.seguidores.add(item);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void getSeguindo(String key, boolean notificationVisible) {
+        try {
+            User item = Import.get.tipsters.get(key);
+            if (item == null) {
+                getTipster(key, SEGUIDORES, notificationVisible);
+            } else {
+//            if (notificationVisible)
+//                notificationPunterAceito(item.getDados());
+                Import.get.seguindo.add(item);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void getSeguidorPendente(String id, boolean notificationVisible) {
+        try {
+            User item = Import.get.tipsters.get(id);
+            if (item == null) {
+                getTipster(id, PENDENTE, notificationVisible);
+            } else {
+//            if (notificationVisible)
+//                notificationPunterPendente(item.getDados());
+                Import.get.solicitacao.add(item);
+            }
+        } catch (Exception ignored) {}
+    }
+
     private void getTipster(String key, int notificationID, boolean notificationVisible) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
@@ -396,75 +445,44 @@ public class SegundoPlanoService extends Service {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        User item = dataSnapshot.getValue(User.class);
-                        if (item == null)
-                            return;
+                        try {
+                            User item = dataSnapshot.getValue(User.class);
+                            if (item == null)
+                                return;
 
-                        String id = item.getDados().getId();
+                            String id = item.getDados().getId();
 
-                        if (item.getDados().isTipster()) {
-                            Import.get.tipsters.add(item);
-                        }
-
-                        if (Import.getFirebase.getTipster().getSeguidores().containsValue(id)) {
-                            Import.get.seguidores.add(item);
-                        }
-
-                        if (Import.getFirebase.getTipster().getSeguindo().containsValue(id)) {
-                            Import.get.seguindo.add(item);
-                        }
-
-                        if (notificationVisible) {
-                            switch (notificationID) {
-                                case SEGUIDORES:
-                                    break;
-                                case SEGUINDO:
-                                    notificationPunterAceito(item.getDados());
-                                    break;
-                                case PENDENTE:
-                                    Import.get.solicitacao.add(item);
-                                    notificationPunterPendente(item.getDados());
-                                    break;
+                            if (item.getDados().isTipster()) {
+                                Import.get.tipsters.add(item);
                             }
-                        }
+
+                            if (Import.getFirebase.getTipster().getSeguidores().containsValue(id)) {
+                                Import.get.seguidores.add(item);
+                            }
+
+                            if (Import.getFirebase.getTipster().getSeguindo().containsValue(id)) {
+                                Import.get.seguindo.add(item);
+                            }
+
+                            if (notificationVisible) {
+                                switch (notificationID) {
+                                    case SEGUIDORES:
+                                        break;
+                                    case SEGUINDO:
+//                                    notificationPunterAceito(item.getDados());
+                                        break;
+                                    case PENDENTE:
+                                        Import.get.solicitacao.add(item);
+//                                    notificationPunterPendente(item.getDados());
+                                        break;
+                                }
+                            }
+                        } catch (Exception ignored) {}
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
-    }
-
-    private void getSeguidor(String key, boolean notificationVisible) {
-        User item = Import.get.tipsters.get(key);
-        if (item == null) {
-            getTipster(key, SEGUIDORES, notificationVisible);
-        } else {
-            if (notificationVisible)
-                notificationPunterAceito(item.getDados());
-            Import.get.seguidores.add(item);
-        }
-    }
-
-    private void getSeguindo(String key, boolean notificationVisible) {
-        User item = Import.get.tipsters.get(key);
-        if (item == null) {
-            getTipster(key, SEGUIDORES, notificationVisible);
-        } else {
-            if (notificationVisible)
-                notificationPunterAceito(item.getDados());
-            Import.get.seguindo.add(item);
-        }
-    }
-
-    private void getSeguidorPendente(String id, boolean notificationVisible) {
-        User item = Import.get.tipsters.get(id);
-        if (item == null) {
-            getTipster(id, PENDENTE, notificationVisible);
-        } else {
-            if (notificationVisible)
-                notificationPunterPendente(item.getDados());
-            Import.get.solicitacao.add(item);
-        }
     }
 
     private void postAddChildEventList(String userId) {
@@ -475,15 +493,16 @@ public class SegundoPlanoService extends Service {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Post item = dataSnapshot.getValue(Post.class);
-                if (item == null)
-                    return;
+                try {
+                    Post item = dataSnapshot.getValue(Post.class);
+                    if (item == null)
+                        return;
 
-                Import.get.seguindo.add(item);
-                User user = Import.get.tipsters.get(item.getId_tipster());
-                if (user != null) {
-                    notificationNewPost(user, item);
-                }
+                    Import.get.seguindo.add(item);
+//                    User user = Import.get.tipsters.get(item.getId_tipster());
+//                if (user != null)
+//                    notificationNewPost(user, item);
+                } catch (Exception ignored) {}
             }
 
             @Override
@@ -491,16 +510,14 @@ public class SegundoPlanoService extends Service {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Post item = dataSnapshot.getValue(Post.class);
-                if (item == null)
-                    return;
-
-                Import.get.seguindo.remove(item);
-
                 try {
+                    Post item = dataSnapshot.getValue(Post.class);
+                    if (item == null)
+                        return;
+
+                    Import.get.seguindo.remove(item);
                     Import.activites.getMainActivity().feedFragment.adapterUpdate();
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
             }
 
             @Override

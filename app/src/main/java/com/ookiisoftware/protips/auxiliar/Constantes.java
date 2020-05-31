@@ -10,7 +10,7 @@ import com.ookiisoftware.protips.R;
 
 public class Constantes {
 
-    static final int APP_VERSAO = 14;
+    static final int APP_VERSAO = 17;
 
     public static class user {
         public static class logado {
@@ -119,12 +119,29 @@ public class Constantes {
             public static final String BOM = "bom";
             public static final String RUIM = "ruim";
             public static final String ESPORTES = "esportes";
+            public static final String LINHAS = "linhas";
+            //Use LINHAS
+            @Deprecated
             public static final String MERCADOS = "mercados";
             public static final String BLOQUEADO = "bloqueado";
             public static final String ADMINISTRADORES = "administradores";
             public static final String VERSAO = "versao";
             public static final String APP = "app";
             public static final String TIPSTER = "tipster";
+            public static final String TOKENS = "token";
+            public static final String MESSAGES = "messages";
+            public static final String AUTO_COMPLETE = "auto_complete";
+            public static final String CAMPEONATOS = "campeonatos";
+        }
+    }
+
+    public static class oneSignal {
+        public static class tag {
+            public static final String FIREBASE_ID = "firebase_id";
+        }
+        public static class request {
+            public static final String CONTENT_TYPE = "Content-Type";
+            public static final String AUTORIZACAO = "Authorization";
         }
     }
 
@@ -139,13 +156,23 @@ public class Constantes {
         public static final String CHANNEL_ID_UPDATE_APP = "channel_id_update_app";
         public static final String CHANNEL_NOME = "channel_nome";
         public static final String CHANNEL_DESCRICAO = "channel_descricao";
+        public static class action {
+            public static final String OPEN_MAIN = "action_open_main_activity";
+            public static final String OPEN_NOTIFICATION = "action_open_notifications";
+        };
 
         public static class id {
-            public static final int NOVO_PUNTER_PENDENTE = 235345;
-            public static final int NOVO_PUNTER_ACEITO = 56462;
-            public static final int NOVO_POST = 573425;
-            public static final int TIPSTER_SOLICITACAO = 65645;
+            public static final String NOVO_PUNTER_PENDENTE = "235345";
+            public static final String NOVO_PUNTER_ACEITO = "56462";
+            public static final String NOVO_POST = "573425";
+            public static final String TIPSTER_SOLICITACAO = "65645";
 
+            public static final String SENDER = "protips_msg_sender";
+        }
+        public static class tag {
+            public static final String TITLE = "protips_msg_title";
+            public static final String MESSAGE = "protips_msg_,essage";
+            public static final String ACTION = "protips_msg_action";
         }
 
         public static AudioAttributes audioAttributes = new AudioAttributes

@@ -70,21 +70,26 @@
     <!-- TODO: Palavras -->
     <string name="aceitar">Aceitar</string>
     <string name="ajuda">Ajuda</string>
+    <string name="atencao">Atenção</string>
 
     <string name="baixar">Baixar</string>
     <string name="bom">Bom</string>
 
     <string name="cadastre_se">Cadastre-se</string>
+    <string name="campeonato">Campeonato</string>
+    <string name="campeonato_">CAMPEONATO</string>
     <string name="cancelar">Cancelar</string>
     <string name="categoria">Categoria</string>
     <string name="conta">CONTA</string>
     <string name="criar">CRIAR</string>
     <string name="criar_tip">CRIAR TIP</string>
 
-    <string name="descricao">Descrição..</string>
+    <string name="descricao">Descrição…</string>
+    <string name="descricao_">DESCRIÇÃO…</string>
 
     <string name="editar">Editar</string>
     <string name="esporte">Esporte</string>
+    <string name="esporte_">ESPORTE</string>
     <string name="esportes">Esportes</string>
     <string name="estado">Estado</string>
     <string name="excluindo">Excluindo</string>
@@ -98,10 +103,12 @@
     <string name="informacao">Informação</string>
 
     <string name="legenda">Legenda</string>
+    <string name="linha">Linha</string>
     <string name="login">LOGIN</string>
 
     <string name="maximo">Máximo</string>
     <string name="mercado">Mercado</string>
+    <string name="mercado_">MERCADO</string>
     <string name="mercados">Mercados</string>
     <string name="minimo">Mínimo</string>
 
@@ -112,11 +119,14 @@
     <string name="odd">Odd</string>
     <string name="odd_maxima">Odd Máxima</string>
     <string name="odd_minima">Odd Mínima</string>
+    <string name="odd_maxima_">ODD MÁXIMA</string>
+    <string name="odd_minima_">ODD MÍNIMA</string>
     <string name="ok">OK</string>
     <string name="ou">OU</string>
 
     <string name="pendente">Pendente</string>
     <string name="postar">Postar</string>
+    <string name="postar_">POSTAR</string>
     <string name="preferencias">Preferências</string>
     <string name="privacidade">Privacidade</string>
 
@@ -132,7 +142,9 @@
 
     <string name="telefone">Telefone</string>
     <string name="titulo">Titulo</string>
+    <string name="titulo_">TÍTULO</string>
 
+    <string name="unidades_">UNIDADES</string>
     <string name="usuario">Usuário</string>
 
     <string name="voltar">Voltar</string>
@@ -141,20 +153,25 @@
     <string name="seu_nome">Seu nome</string>
     <string name="orderBy">Ondem por:</string>
     <string name="seu_email">Seu email</string>
+    <string name="odd_atual">Odd Atual</string>
     <string name="sua_senha">Sua senha</string>
     <string name="novo_poste">Novo Tip</string>
+    <string name="odd_atual_">ODD ATUAL</string>
     <string name="em_analize">Em análise</string>
     <string name="abrir_link">Abrir link</string>
     <string name="texto_aqui">Texto aqui</string>
     <string name="postar_tip">POSTAR TIP</string>
     <string name="tip_publico">Tip público</string>
+    <string name="tip_publico_">TIP PÚBLICA</string>
     <string name="novos_postes">Novos Tips</string>
     <string name="seu_tipname">SEU TIPNAME</string>
     <string name="txt_entre_com">Entre com</string>
     <string name="dados_outros">Outros dados</string>
     <string name="enviar_email">Enviar email</string>
     <string name="bem_vindo_ao">Bem vindo ao</string>
+    <string name="posts_no_perfil">MEU PERFIL</string>
     <string name="email_enviado">Email enviado</string>
+    <string name="anexar_imagem_">ANEXAR IMAGEM</string>
     <string name="dados_pessoais">Dados pessoais</string>
     <string name="enviar_codigo">Enviar o código</string>
     <string name="data_incorreta">Data incorreta</string>
@@ -167,9 +184,9 @@
     <string name="login_cancelado">Login Cancelado</string>
     <string name="sem_atualizacao">Sem atualização</string>
 
-    <string name="posts_no_perfil">MEU PERFIL</string>
     <string name="tip_voto_removido">Voto removido</string>
     <string name="recuperar_senha">Recuperar senha</string>
+    <string name="msg_post_excluido">Post excluído</string>
     <string name="registrar_numero">Registrar número</string>
     <string name="TipName_invalido">Tipname inválido</string>
     <string name="tip_voto_bom">Tip marcado como BOM</string>
@@ -178,27 +195,27 @@
     <string name="popup_caixa_de_texto">Escreva aqui..</string>
     <string name="tip_voto_ruim">Tip marcado como RUIM</string>
     <string name="enviar_novo_email">Enviar novo email</string>
+    <string name="deseja_prosseguir">Deseja prosseguir?</string>
     <string name="email_invalido">Este email é inválido</string>
     <string name="more_info">Mais Informações do Tipster</string>
     <string name="idade_minima">A idade mínima é 18 anos</string>
-    <string name="horario_minimo">Horário mínimo indicado</string>
-    <string name="horario_maximo">Horário máximo indicado</string>
     <string name="selecione_esporte">Selecione um esporte</string>
     <string name="selecione_mercado">Selecione um mercado</string>
     <string name="salve_primeiro">Salve os dados primeiro</string>
-    <string name="usuario_salvo">Dados Salvos com sucesso</string>
     <string name="carregando_a_imagem">Carregando a imagem</string>
     <string name="tipName_obrigatório">TipName obrigatório</string>
+    <string name="msg_dados_salvos">Dados Salvos com sucesso</string>
     <string name="quero_ser_um_filiado">Quero ser um Filiado</string>
     <string name="filiado_aceito">Sua solicitação foi aceita</string>
     <string name="quero_ser_um_tipster">Quero ser um Tipster</string>
     <string name="cancelar_solicitacao">Cancelar solicitação</string>
+    <string name="horario_minimo">HORÁRIO MÍNIMO PARA ENTRADA</string>
+    <string name="horario_maximo">HORÁRIO MÁXIMO PARA ENTRADA</string>
 
     <string name="post_foto_obrigatorio">A Foto é obrigatória</string>
     <string name="verificar_atualizacao">Verificar atualização</string>
     <string name="post_erro">Ocorreu um erro ao postar seu Tip</string>
     <string name="conversa_caixa_de_texto">Digite sua mensagem</string>
-    <string name="post_esporte_obrigatorio">Selecione o esporte</string>
     <string name="entre_em_contato_com">"Entre em contato com "</string>
     <string name="post_mercado_obrigatorio">Selecione o mercado</string>
     <string name="sem_esporte_registrado">Sem esporte registrado</string>
@@ -216,8 +233,12 @@
     <string name="nova_solicitação_filiado">Nova solicitação de Filiado</string>
     <string name="usuário_senha_incorretos">Usuário ou senha incorretos</string>
     <string name="post_odd_maxima_obrigatorio">Odd Máxima é obrigatória</string>
+    <string name="post_odd_atual_obrigatorio">Odd Atual é obrigatória</string>
     <string name="post_odd_minima_obrigatorio">Odd Minima é obrigatória</string>
-    <string name="excluir_post">Deseja excluir este Tip permanentemente?</string>
+    <string name="post_unidades_obrigatorio">Unidade é obrigatória</string>
+    <string name="post_esporte_obrigatorio">Esporte é obrigatório</string>
+    <string name="post_link_obrigatorio">Link é obrigatório</string>
+    <string name="post_excluir">Excluir Post</string>
     <string name="cadastro_email_repetido">Este email já está cadastrado</string>
     <string name="nova_solicitação_tipster">Nova solicitação para Tipster</string>
     <string name="foto_de_usuario_obrigatoria">Foto de usuário obrigatória</string>
@@ -230,8 +251,10 @@
     <string name="erro_generico">Ocorreu um erro</string>
     <string name="erro_abrir_link">Erro ao abrir o link</string>
     <string name="erro_de_autencicacao">Erro de autenticação</string>
+    <string name="erro_salvar_dados">Erro ao salvar os dados</string>
     <string name="erro_foto_carregar">Erro ao carregar a foto</string>
     <string name="erro_cadastro">Ocorreu um erro ao cadastrar</string>
+    <string name="erro_excluir_post">Erro ao excluir este post</string>
     <string name="erro_baixar_atualizacao">Erro ao baixar atualização</string>
     <string name="erro_enviar_codigo">Não foi possível enviar o código</string>
     <string name="erro_de_autencitacao">OCORREU UM ERRO DE AUTENTICAÇÃO</string>
@@ -252,6 +275,7 @@
     <!-- TODO: Mensagens de Informação -->
     <string name="info_numero_registrado">Número registrado com sucesso</string>
     <string name="info_registrar_codigo">Insira o código no campo abaixo</string>
+    <string name="info_tip_publico_maximo_atingido">Você atingiu o limite de postes publicos do dia</string>
     <string name="info_privacidade">Com o seu perfil público outras pessoas poderão ver seu email e telefone</string>
     <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
     <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Filiados. Você pode postar 5 Tips públicas por dia.</string>

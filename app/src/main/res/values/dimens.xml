@@ -11,7 +11,9 @@
     <dimen name="login_table_vertical">40dp</dimen>
     <dimen name="perfil_table_horizontal">40dp</dimen>
     <dimen name="perfil_table_vertical">40dp</dimen>
-    <dimen name="new_tip_table_padding">10dp</dimen>
+
+    <dimen name="new_post_table_padding">10dp</dimen>
+    <dimen name="new_post_item_margin">10dp</dimen>
 
     <!--TODO Textos -->
     <dimen name="title_size">20sp</dimen>
@@ -19,6 +21,7 @@
     <dimen name="title_max_size">28sp</dimen>
     <dimen name="subtitle_size">15sp</dimen>
     <dimen name="text_size">15sp</dimen>
+    <dimen name="text_min_size">12sp</dimen>
 
     <dimen name="et_top_bot">12dp</dimen>
     <dimen name="et_start_end">17dp</dimen>

@@ -96,7 +96,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                 isGerencia = bundle.getBoolean(Constantes.intent.IS_GERENCIA);
                 if (userId == null) {
                     Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
-                    Import.Alert.erro(TAG, "Init", "idUser == null");
+                    Import.Alert.e(TAG, "Init", "idUser == null");
                     onBackPressed();
                     return;
                 }
@@ -109,7 +109,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
             if (usuario == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
-                Import.Alert.erro(TAG, "Init", "usuario == null");
+                Import.Alert.e(TAG, "Init", "usuario == null");
                 onBackPressed();
                 return;
             }
@@ -233,12 +233,12 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                     user.solicitarSerTipsterCancelar();
                     user.habilitarTipster(true);
                 } else {
-                    eu.aceitarSeguidor(user);
+                    eu.aceitarSeguidor(activity, user);
                 }
                 btn_recusar.setVisibility(View.GONE);
                 btn_aceitar.setVisibility(View.GONE);
             } catch (Exception e) {
-                Import.Alert.erro(TAG, "btn_aceitar.setOnClickListener", e);
+                Import.Alert.e(TAG, "btn_aceitar.setOnClickListener", e);
             }
         });
 
@@ -253,7 +253,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                 }
                 btn_remover.setVisibility(View.GONE);
             } catch (Exception e) {
-                Import.Alert.erro(TAG, "btn_seguir.setOnClickListener", e);
+                Import.Alert.e(TAG, "btn_seguir.setOnClickListener", e);
             }
         });
         btn_seguir.setOnClickListener(view -> {
@@ -261,7 +261,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                 switch (acao) {
                     case R.string.seguir: {
                         btn_seguir.setText(getResources().getString(R.string.pendente));
-                        user.addSolicitacao(meuId);
+                        user.addSolicitacao(activity, eu);
                         acao = R.string.pendente;
                         break;
                     }
@@ -273,7 +273,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
-                Import.Alert.erro(TAG, "btn_seguir.setOnClickListener", e);
+                Import.Alert.e(TAG, "btn_seguir.setOnClickListener", e);
             }
         });
 

@@ -11,12 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/toolbarHeight"
         android:background="@color/brancoDark"
-        app:menu="@menu/menu_post">
+        app:menu="@menu/menu_item_post">
 
         <androidx.cardview.widget.CardView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="7dp"
+            android:layout_margin="2dp"
             app:cardCornerRadius="20dp">
 
             <ImageView
@@ -80,26 +80,22 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/img_constraint"
+            android:id="@+id/constraint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.cardview.widget.CardView
+            <it.sephiroth.android.library.imagezoom.ImageViewTouch
+                android:id="@+id/iv_foto_post"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
 
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
-
-                <it.sephiroth.android.library.imagezoom.ImageViewTouch
-                    android:id="@+id/ivt_foto_post"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="fitXY"/>
-
-            </androidx.cardview.widget.CardView>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -131,6 +127,12 @@
                 android:layout_height="1dp"
                 android:background="@color/pretoLight"/>
 
+            <TextView
+                android:id="@+id/tv_campeonato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/campeonato"/>
+
             <TableRow>
 
                 <TextView
@@ -148,6 +150,29 @@
 
                 <TextView
                     android:id="@+id/tv_mercado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size" />
+
+            </TableRow>
+
+            <TableRow android:id="@+id/container_odd_atual">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/odd_atual"
+                    android:layout_marginEnd="5dp"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/tv_odd_atual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size" />
+
+                <TextView
+                    android:id="@+id/tv_unidade"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size" />
@@ -179,7 +204,7 @@
 
             </TableRow>
 
-            <TableRow>
+            <TableRow android:id="@+id/container_odd">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -202,7 +227,7 @@
 
             </TableRow>
 
-            <TableRow>
+            <TableRow android:id="@+id/container_horario">
 
                 <TextView
                     android:layout_width="match_parent"

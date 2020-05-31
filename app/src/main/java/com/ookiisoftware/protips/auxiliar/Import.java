@@ -3,15 +3,11 @@ package com.ookiisoftware.protips.auxiliar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -22,13 +18,12 @@ import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
 
 import com.facebook.login.LoginManager;
 import com.google.android.material.snackbar.Snackbar;
@@ -39,7 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
@@ -47,10 +41,12 @@ import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.LoginActivity;
 import com.ookiisoftware.protips.modelo.Activites;
 //import com.ookiisoftware.protips.modelo.Punter;
-import com.ookiisoftware.protips.modelo.Esporte;
+import com.ookiisoftware.protips.modelo.AutoComplete;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -105,7 +101,7 @@ public class Import {
                         dialog.setPositiveButton(activity.getResources().getString(R.string.baixar), (dialog1, which) -> {
                             String appName = "protips_" + ultima + ".apk";
                             Import.Alert.toast(activity, "aguarde");
-                            Import.Alert.msg(TAG, "verificar_atualizacao", appName);
+                            Import.Alert.d(TAG, "verificar_atualizacao", appName);
                             Import.getFirebase.getStorage()
                                     .child(Constantes.firebase.child.APP)
                                     .child(appName)
@@ -115,7 +111,7 @@ public class Import {
                                         activity.startActivity(intent);
                                     })
                                     .addOnFailureListener(e -> {
-                                        Import.Alert.erro(TAG, "verificar_atualizacao", e);
+                                        Import.Alert.e(TAG, "verificar_atualizacao", e);
                                         atualizacao_erro();
                                     });
                         });
@@ -151,9 +147,23 @@ public class Import {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             activity.startActivity(intent);
         } catch (Exception e) {
-            Alert.erro(TAG, "abrirLink", e);
+            Alert.e(TAG, "abrirLink", e);
             Alert.toast(activity, activity.getResources().getString(R.string.erro_abrir_link));
         }
+    }
+
+    public static void abrirCropView(Activity activity, int ratio) {
+        if (ratio > 0)
+            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(ratio, ratio).start(activity);
+        else
+            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(activity);
+    }
+
+    public static void abrirCropView(Activity activity, Fragment fragment, int ratio) {
+        if (ratio > 0)
+            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(ratio, ratio).start(activity, fragment);
+        else
+            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(activity, fragment);
     }
 
     public static String splitData(String data){
@@ -172,17 +182,17 @@ public class Import {
             if (date != null)
                 reborn = df.format(date);
         } catch (ParseException ex) {
-            Alert.erro(TAG, ex);
+            Alert.e(TAG, ex);
         }
         return reborn;
     }
 
-    public static void notificacaoCancel(Activity activity, int id) {
+    public static void notificacaoCancel(Activity activity, String id) {
         try {
             String ns = Context.NOTIFICATION_SERVICE;
             NotificationManager manager = (NotificationManager) activity.getSystemService(ns);
             if (manager != null) {
-                manager.cancel(id);
+                manager.cancel(Integer.parseInt(id));
             }
         } catch (Exception ignored) {}
     }
@@ -242,6 +252,8 @@ public class Import {
         limparDados();
         getFirebase.getAuth().signOut();
         LoginManager.getInstance().logOut();
+        if (getFirebase.getTipster() != null)
+            getFirebase.getTipster().logout();
         getFirebase.setGerencia(activity, false);
         irProLogin(activity);
     }
@@ -271,11 +283,11 @@ public class Import {
 
     public static class get {
         private static Random random = new Random();
-        private static Esporte esporte;
+        private static AutoComplete autoComplete;
         private static Locale locale = new Locale("pt", "BR");
 
-        public static void setEsporte(Esporte esporte) {
-            get.esporte = esporte;
+        public static void setAutoComplete(AutoComplete autoComplete) {
+            get.autoComplete = autoComplete;
         }
 
         public static void fotoDaGaleria(Activity activity) {
@@ -297,8 +309,8 @@ public class Import {
             return pref.getString(Constantes.sqlite.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
         }
 
-        public static Esporte esporte() {
-            return esporte;
+        public static AutoComplete autoComplete() {
+            return autoComplete;
         }
 
         public static String randomString() {
@@ -350,6 +362,18 @@ public class Import {
             }
             public static int ano () {
                 return calendario().get(Calendar.YEAR);
+            }
+            public static String hoje() {
+                int mes = mes() + 1;// O mês retorna o valor com 1 a menos
+                int dia = dia();
+                String mesS = "" + mes;
+                String diaS = "" + dia;
+                if (mesS.length() == 1)
+                    mesS = "0" + mesS;
+                if (diaS.length() == 1)
+                    diaS = "0" + diaS;
+
+                return ano() + "-" + mesS + "-" + diaS;
             }
         }
 
@@ -611,15 +635,15 @@ public class Import {
             }
         }
 
-        public static void msg(String tag, String titulo, String texto) {
+        public static void d(String tag, String titulo, String texto) {
             Log.e(tag, "msg: " + titulo + ": " + texto);
         }
 
-        public static void msg(String tag, String titulo, String texto, String msg) {
+        public static void d(String tag, String titulo, String texto, String msg) {
             Log.e(tag, "msg: " + titulo + ": " + texto + ": " + msg);
         }
 
-        public static void erro(String tag, Exception ex) {
+        public static void e(String tag, Exception ex) {
             String msg = "erro:";
             msg += "\nMensagem: "+ ex.getMessage();
             msg += "\nLocalizedMessage: "+ ex.getLocalizedMessage();
@@ -627,7 +651,7 @@ public class Import {
             Log.e(tag, msg);
         }
 
-        public static void erro(String tag, String metodo, Exception ex) {
+        public static void e(String tag, String metodo, Exception ex) {
             String msg = "erro:";
             msg += "\nMetodo: " + metodo;
             msg += "\nMensagem: "+ ex.getMessage();
@@ -635,7 +659,7 @@ public class Import {
             msg += "\n-------";
             Log.e(tag, msg);
         }
-        public static void erro(String tag, String titulo, String texto) {
+        public static void e(String tag, String titulo, String texto) {
             Log.e(tag, "erro: " + titulo + ": " + texto);
         }
     }
@@ -643,7 +667,7 @@ public class Import {
     public static class getFirebase {
         private static FirebaseAuth auth;
         private static DatabaseReference reference;
-        private static FirebaseInstanceId instanceId;
+        private static String token;
 
         private static User tipster;
 
@@ -685,20 +709,12 @@ public class Import {
             return getUser().getEmail();
         }
 
-//        public static Punter getPunter() {
-//            return punter;
-//        }
-
         public static User getTipster() {
             return tipster;
         }
 
         public static Usuario getUsuario() {
-//            if (isTipster())
                 return getTipster().getDados();
-//            else if (getPunter() != null)
-//                return getPunter().getDados();
-//            return null;
         }
 
         public static String getUltinoEmail(Context context) {
@@ -716,21 +732,19 @@ public class Import {
             return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Constantes.presset.IS_GERENTE, false);
         }
 
+        public static boolean isFilePresent(Context context, String fileName) {
+            String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
+            File file = new File(path);
+            return file.exists();
+        }
+
+        public static String getToken() {
+            return token;
+        }
+
         //endregion
 
         //region set
-
-        /*public static void setUser(Context context, Punter user, boolean save) {
-            if (save) {
-
-                Gson gson = new Gson();
-                String json = gson.toJson(user);
-
-                create(context, Constantes.files.PUNTER_JSON, json);
-            }
-
-            punter = user;
-        }*/
 
         public static void setUser(Context context, User user, boolean save) {
             if (save) {
@@ -753,6 +767,10 @@ public class Import {
             SharedPreferences.Editor editor = activity.getSharedPreferences("info", MODE_PRIVATE).edit();
             editor.putBoolean(Constantes.presset.IS_GERENTE, isGerente);
             editor.apply();
+        }
+
+        public static void setToken(String token) {
+            getFirebase.token = token;
         }
 
         //endregion
@@ -798,15 +816,9 @@ public class Import {
                 fos.close();
                 return true;
             } catch (IOException fileNotFound) {
-                Alert.erro(TAG, "create", fileNotFound);
+                Alert.e(TAG, "create", fileNotFound);
                 return false;
             }
-        }
-
-        public static boolean isFilePresent(Context context, String fileName) {
-            String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
-            File file = new File(path);
-            return file.exists();
         }
 
     }

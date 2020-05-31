@@ -38,7 +38,6 @@ import com.ookiisoftware.protips.modelo.Data;
 import com.ookiisoftware.protips.modelo.User;
 import com.ookiisoftware.protips.modelo.Usuario;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -64,7 +63,7 @@ public class PerfilActivity extends AppCompatActivity {
     public boolean isPrimeiroLogin;
     private boolean fotoUserIsLocal;
     private Activity activity;
-    private String foto_uri = "";
+    private String foto_path = "";
     private StorageTask uploadTask;
 
     //endregion
@@ -85,12 +84,12 @@ public class PerfilActivity extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK && result != null && result.getUri() != null) {
-                foto_uri = result.getUri().toString();
+                foto_path = result.getUri().toString();
                 fotoUserIsLocal = true;
-                Glide.with(activity).load(foto_uri).into(foto);
+                Glide.with(activity).load(foto_path).into(foto);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 if (result != null)
-                    Import.Alert.erro(TAG, "onActivityResult", result.getError().getMessage());
+                    Import.Alert.e(TAG, "onActivityResult", result.getError().getMessage());
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_foto_salvar));
             }
         }
@@ -103,7 +102,7 @@ public class PerfilActivity extends AppCompatActivity {
             case Constantes.permissions.STORANGE:
             case Constantes.permissions.CAMERA: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    AbrirCropView();
+                    Import.abrirCropView(activity, 1);
                 } else {
                     Import.Alert.toast(this, getResources().getString(R.string.permissao_camera_recusada));
                 }
@@ -189,7 +188,7 @@ public class PerfilActivity extends AppCompatActivity {
                 nascimento.setText(usuario.getNascimento().toString());
 
                 if (usuario.getFoto() != null && !usuario.getFoto().isEmpty())
-                    foto_uri = usuario.getFoto();
+                    foto_path = usuario.getFoto();
                 if (usuario.getTelefone() != null && !usuario.getTelefone().isEmpty())
                     telefone.setText(usuario.getTelefone());
                 else
@@ -198,7 +197,7 @@ public class PerfilActivity extends AppCompatActivity {
         }
         tipName.setEnabled(isPrimeiroLogin);
 
-        Glide.with(activity).load(foto_uri).into(foto);
+        Glide.with(activity).load(foto_path).into(foto);
 
         SimpleMaskFormatter formatter = new SimpleMaskFormatter(Constantes.formats.DATA);
         MaskTextWatcher watcher = new MaskTextWatcher(nascimento, formatter);
@@ -217,7 +216,7 @@ public class PerfilActivity extends AppCompatActivity {
                     Import.Alert.toast(activity, getResources().getString(R.string.carregando_a_imagem));
                 } else {
                     foto.setBackground(getDrawable(R.drawable.bg_circulo_primary_light));
-                    AbrirCropView();
+                    Import.abrirCropView(activity, 1);
                 }
             }
         });
@@ -275,11 +274,6 @@ public class PerfilActivity extends AppCompatActivity {
         //endregion
     }
 
-    private void AbrirCropView() {
-        int ratio = 1;
-        CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(ratio, ratio).start(activity);
-    }
-
     private void CriarUsuario() {
         progressBar.setVisibility(View.VISIBLE);
         if (uploadTask != null && uploadTask.isInProgress()) {
@@ -294,7 +288,7 @@ public class PerfilActivity extends AppCompatActivity {
             user.getDados().setTipname(tipName.getText().toString());
             user.getDados().setNome(nome.getText().toString());
             user.getDados().setEmail(email.getText().toString());
-            user.getDados().setFoto(foto_uri);
+            user.getDados().setFoto(foto_path);
             user.getDados().setNascimento(data);
             user.getDados().setTelefone(telefone.getText().toString());
             user.getDados().getEndereco().setEstado(estado.getSelectedItemPosition());
@@ -342,7 +336,7 @@ public class PerfilActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                             return;
                         }
-                        UparFoto(user);
+                        uparFoto(user);
                     }
 
                     @Override
@@ -350,7 +344,7 @@ public class PerfilActivity extends AppCompatActivity {
                 });
             }
             else
-                UparFoto(user);
+                uparFoto(user);
         }
         progressBar.setVisibility(View.GONE);
     }
@@ -403,15 +397,15 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void AlterarNome(final String nome) {
         UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder().setDisplayName(nome).build();
-        Import.getFirebase.getUser().updateProfile(changeRequest).addOnCompleteListener(task -> Import.Alert.msg(TAG, "Nome alterado para", nome));
+        Import.getFirebase.getUser().updateProfile(changeRequest).addOnCompleteListener(task -> Import.Alert.d(TAG, "Nome alterado para", nome));
     }
 
     private void AlterarFoto(final Uri uri) {
         UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
-        Import.getFirebase.getUser().updateProfile(changeRequest).addOnCompleteListener(task -> Import.Alert.msg(TAG, "Foto alterada", uri.toString()));
+        Import.getFirebase.getUser().updateProfile(changeRequest).addOnCompleteListener(task -> Import.Alert.d(TAG, "Foto alterada", uri.toString()));
     }
 
-    private void UparFoto(final User usuario) {
+    private void uparFoto(final User usuario) {
         if (!fotoUserIsLocal) {
             Salvar(usuario);
         } else {
@@ -445,19 +439,14 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void Salvar(User usuario) {
         // Salva no firebase
-        usuario.salvar();
+        usuario.salvar(activity);
         Import.getFirebase.setUser(activity, usuario, true);
-        try {
-            Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
-            SalvarComum();
-        } catch (Exception ignored){}
-    }
-
-    private void SalvarComum() {
         tipName.setEnabled(false);
         isPrimeiroLogin = false;
         progressBar.setVisibility(View.GONE);
-        Import.Alert.snakeBar(activity, getResources().getString(R.string.usuario_salvo));
+        try {
+            Glide.with(activity).load(usuario.getDados().getFoto()).into(foto);
+        } catch (Exception ignored){}
     }
 
     //endregion

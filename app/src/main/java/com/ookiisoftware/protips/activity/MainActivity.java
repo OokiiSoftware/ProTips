@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
@@ -26,7 +27,8 @@ import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
 import com.ookiisoftware.protips.modelo.Activites;
-import com.ookiisoftware.protips.modelo.Esporte;
+import com.ookiisoftware.protips.modelo.AutoComplete;
+import com.ookiisoftware.protips.modelo.Token;
 import com.ookiisoftware.protips.modelo.User;
 
 import androidx.annotation.NonNull;
@@ -43,19 +45,21 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.TimeZone;
 
+import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.FEED;
+import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.PERFIL;
+import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.TIPSTERS;
+
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener {
 
     //region Variáveis
 
     private static final String TAG = "MainActivity";
-    private static final int FRAGMENT_FEED = 0;
-    private static final int FRAGMENT_TIPSTER = 1;
-    private static final int FRAGMENT_PERFIL = 2;
 
     private Activity activity;
     private String meuId;
     private SectionsPagerAdapter sectionsPagerAdapter;
     private boolean inPrimeiroPlano;
+    private int pageSelect;
 
     private DatabaseReference refAllTipsters;
     private ChildEventListener eventAllTipsters;
@@ -87,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         activity = this;
         startService(new Intent(activity, SegundoPlanoService.class));
 
-        Import.Alert.msg(TAG, "Timezone1", TimeZone.getDefault().getID());
-        Import.Alert.msg(TAG, "Timezone2", TimeZone.getDefault().getDisplayName());
+        Import.Alert.d(TAG, "Timezone1", TimeZone.getDefault().getID());
+        Import.Alert.d(TAG, "Timezone2", TimeZone.getDefault().getDisplayName());
 
         init();
     }
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         try {
             Import.getFirebase.saveUser(activity);
         } catch (Exception e) {
-            Import.Alert.erro(TAG, "onStop", e);
+            Import.Alert.e(TAG, "onStop", e);
         }
     }
 
@@ -132,15 +136,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             public boolean onQueryTextChange(String newText) {
                 tipstersFragment.refreshLayout.setEnabled(newText.isEmpty());
                 feedFragment.refreshLayout.setEnabled(newText.isEmpty());
-//                if (isTipster)
-//                    tipstersFragment.getPunterAdapter().getFilter().filter(newText);
-//                else
-                    tipstersFragment.getUserAdapter().getFilter().filter(newText);
+                tipstersFragment.getUserAdapter().getFilter().filter(newText);
                 return false;
             }
         });
 
-        SwithMenu(0);
+        SwithMenu(pageSelect);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -156,13 +157,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_menu_feed:
-                viewPager.setCurrentItem(FRAGMENT_FEED);
+                setPagePosition(FEED);
                 break;
             case R.id.nav_menu_tipster:
-                viewPager.setCurrentItem(FRAGMENT_TIPSTER);
+                setPagePosition(TIPSTERS);
                 break;
             case R.id.nav_menu_perfil:
-                viewPager.setCurrentItem(FRAGMENT_PERFIL);
+                setPagePosition(PERFIL);
                 break;
             case R.id.menu_lateral_batepapo: {
                 Intent intent = new Intent(activity, BatepapoActivity.class);
@@ -199,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onBackPressed() {
-        if(viewPager.getCurrentItem() != FRAGMENT_FEED)
-            viewPager.setCurrentItem(FRAGMENT_FEED);
+        if(getPagePosition() != FEED)
+            setPagePosition(FEED);
         else {
             if (feedFragment.scrollInTop())
                 super.onBackPressed();
@@ -223,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //endregion
 
         meuId = Import.getFirebase.getId();
-        int pageSelect = 0;
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Import.activites = new Activites();
             Import.activites.setMainActivity(this);
         } catch (Exception e) {
-            Import.Alert.erro(TAG, "init", e);
+            Import.Alert.e(TAG, "init", e);
             Import.Alert.toast(activity, getResources().getString(R.string.erro_init_main_activity));
             Import.irProLogin(activity);
         }
@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //endregion
 
         MyNotificationManager.criarChannelNotification(activity);
+        getDeviceToken();
 
         //region NavigationView
         navigationView.setNavigationItemSelectedListener(this);
@@ -279,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.addOnPageChangeListener(this);
-        viewPager.setCurrentItem(pageSelect);
+        setPagePosition(pageSelect);
         //endregion
 
         atualizarMeusDados();
@@ -310,19 +311,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void baixarEsportes() {
         Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.AUTO_COMPLETE)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         try {
-                            Esporte item = dataSnapshot.getValue(Esporte.class);
+                            AutoComplete item = dataSnapshot.getValue(AutoComplete.class);
                             if (item == null) {
                                 throw new Exception("item == null");
                             } else {
-                                Import.get.setEsporte(item);
+                                Import.get.setAutoComplete(item);
                             }
                         } catch (Exception e) {
-                            Import.get.setEsporte(new Esporte());
-                            Import.Alert.erro(TAG, "getEsportes", e);
+                            Import.get.setAutoComplete(new AutoComplete());
+                            Import.Alert.e(TAG, "baixarEsportes", e);
                         }
                     }
 
@@ -364,8 +366,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     tipstersFragment.adapterUpdate();
                     feedFragment.adapterUpdate();
                 } catch (Exception ex) {
-                    Import.Alert.erro(TAG, ex);
-                    Import.Alert.msg(TAG, "onChildAdded", dataSnapshot.getKey());
+                    Import.Alert.e(TAG, ex);
+                    Import.Alert.d(TAG, "onChildAdded", dataSnapshot.getKey());
                 }
                 try {
                     feedFragment.refreshLayout.setRefreshing(false);
@@ -384,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Import.get.seguindo.remove(key);
                 Import.get.seguidores.remove(key);
 
-                Import.Alert.msg(TAG, "onChildRemoved", key);
+                Import.Alert.d(TAG, "onChildRemoved", key);
                 tipstersFragment.adapterUpdate();
             }
 
@@ -431,13 +433,37 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                                 Import.get.seguindo.addAll(user.getPostes());
                             }
                         } catch (Exception e) {
-                            Import.Alert.erro(TAG, "atualizarMeusDados", e);
+                            Import.Alert.e(TAG, "atualizarMeusDados", e);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {}
                 });
+    }
+
+    private void getDeviceToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnSuccessListener(instanceIdResult -> {
+                    User user = Import.getFirebase.getTipster();
+                    Token token = new Token();
+                    token.setId(instanceIdResult.getToken());
+                    token.setData(Import.get.Data());
+
+                    Import.getFirebase.setToken(token.getId());
+
+                    user.getDados().setToken(token.getId());
+                    user.salvarToken();
+                    /*if (!user.getDados().getTokens().containsKey(token.getId())) {
+//                        user.getDados().getTokens().put(token.getId(), token);
+
+                        if (user.getDados().getTokens().size() > 1) {
+                            //notificar aos outros tokens o novo acesso
+                        }
+                        Import.Alert.d(TAG, "getDeviceToken", "novo token", instanceIdResult.getToken());
+                    }*/
+                })
+                .addOnFailureListener(e -> Import.Alert.e(TAG, "getDeviceToken", e));
     }
 
     //endregion

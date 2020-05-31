@@ -11,27 +11,34 @@ import com.ookiisoftware.protips.adapter.PostAdapter;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
 
 import java.util.Comparator;
 import java.util.HashMap;
 
 public class Post {
 
-    private static final String TAG = "Post";
     //region Variáveis
+    private static final String TAG = "Post";
+
     private String id;
     private String id_tipster;
     private String titulo;
     private String link;
+    private String descricao;
     private String texto;
     private String foto;
     private String odd_maxima;
     private String odd_minima;
+    private String odd_atual;
+    private String unidade;
     private String horario_maximo;
     private String horario_minimo;
     private String data;
     private String esporte;
+    private String linha;
     private String mercado;
+    private String campeonato;
     private boolean publico;
 
     private HashMap<String,String> bom, ruim;
@@ -44,7 +51,7 @@ public class Post {
 
     //region Métodos
 
-    public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
+    public void postar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
         if (isFotoLocal) {
             try {
                 Import.getFirebase.getStorage()
@@ -56,8 +63,7 @@ public class Post {
                                 taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnCompleteListener(task -> {
                                     if (task.getResult() != null) {
                                         setFoto(task.getResult().toString());
-                                        salvar();
-                                        activity.finish();
+                                        postar(activity);
                                     }
                                 });
                         }).addOnFailureListener(e -> {
@@ -67,21 +73,31 @@ public class Post {
 
             } catch (Exception e) {
                 Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
-                Import.Alert.erro(TAG, "", e);
+                Import.Alert.e(TAG, "", e);
             }
         } else {
-            salvar();
+            postar(activity);
         }
     }
 
-    private void salvar() {
+    private void postar(final Activity activity) {
         String id = getId_tipster() == null ? Import.getFirebase.getId() : getId_tipster();
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(id)
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
-                .setValue(this);
+                .setValue(this)
+                .addOnSuccessListener(aVoid -> {
+                    for (User user : Import.get.seguidores.getAll()) {
+                        MyNotificationManager.getInstance(activity).sendNewPost(Post.this, user);
+                    }
+
+                    activity.finish();
+                })
+                .addOnFailureListener(e -> {
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.post_erro));
+                });
 
         Import.get.seguindo.add(this);
         Import.getFirebase.getTipster().getPostes().put(getId(), this);
@@ -90,7 +106,6 @@ public class Post {
     public void addBom(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -107,7 +122,6 @@ public class Post {
     public void addRuim(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -124,7 +138,6 @@ public class Post {
     public void removeBom(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -137,7 +150,6 @@ public class Post {
     public void removeRuim(String id) {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
-//                .child(Constantes.firebase.child.TIPSTERS)
                 .child(getId_tipster())
                 .child(Constantes.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
@@ -188,12 +200,12 @@ public class Post {
         this.id_tipster = id_tipster;
     }
 
-    public String getTexto() {
-        return texto;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setTexto(String texto) {
-        this.texto = texto;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getFoto() {
@@ -222,6 +234,30 @@ public class Post {
 
     public void setRuim(HashMap<String,String> ruim) {
         this.ruim = ruim;
+    }
+
+    public String getOdd_atual() {
+        return odd_atual;
+    }
+
+    public void setOdd_atual(String odd_atual) {
+        this.odd_atual = odd_atual;
+    }
+
+    public String getUnidade() {
+        return unidade;
+    }
+
+    public void setUnidade(String unidade) {
+        this.unidade = unidade;
+    }
+
+    public String getCampeonato() {
+        return campeonato;
+    }
+
+    public void setCampeonato(String campeonato) {
+        this.campeonato = campeonato;
     }
 
     public String getData() {
@@ -280,12 +316,12 @@ public class Post {
         this.esporte = esporte;
     }
 
-    public String getMercado() {
-        return mercado;
+    public String getLinha() {
+        return linha;
     }
 
-    public void setMercado(String mercado) {
-        this.mercado = mercado;
+    public void setLinha(String linha) {
+        this.linha = linha;
     }
 
     public boolean isPublico() {
@@ -302,6 +338,34 @@ public class Post {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    //Use getDescricao
+    @Deprecated
+    public String getTexto() {
+        return texto;
+    }
+
+    //Use setDescricao
+    @Deprecated
+    public void setTexto(String texto) {
+        this.texto = texto;
+        if (descricao == null || descricao.isEmpty())
+            descricao = texto;
+    }
+
+    //Use getLinha
+    @Deprecated
+    public String getMercado() {
+        return mercado;
+    }
+
+    //Use setLinha
+    @Deprecated
+    public void setMercado(String mercado) {
+        this.mercado = mercado;
+        if (linha == null || linha.isEmpty())
+            linha = mercado;
     }
 
     //endregion

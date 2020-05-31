@@ -1,6 +1,7 @@
 package com.ookiisoftware.protips.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +19,7 @@ import com.ookiisoftware.protips.auxiliar.OnSwipeListener;
 import com.ookiisoftware.protips.modelo.PostPerfil;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PostPerfilAdapter extends RecyclerView.Adapter<PostPerfilAdapter.Holder> implements View.OnClickListener, View.OnLongClickListener {
 
@@ -69,10 +72,30 @@ public class PostPerfilAdapter extends RecyclerView.Adapter<PostPerfilAdapter.Ho
                 holder.texto.setText(item.getTexto());
         }
 
+        holder.toolbar.setVisibility(View.GONE);
+        holder.toolbar.setOnMenuItemClickListener(_item -> {
+            switch (_item.getItemId()) {
+                case R.id.menu_excluir: {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                    dialog.setTitle(activity.getResources().getString(R.string.post_excluir));
+                    dialog.setMessage(activity.getResources().getString(R.string.deseja_prosseguir));
+
+                    dialog.setPositiveButton(activity.getResources().getString(R.string.sim), (dialog1, which) -> item.excluir(activity));
+                    dialog.setNeutralButton(activity.getResources().getString(R.string.cancelar), null);
+                    dialog.show();
+                    break;
+                }
+                case R.id.menu_ajuda: {
+                    break;
+                }
+            }
+            return false;
+        });
+
         try {
             Glide.with(activity).load(item.getFoto()).into(holder.foto);
         } catch (Exception e) {
-            Import.Alert.erro(TAG, "onBindViewHolder", e);
+            Import.Alert.e(TAG, "onBindViewHolder", e);
         }
     }
 
@@ -91,13 +114,20 @@ public class PostPerfilAdapter extends RecyclerView.Adapter<PostPerfilAdapter.Ho
 
     //endregion
 
+    public boolean isMyPost(int position) {
+        PostPerfil item = data.get(position);
+        return Objects.equals(item.getId_tipster(), Import.getFirebase.getId());
+    }
+
     static class Holder extends RecyclerView.ViewHolder {
+        Toolbar toolbar;
         ImageView foto;
         TextView titulo;
         TextView texto;
 
         Holder(@NonNull View itemView) {
             super(itemView);
+            toolbar = itemView.findViewById(R.id.toolbar);
             foto = itemView.findViewById(R.id.iv_foto);
             texto = itemView.findViewById(R.id.et_texto);
             titulo = itemView.findViewById(R.id.et_titulo);

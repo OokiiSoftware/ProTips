@@ -4,6 +4,10 @@ import com.google.firebase.database.Exclude;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 public class Usuario {
 
     private String info;
@@ -12,6 +16,8 @@ public class Usuario {
     private String email;
     private String tipname;
     private String senha;
+    private HashMap<String, Token> tokens;
+    private String token;
     private String foto;
     private String telefone;
     private Endereco endereco;
@@ -106,6 +112,24 @@ public class Usuario {
 
     public void setPrivado(boolean privado) {
         this.privado = privado;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public HashMap<String, Token> getTokens() {
+        if (tokens == null)
+            tokens = new HashMap<>();
+        return tokens;
+    }
+
+    public void setTokens(HashMap<String, Token> tokens) {
+        this.tokens = tokens;
     }
 
     public Data getNascimento() {

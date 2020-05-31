@@ -12,6 +12,10 @@
     <color name="text_light">#000000</color>
     <color name="text_light_disabled">#555</color>
 
+    <color name="transparent_light">#44000000</color>
+
+    <color name="new_post_item_background">#dee5ed</color>
+
     <color name="brancoDark">#f1f3f2</color>
     <color name="transparente">#00000000</color>
     <color name="amarelo">#ffc809</color>

@@ -4,13 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_excluir"
-        android:title="@string/excluir"
-        app:showAsAction="never"/>
+        android:id="@+id/menu_ajuda"
+        android:title="@string/ajuda"
+        android:icon="@drawable/ic_help"
+        app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/menu_link"
-        android:title="@string/abrir_link"
-        app:showAsAction="never"/>
 
 </menu>

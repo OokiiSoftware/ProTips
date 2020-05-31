@@ -14,10 +14,8 @@ import android.widget.TextView;
 
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -143,7 +141,7 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 erro.setText(getResources().getString(R.string.erro_atualizar_numero));
                                 erro.setVisibility(View.VISIBLE);
-                                Import.Alert.erro(TAG, "onVerificationCompleted erro", e);
+                                Import.Alert.e(TAG, "onVerificationCompleted erro", e);
                             }
                         });
             }
@@ -156,12 +154,12 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
-                    Import.Alert.erro(TAG, "onVerificationFailed 1", e);
+                    Import.Alert.e(TAG, "onVerificationFailed 1", e);
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
-                    Import.Alert.erro(TAG, "onVerificationFailed 2", e);
+                    Import.Alert.e(TAG, "onVerificationFailed 2", e);
                 } else
-                    Import.Alert.erro(TAG, "onVerificationFailed 3", e);
+                    Import.Alert.e(TAG, "onVerificationFailed 3", e);
                 erro.setText(getResources().getString(R.string.erro_enviar_codigo));
                 erro.setVisibility(View.VISIBLE);
             }
@@ -173,7 +171,7 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
                 mVerificationId = verificationId;
                 mResendToken = token;
                 codigoEnviado();
-                Import.Alert.msg(TAG, "init", "onCodeSent");
+                Import.Alert.d(TAG, "init", "onCodeSent");
             }
         };
 

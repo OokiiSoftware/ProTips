@@ -47,9 +47,9 @@
         <item name="android:textColorHint">@color/colorPrimaryDark</item>
     </style>
 
-    <style name="EditText.NewTip" parent="Base.Widget.AppCompat.EditText">
+    <style name="EditText.NewPost" parent="Base.Widget.AppCompat.EditText">
         <item name="android:padding">@dimen/et_novo_tip</item>
-        <item name="android:background">@drawable/bg_stroke_primary_color</item>
+        <item name="android:background">@color/new_post_item_background</item>
         <item name="android:textColor">@color/text_light</item>
         <item name="android:textColorHint">@color/text_light</item>
     </style>

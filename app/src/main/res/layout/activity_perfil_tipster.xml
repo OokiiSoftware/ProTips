@@ -160,9 +160,9 @@
                             android:text="@string/remover"
                             android:textAlignment="center"
                             android:textSize="@dimen/text_size"
-                            android:textColor="?attr/textColor"
+                            android:textColor="@color/text_light"
                             tools:ignore="RelativeOverlap"
-                            style="@style/EditText.NewTip" />
+                            style="@style/Widget.AppCompat.Button.Colored" />
 
                         <TextView
                             android:id="@+id/tv_seguir"
@@ -173,9 +173,9 @@
                             android:padding="10dp"
                             android:text="@string/seguir"
                             android:textAlignment="center"
-                            android:textColor="?attr/textColor"
+                            android:textColor="@color/text_light"
                             android:textSize="@dimen/text_size"
-                            style="@style/EditText.NewTip" />
+                            style="@style/Widget.AppCompat.Button.Colored" />
 
                     </LinearLayout>
 
@@ -190,10 +190,10 @@
                             android:padding="10dp"
                             android:text="@string/recusar"
                             android:textAlignment="center"
-                            android:textColor="?attr/textColor"
+                            android:textColor="@color/text_light"
                             android:textSize="@dimen/text_size"
-                            style="@style/EditText.NewTip"
-                            tools:ignore="RelativeOverlap" />
+                            tools:ignore="RelativeOverlap"
+                            style="@style/Widget.AppCompat.Button.Colored" />
 
                         <TextView
                             android:id="@+id/tv_aceitar"
@@ -203,9 +203,9 @@
                             android:padding="10dp"
                             android:text="@string/aceitar"
                             android:textAlignment="center"
-                            android:textColor="?attr/textColor"
+                            android:textColor="@color/text_light"
                             android:textSize="@dimen/text_size"
-                            style="@style/EditText.NewTip" />
+                            style="@style/Widget.AppCompat.Button.Colored" />
 
                     </LinearLayout>
 

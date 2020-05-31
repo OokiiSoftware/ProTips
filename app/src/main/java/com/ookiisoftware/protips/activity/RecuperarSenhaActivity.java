@@ -65,7 +65,7 @@ public class RecuperarSenhaActivity extends AppCompatActivity {
                             Import.Alert.snakeBar(activity, texto);
                             enviar.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
-                            Import.Alert.erro(TAG, e);
+                            Import.Alert.e(TAG, e);
                         });
             }
         });

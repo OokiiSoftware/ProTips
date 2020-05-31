@@ -64,7 +64,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
             String userId = bundle.getString(Constantes.intent.USER_ID, null);
             if (userId == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
-                Import.Alert.erro(TAG, "Init", "idUser == null");
+                Import.Alert.e(TAG, "Init", "idUser == null");
                 onBackPressed();
                 return;
             }
@@ -82,7 +82,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
 
         if (usuario == null) {
             Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
-            Import.Alert.erro(TAG, "Init", "usuario == null");
+            Import.Alert.e(TAG, "Init", "usuario == null");
             onBackPressed();
             return;
         }
@@ -151,7 +151,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
                 switch (acao) {
                     case R.string.aceitar: {
                         btn_aceitar.setText(getResources().getString(R.string.remover));
-                        eu.aceitarSeguidor(user);
+                        eu.aceitarSeguidor(activity, user);
                         btn_recusar.setVisibility(View.GONE);
                         acao = R.string.remover;
                         break;
@@ -163,7 +163,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
-                Import.Alert.erro(TAG, "btn_aceitar.setOnClickListener", e);
+                Import.Alert.e(TAG, "btn_aceitar.setOnClickListener", e);
             }
         });
         btn_voltar.setOnClickListener(view -> onBackPressed());

@@ -225,8 +225,8 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
                     tipstersFragment.adapterUpdate();
                     notificationsFragment.adapterUpdate();
                 } catch (Exception ex) {
-                    Import.Alert.erro(TAG, ex);
-                    Import.Alert.msg(TAG, "onChildAdded", dataSnapshot.getKey());
+                    Import.Alert.e(TAG, ex);
+                    Import.Alert.d(TAG, "onChildAdded", dataSnapshot.getKey());
                 }
                 try {
                     tipstersFragment.refreshLayout.setRefreshing(false);
@@ -241,7 +241,7 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
                 String key = dataSnapshot.getKey();
 
                 Import.get.tipsters.remove(key);
-                Import.Alert.msg(TAG, "onChildRemoved", key);
+                Import.Alert.d(TAG, "onChildRemoved", key);
                 tipstersFragment.adapterUpdate();
             }
 

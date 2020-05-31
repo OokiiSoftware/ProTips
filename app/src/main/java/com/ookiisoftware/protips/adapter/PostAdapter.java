@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,13 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
@@ -35,7 +42,8 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implements View.OnClickListener, View.OnTouchListener {
 
     //region Variáveis
-//    private final static String TAG = "PostAdapter";
+    private final static String TAG = "PostAdapter";
+    private ConstraintSet set = new ConstraintSet();
     private Activity activity;
     private ArrayList<Post> data;
     //endregion
@@ -64,16 +72,41 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         final MenuItem menuItemExcluir = holder.toolbar.getMenu().findItem(R.id.menu_excluir);
         final MenuItem menuItemLink = holder.toolbar.getMenu().findItem(R.id.menu_link);
         String _data = Import.reorder(item.getData());
-        holder.data.setText(_data);
-        holder.texto.setText(item.getTexto());
+        holder.foto_post.setId(position);
 
-        holder.esporte.setText(item.getEsporte());
-        holder.mercado.setText(item.getMercado());
+        holder.data.setText(_data);
+        holder.mercado.setText(item.getLinha());
         holder.titulo.setText(item.getTitulo());
-        holder.odd_min.setText(item.getOdd_minima());
-        holder.odd_max.setText(item.getOdd_maxima());
+        holder.esporte.setText(item.getEsporte());
         holder.horario_min.setText(item.getHorario_minimo());
         holder.horario_max.setText(item.getHorario_maximo());
+
+        //region ifs
+        if ((item.getOdd_minima() == null || item.getOdd_minima().isEmpty()) &&
+                (item.getOdd_maxima() == null || item.getOdd_maxima().isEmpty())) {
+            holder.container_odd.setVisibility(View.GONE);
+        } else {
+            holder.odd_min.setText(item.getOdd_minima());
+            holder.odd_max.setText(item.getOdd_maxima());
+        }
+        if ((item.getOdd_atual() == null || item.getOdd_atual().isEmpty()) &&
+                (item.getUnidade() == null || item.getUnidade().isEmpty())) {
+            holder.container_odd_atual.setVisibility(View.GONE);
+        } else {
+            holder.odd_atual.setText(item.getOdd_atual());
+            holder.unidade.setText(item.getUnidade());
+        }
+        if (item.getCampeonato() == null || item.getCampeonato().isEmpty()) {
+            holder.campeonato.setVisibility(View.GONE);
+        } else {
+            holder.campeonato.setText(item.getCampeonato());
+        }
+        if (item.getDescricao() == null || item.getDescricao().isEmpty()) {
+            holder.descricao.setVisibility(View.GONE);
+        } else {
+            holder.descricao.setText(item.getDescricao());
+        }
+        //endregion
 
         //region path foto
         String userId = item.getId_tipster();
@@ -93,7 +126,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         if (path != null)
             Glide.with(activity).load(path).into(holder.foto_user);
         if (foto_post != null)
-            Glide.with(activity).load(foto_post).into(holder.foto_post);
+            Glide.with(activity).asBitmap().load(foto_post).into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    String ratio = String.format("%s:%s", resource.getWidth(), resource.getHeight());
+                    set.clone(holder.constraintLayout);
+                    set.setDimensionRatio(holder.foto_post.getId(), ratio);
+                    set.applyTo(holder.constraintLayout);
+
+                    holder.foto_post.setImageBitmap(resource);
+                }
+            });
 
         //endregion
 
@@ -152,9 +195,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
             switch (_item.getItemId()) {
                 case R.id.menu_excluir: {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-                    dialog.setTitle(activity.getResources().getString(R.string.excluir));
-                    dialog.setMessage(activity.getResources().getString(R.string.excluir_post));
-                    dialog.setPositiveButton(activity.getResources().getString(R.string.ok), (dialog1, which) -> {
+                    dialog.setTitle(activity.getResources().getString(R.string.post_excluir));
+                    dialog.setMessage(activity.getResources().getString(R.string.deseja_prosseguir));
+                    dialog.setPositiveButton(activity.getResources().getString(R.string.sim), (dialog1, which) -> {
                         item.excluir(PostAdapter.this);
                         holder.userName.setText(activity.getResources().getString(R.string.excluindo));
                     });
@@ -192,6 +235,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
     //endregion
 
     static class Holder extends RecyclerView.ViewHolder {
+        ConstraintLayout constraintLayout;
+        TableRow container_odd;
+        TableRow container_horario;
+        TableRow container_odd_atual;
         ImageView foto_user;
         ImageViewTouch foto_post;
         LinearLayout green_red;
@@ -201,25 +248,36 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
         TextView mercado;
         TextView odd_min;
         TextView odd_max;
+        TextView odd_atual;
+        TextView unidade;
+        TextView campeonato;
         TextView horario_min;
         TextView horario_max;
-        TextView texto, data, userName, bom, ruim;
+        TextView descricao, data, userName, bom, ruim;
 
         Holder(@NonNull View itemView) {
             super(itemView);
+            container_odd = itemView.findViewById(R.id.container_odd);
+            container_horario = itemView.findViewById(R.id.container_horario);
+            container_odd_atual = itemView.findViewById(R.id.container_odd_atual);
+            constraintLayout = itemView.findViewById(R.id.constraint);
+
             toolbar = itemView.findViewById(R.id.toolbar);
             titulo = itemView.findViewById(R.id.tv_titulo);
             esporte = itemView.findViewById(R.id.tv_esporte);
             mercado = itemView.findViewById(R.id.tv_mercado);
             odd_min = itemView.findViewById(R.id.tv_odd_min);
             odd_max = itemView.findViewById(R.id.tv_odd_max);
+            unidade = itemView.findViewById(R.id.tv_unidade);
+            campeonato = itemView.findViewById(R.id.tv_campeonato);
+            odd_atual = itemView.findViewById(R.id.tv_odd_atual);
             horario_max = itemView.findViewById(R.id.tv_horario_max);
             horario_min = itemView.findViewById(R.id.tv_horario_min);
 
             foto_user = itemView.findViewById(R.id.iv_foto);
-            foto_post = itemView.findViewById(R.id.ivt_foto_post);
+            foto_post = itemView.findViewById(R.id.iv_foto_post);
             green_red = itemView.findViewById(R.id.tipster_container);
-            texto = itemView.findViewById(R.id.tv_texto);
+            descricao = itemView.findViewById(R.id.tv_texto);
             data = itemView.findViewById(R.id.tv_data);
             userName = itemView.findViewById(R.id.tv_tipster);
             bom = itemView.findViewById(R.id.tv_bom);

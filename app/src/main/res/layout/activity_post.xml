@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,140 +18,103 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/new_tip_table_padding"
+            android:padding="@dimen/new_post_table_padding"
             android:stretchColumns="0,1">
 
             <EditText
                 android:id="@+id/et_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/titulo"
+                android:hint="@string/titulo_"
                 android:inputType="textPersonName"
+                android:imeOptions="actionDone"
                 android:importantForAutofill="no"
-                style="@style/EditText.NewTip" />
+                style="@style/EditText.NewPost" />
 
-            <TableRow android:layout_marginTop="@dimen/item_table_margin">
+            <TextView
+                android:id="@+id/tv_foto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/new_post_item_margin"
+                android:text="@string/anexar_imagem_"
+                style="@style/EditText.NewPost" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/et_texto"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_marginTop="@dimen/new_post_item_margin"
+                android:gravity="top"
+                android:hint="@string/descricao_"
+                android:maxLength="200"
+                android:imeOptions="actionNext"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no"
+                style="@style/EditText.NewPost" />
 
-                    <ImageView
-                        android:id="@+id/iv_foto"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="@dimen/item_table_margin"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:maxHeight="200dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_download"
-                        android:background="@color/colorPrimary"
+            <TextView
+                android:id="@+id/tv_popup_length"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/_0"
+                android:textAlignment="center" />
 
-                        app:layout_constraintDimensionRatio="1:1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/new_post_item_background"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <EditText
-                    android:id="@+id/et_texto"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:gravity="top"
-                    android:hint="@string/descricao"
-                    android:maxLength="200"
-                    android:imeOptions="actionDone"
-                    android:inputType="textMultiLine"
-                    android:importantForAutofill="no"
-                    style="@style/EditText.NewTip" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/imagem"/>
-
-                <TextView
-                    android:id="@+id/tv_popup_length"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center" />
-
-            </TableRow>
-
-            <TableRow>
-
-                <CheckBox
-                    android:id="@+id/cb_tip_publico"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/item_table_margin"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:text="@string/tip_publico"/>
-
-                <TextView
-                    android:id="@+id/tv_ajuda"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:text="@string/ajuda"/>
-
-            </TableRow>
-
-            <TableRow android:layout_marginTop="@dimen/item_table_margin">
-
-                <Spinner
-                    android:id="@+id/sp_esporte"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/item_table_margin"
-                    android:entries="@array/esporte"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:padding="3dp" />
-
-                <Spinner
-                    android:id="@+id/sp_mercado"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/mercado"
-                    android:background="@drawable/bg_stroke_primary_color"
-                    android:padding="3dp" />
-
-            </TableRow>
-
-            <TableRow android:layout_marginTop="@dimen/item_table_margin">
+            <TableRow android:layout_marginTop="@dimen/new_post_item_margin">
 
                 <EditText
                     android:id="@+id/et_odd_min"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/odd_minima"
+                    android:hint="@string/odd_minima_"
                     android:layout_marginEnd="@dimen/item_table_margin"
                     android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:importantForAutofill="no"
-                    style="@style/EditText.NewTip" />
+                    style="@style/EditText.NewPost" />
 
                 <EditText
                     android:id="@+id/et_odd_max"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/odd_maxima"
-                    android:imeOptions="actionDone"
+                    android:hint="@string/odd_maxima_"
+                    android:imeOptions="actionNext"
                     android:inputType="numberDecimal"
                     android:importantForAutofill="no"
-                    style="@style/EditText.NewTip" />
+                    style="@style/EditText.NewPost" />
 
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/item_table_margin">
+            <TableRow android:layout_marginTop="@dimen/new_post_item_margin">
+
+                <EditText
+                    android:id="@+id/et_odd_atual"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/odd_atual_"
+                    android:layout_marginEnd="@dimen/item_table_margin"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.NewPost" />
+
+                <EditText
+                    android:id="@+id/et_unidades"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/unidades_"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:importantForAutofill="no"
+                    style="@style/EditText.NewPost" />
+
+            </TableRow>
+
+            <TableRow android:layout_marginTop="@dimen/new_post_item_margin">
 
                 <EditText
                     android:id="@+id/et_horario_min"
@@ -166,7 +128,7 @@
                     android:focusableInTouchMode="false"
                     android:importantForAutofill="no"
                     android:inputType="none"
-                    style="@style/EditText.NewTip"/>
+                    style="@style/EditText.NewPost"/>
 
                 <EditText
                     android:id="@+id/et_horario_max"
@@ -179,7 +141,7 @@
                     android:focusableInTouchMode="false"
                     android:importantForAutofill="no"
                     android:inputType="none"
-                    style="@style/EditText.NewTip" />
+                    style="@style/EditText.NewPost" />
 
             </TableRow>
 
@@ -190,24 +152,87 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="@string/horario_minimo"
+                    android:textSize="@dimen/text_min_size"
                     android:textAlignment="center" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/horario_maximo"
+                    android:textSize="@dimen/text_min_size"
                     android:textAlignment="center" />
+
+            </TableRow>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/new_post_item_background"/>
+
+            <TableRow android:layout_marginTop="@dimen/new_post_item_margin">
+
+                <AutoCompleteTextView
+                    android:id="@+id/et_esporte"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/item_table_margin"
+                    android:hint="@string/esporte_"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"
+                    style="@style/EditText.NewPost" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/et_mercado"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/mercado_"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:inputType="textPersonName"
+                    android:imeOptions="actionNext"
+                    style="@style/EditText.NewPost" />
 
             </TableRow>
 
             <EditText
                 android:id="@+id/et_link"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/new_post_item_margin"
                 android:hint="@string/link"
-                android:inputType="textPersonName"
+                android:inputType="text"
+                android:imeOptions="actionNext"
                 android:importantForAutofill="no"
-                style="@style/EditText.NewTip" />
+                style="@style/EditText.NewPost" />
+
+            <TableRow android:layout_marginTop="@dimen/new_post_item_margin">
+
+                <AutoCompleteTextView
+                    android:id="@+id/et_campeonato"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/item_table_margin"
+                    android:hint="@string/campeonato_"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:imeOptions="actionDone"
+                    style="@style/EditText.NewPost" />
+
+                <CheckBox
+                    android:id="@+id/cb_tip_publico"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/new_post_item_background"
+                    android:text="@string/tip_publico_"/>
+
+            </TableRow>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="100dp"/>
 
         </TableLayout>
 
@@ -234,7 +259,7 @@
         android:textColor="?attr/textColor"
         android:textStyle="bold"
         android:textSize="@dimen/text_size"
-        android:text="@string/postar"
+        android:text="@string/postar_"
         android:background="@drawable/ic_postar"/>
 
 </RelativeLayout>

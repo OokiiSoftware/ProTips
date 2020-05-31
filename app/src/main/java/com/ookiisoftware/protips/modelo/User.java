@@ -1,13 +1,21 @@
 package com.ookiisoftware.protips.modelo;
 
+import android.app.Activity;
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseReference;
+import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.auxiliar.Constantes;
 import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class User {
 
@@ -20,6 +28,9 @@ public class User {
 
     private HashMap<String, Post> postes;
     private HashMap<String, PostPerfil> post_perfil;
+
+    private String postsPublicas;
+
     //endregion
 
     public User() {
@@ -56,6 +67,24 @@ public class User {
 
     //region Metodos
 
+    public void salvarToken() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.DADOS)
+                .child(Constantes.firebase.child.TOKENS)
+                .setValue(getDados().getToken());
+    }
+
+    public void logout() {
+        Import.getFirebase.getReference()
+                .child(Constantes.firebase.child.USUARIO)
+                .child(getDados().getId())
+                .child(Constantes.firebase.child.TOKENS)
+                .child(Import.getFirebase.getToken())
+                .removeValue();
+    }
+
     public void solicitarSerTipster() {
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
@@ -91,12 +120,18 @@ public class User {
         desbloquear();
     }
 
-    public void salvar() {
+    public void salvar(Activity activity) {
         DatabaseReference reference = Import.getFirebase.getReference();
         reference
                 .child(Constantes.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .setValue(this);
+                .setValue(this)
+                .addOnSuccessListener(aVoid -> {
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.msg_dados_salvos));
+                })
+                .addOnFailureListener(e -> {
+                    Import.Alert.snakeBar(activity, activity.getResources().getString(R.string.erro_salvar_dados));
+                });
 
         reference
                 .child(Constantes.firebase.child.IDENTIFICADOR)
@@ -104,13 +139,16 @@ public class User {
                 .setValue(getDados().getId());
     }
 
-    public void addSolicitacao(String id) {
+    public void addSolicitacao(Context context, User user) {
+        String id = user.getDados().getId();
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
                 .child(getDados().getId())
                 .child(Constantes.firebase.child.SEGUIDORES_PENDENTES)
                 .child(id)
                 .setValue(id);
+
+        MyNotificationManager.getInstance(context).sendSolicitacao(this);
     }
 
     public void removerSolicitacao(String id) {
@@ -142,7 +180,7 @@ public class User {
         getSeguindo().remove(id);
     }
 
-    public void aceitarSeguidor(@NonNull User user) {
+    public void aceitarSeguidor(Context context, @NonNull User user) {
         String id = user.getDados().getId();
         Import.getFirebase.getReference()
                 .child(Constantes.firebase.child.USUARIO)
@@ -154,6 +192,7 @@ public class User {
         user.addSeguindo(Import.getFirebase.getId());
         getSeguidores().put(id, id);
         removerSolicitacao(id);
+        MyNotificationManager.getInstance(context).sendSolicitacaoAceita(user);
     }
 
     public void removerSeguidor(@NonNull User punter) {
@@ -229,6 +268,20 @@ public class User {
         return count;
     }
 
+    public List<Post> getPostes(@NonNull String data, boolean publucas) {
+        List<Post> items = new LinkedList<>();
+        for (Post item : getPostes().values()) {
+            if (item.getData().contains(data)) {
+                if (publucas) {
+                    if (item.isPublico())
+                        items.add(item);
+                } else
+                    items.add(item);
+            }
+        }
+        return items;
+    }
+
     //endregion
 
     //region gets sets
@@ -289,7 +342,17 @@ public class User {
         this.post_perfil = post_perfil;
     }
 
+    public String getPostsPublicas() {
+        return postsPublicas;
+    }
+
+    public void setPostsPublicas(String postsPublicas) {
+        this.postsPublicas = postsPublicas;
+    }
+
     //endregion
+
+    //region sortMethods
 
     public static class sortByMedia implements Comparator<User> {
         private boolean reverse;
@@ -361,5 +424,7 @@ public class User {
             }
         }
     }
+
+    //endregion
 
 }
