@@ -13,7 +13,7 @@ import android.widget.RemoteViews;
 import androidx.core.app.NotificationCompat;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Notificacao;
 import com.ookiisoftware.protips.modelo.Post;
@@ -45,15 +45,15 @@ public class MyNotificationManager {
         notificacaoSimples.setTextViewText(R.id.notification_subtitulo, texto);
         notificacaoExpandida.setTextViewText(R.id.notification_texto, texto);
 
-        NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context, Constantes.notification.CHANNEL_ID_DEFAULT)
+        NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context, Const.notification.CHANNEL_ID_DEFAULT)
                 .setSmallIcon(R.drawable.ic_notification_icon_dark)
-                .setSound(Constantes.notification.SOUND_DEFAULT)
-                .setVibrate(Constantes.notification.VIBRATION)
+                .setSound(Const.notification.SOUND_DEFAULT)
+                .setVibrate(Const.notification.VIBRATION)
                 .setCustomContentView(notificacaoSimples)
                 .setCustomBigContentView(notificacaoExpandida)
                 .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                .setSound(Constantes.notification.SOUND_DEFAULT)
-                .setVibrate(Constantes.notification.VIBRATION)
+                .setSound(Const.notification.SOUND_DEFAULT)
+                .setVibrate(Const.notification.VIBRATION)
                 .setContentTitle(titulo)
                 .setContentText(texto)
                 .setChannelId(channelId)
@@ -94,8 +94,8 @@ public class MyNotificationManager {
             notificacao.setDe(Import.getFirebase.getId());
             notificacao.setPara(user.getDados().getId());
             notificacao.setToken(user.getDados().getToken());
-            notificacao.setChannel(Constantes.notification.id.NOVO_POST);
-            notificacao.setAction(Constantes.notification.action.OPEN_MAIN);
+            notificacao.setChannel(Const.notification.id.NOVO_POST);
+            notificacao.setAction(Const.notification.action.OPEN_MAIN);
             notificacao.enviar();
         } catch (Exception ignored) {}
 
@@ -162,8 +162,8 @@ public class MyNotificationManager {
             notificacao.setDe(Import.getFirebase.getId());
             notificacao.setPara(user.getDados().getId());
             notificacao.setToken(user.getDados().getToken());
-            notificacao.setChannel(Constantes.notification.id.NOVO_PUNTER_PENDENTE);
-            notificacao.setAction(Constantes.notification.action.OPEN_NOTIFICATION);
+            notificacao.setChannel(Const.notification.id.NOVO_PUNTER_PENDENTE);
+            notificacao.setAction(Const.notification.action.OPEN_NOTIFICATION);
             notificacao.enviar();
         } catch (Exception ignored) {}
     }
@@ -180,16 +180,16 @@ public class MyNotificationManager {
             notificacao.setDe(Import.getFirebase.getId());
             notificacao.setPara(user.getDados().getId());
             notificacao.setToken(user.getDados().getToken());
-            notificacao.setChannel(Constantes.notification.id.NOVO_PUNTER_ACEITO);
-            notificacao.setAction(Constantes.notification.action.OPEN_MAIN);
+            notificacao.setChannel(Const.notification.id.NOVO_PUNTER_ACEITO);
+            notificacao.setAction(Const.notification.action.OPEN_MAIN);
             notificacao.enviar();
         } catch (Exception ignored) {}
     }
 
     public static void criarChannelNotification(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(Constantes.notification.CHANNEL_ID_DEFAULT,
-                    Constantes.notification.CHANNEL_NOME, NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(Const.notification.CHANNEL_ID_DEFAULT,
+                    Const.notification.CHANNEL_NOME, NotificationManager.IMPORTANCE_DEFAULT);
 
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager == null)
@@ -199,9 +199,9 @@ public class MyNotificationManager {
             channel.enableVibration(true);
             //Roxo (notification_light_color)
             channel.setLightColor(Color.rgb(80, 0, 255));
-            channel.setVibrationPattern(Constantes.notification.VIBRATION);
-            channel.setDescription(Constantes.notification.CHANNEL_DESCRICAO);
-            channel.setSound(Constantes.notification.SOUND_DEFAULT, Constantes.notification.audioAttributes);
+            channel.setVibrationPattern(Const.notification.VIBRATION);
+            channel.setDescription(Const.notification.CHANNEL_DESCRICAO);
+            channel.setSound(Const.notification.SOUND_DEFAULT, Const.notification.audioAttributes);
 
             manager.createNotificationChannel(channel);
         }

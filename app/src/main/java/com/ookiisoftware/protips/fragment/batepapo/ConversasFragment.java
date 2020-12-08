@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.ConversaActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Conversa;
 import com.ookiisoftware.protips.sqlite.SQLiteConversa;
@@ -143,7 +143,7 @@ public class ConversasFragment extends Fragment {
             holder.data.setText(Import.splitData(conversas.get(position).getData()));
 
             {
-                if(conversas.get(position).getLido() == Constantes.user.conversa.MENSAGEM_LIDA)
+                if(conversas.get(position).getLido() == Const.user.conversa.MENSAGEM_LIDA)
                     holder.img_msg_lida.setVisibility(View.INVISIBLE);
                 else
                     holder.img_msg_lida.setVisibility(View.VISIBLE);
@@ -154,8 +154,8 @@ public class ConversasFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), ConversaActivity.class);
-                        intent.putExtra(Constantes.intent.USER_ID, conversas.get(position).getId());
-                        intent.putExtra(Constantes.intent.USER_NOME, conversas.get(position).getNome_contato());
+                        intent.putExtra(Const.intent.USER_ID, conversas.get(position).getId());
+                        intent.putExtra(Const.intent.USER_NOME, conversas.get(position).getNome_contato());
                         startActivity(intent);
                     }
                 });

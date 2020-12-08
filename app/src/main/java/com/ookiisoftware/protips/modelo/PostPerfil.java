@@ -7,8 +7,7 @@ import android.widget.ProgressBar;
 
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.adapter.PostPerfilAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 
@@ -32,7 +31,7 @@ public class PostPerfil {
     public void salvar(final Activity activity, final ProgressBar progressBar, boolean isFotoLocal) {
         if (isFotoLocal) {
             Import.getFirebase.getStorage()
-                    .child(Constantes.firebase.child.POSTES_PERFIL)
+                    .child(Const.firebase.child.POSTES_PERFIL)
                     .child(getId())
                     .putFile(Uri.parse(getFoto()))
                     .addOnSuccessListener(taskSnapshot -> {
@@ -57,9 +56,9 @@ public class PostPerfil {
         String id = getId_tipster() == null ? Import.getFirebase.getId() : getId_tipster();
         DatabaseReference reference = Import.getFirebase.getReference();
         reference
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(id)
-                .child(Constantes.firebase.child.POSTES_PERFIL)
+                .child(Const.firebase.child.POSTES_PERFIL)
                 .child(Criptografia.criptografar(getData()))
                 .setValue(this);
 
@@ -70,14 +69,14 @@ public class PostPerfil {
     public void excluir(final Activity activity) {
         String id = getId_tipster();
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(id)
-                .child(Constantes.firebase.child.POSTES_PERFIL)
+                .child(Const.firebase.child.POSTES_PERFIL)
                 .child(getId())
                 .removeValue()
                 .addOnCompleteListener(aVoid -> {
                     Import.getFirebase.getStorage()
-                            .child(Constantes.firebase.child.POSTES_PERFIL)
+                            .child(Const.firebase.child.POSTES_PERFIL)
                             .child(getId()).delete();
 
                     Import.getFirebase.getTipster().getPost_perfil().remove(getId());

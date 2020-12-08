@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.PostAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
@@ -55,7 +55,7 @@ public class Post {
         if (isFotoLocal) {
             try {
                 Import.getFirebase.getStorage()
-                        .child(Constantes.firebase.child.POSTES)
+                        .child(Const.firebase.child.POSTES)
                         .child(getId())
                         .putFile(Uri.parse(getFoto()))
                         .addOnSuccessListener(taskSnapshot -> {
@@ -83,9 +83,9 @@ public class Post {
     private void postar(final Activity activity) {
         String id = getId_tipster() == null ? Import.getFirebase.getId() : getId_tipster();
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(id)
-                .child(Constantes.firebase.child.POSTES)
+                .child(Const.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
                 .setValue(this)
                 .addOnSuccessListener(aVoid -> {
@@ -105,11 +105,11 @@ public class Post {
 
     public void addBom(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getId_tipster())
-                .child(Constantes.firebase.child.POSTES)
+                .child(Const.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
-                .child(Constantes.firebase.child.BOM)
+                .child(Const.firebase.child.BOM)
                 .child(id)
                 .setValue(id);
         removeRuim(id);
@@ -121,11 +121,11 @@ public class Post {
 
     public void addRuim(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getId_tipster())
-                .child(Constantes.firebase.child.POSTES)
+                .child(Const.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
-                .child(Constantes.firebase.child.RUIM)
+                .child(Const.firebase.child.RUIM)
                 .child(id)
                 .setValue(id);
         removeBom(id);
@@ -137,11 +137,11 @@ public class Post {
 
     public void removeBom(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getId_tipster())
-                .child(Constantes.firebase.child.POSTES)
+                .child(Const.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
-                .child(Constantes.firebase.child.BOM)
+                .child(Const.firebase.child.BOM)
                 .child(id)
                 .removeValue();
         getBom().remove(id);
@@ -149,11 +149,11 @@ public class Post {
 
     public void removeRuim(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getId_tipster())
-                .child(Constantes.firebase.child.POSTES)
+                .child(Const.firebase.child.POSTES)
                 .child(Criptografia.criptografar(getData()))
-                .child(Constantes.firebase.child.RUIM)
+                .child(Const.firebase.child.RUIM)
                 .child(id)
                 .removeValue();
         getRuim().remove(id);
@@ -162,16 +162,16 @@ public class Post {
     public void excluir(final PostAdapter adapter) {
         String id = getId_tipster();
         DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(id)
-                .child(Constantes.firebase.child.POSTES);
+                .child(Const.firebase.child.POSTES);
 
         ref.child(Criptografia.criptografar(getData()))
                 .removeValue()
                 .addOnSuccessListener(aVoid -> {
 
                     Import.getFirebase.getStorage()
-                            .child(Constantes.firebase.child.POSTES)
+                            .child(Const.firebase.child.POSTES)
                             .child(getId()).delete();
 
                     Import.get.seguindo.remove(this);

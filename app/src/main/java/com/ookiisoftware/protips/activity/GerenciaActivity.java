@@ -8,7 +8,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
@@ -25,7 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
 import com.ookiisoftware.protips.auxiliar.notification.TerceiroPlanoService;
@@ -94,10 +93,10 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_menu_feed:
-                viewPager.setCurrentItem(Constantes.classes.fragments.pagerPosition.INICIO);
+                viewPager.setCurrentItem(Const.classes.fragments.pagerPosition.INICIO);
                 break;
             case R.id.nav_menu_tipster:
-                viewPager.setCurrentItem(Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
+                viewPager.setCurrentItem(Const.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
                 break;
             case R.id.nav_menu_perfil:
                 viewPager.setCurrentItem(2);
@@ -163,7 +162,7 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            page = bundle.getInt(Constantes.intent.PAGE_SELECT);
+            page = bundle.getInt(Const.intent.PAGE_SELECT);
         }
 
         //endregion
@@ -191,9 +190,7 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
         //endregion
 
         //region viewPager
-        sectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager(),
-                FragmentPagerAdapter.POSITION_UNCHANGED,
+        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
                 activity, tipstersFragment, notificationsFragment);
 
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -206,7 +203,7 @@ public class GerenciaActivity extends AppCompatActivity implements BottomNavigat
 
     private void getAllTipsters() {
         refAllTipsters = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO);
+                .child(Const.firebase.child.USUARIO);
 
         eventAllTipsters = new ChildEventListener() {
             @Override

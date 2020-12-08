@@ -50,12 +50,12 @@ public class OnSwipeListener implements View.OnTouchListener{
                 clickFocus = true;
                 if (view.getTag() != null) {//tag == null é o recyclerView
                     itemNoNull = true;
-                    handlerLongTouch.postDelayed(longTouch, Constantes.LONGCLICK);
+                    handlerLongTouch.postDelayed(longTouch, Const.LONGCLICK);
 //                    toqueSimples = true;
                     if (touchCount == 1)
                         touchCount++;
                     if (touchCount == 0) {
-                        handlersingleTouch.postDelayed(singleTouch, Constantes.DOUBLETAP);
+                        handlersingleTouch.postDelayed(singleTouch, Const.DOUBLETAP);
                         touchCount++;
                     }
                 }
@@ -89,11 +89,11 @@ public class OnSwipeListener implements View.OnTouchListener{
                 float diffX = x - initX;
                 float diffY = y - initY;
 
-                clickFocus = !(Math.abs(diffX) > Constantes.SWIPE_RADIO_LIMITE || Math.abs(diffY) > Constantes.SWIPE_RADIO_LIMITE);
+                clickFocus = !(Math.abs(diffX) > Const.SWIPE_RADIO_LIMITE || Math.abs(diffY) > Const.SWIPE_RADIO_LIMITE);
 
                 if (!swipped) {
                     swipped = true;
-                    if (Math.abs(diffX) > Constantes.SWIPE_RANGE_LIMITE)
+                    if (Math.abs(diffX) > Const.SWIPE_RANGE_LIMITE)
                         if (Math.abs(diffX) > Math.abs(diffY))
                             if (diffX > 0)
                                 onSwipeRight();

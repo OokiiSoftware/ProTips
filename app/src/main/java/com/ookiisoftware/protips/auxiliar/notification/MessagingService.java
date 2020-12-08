@@ -1,17 +1,13 @@
 package com.ookiisoftware.protips.auxiliar.notification;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.MainActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.auxiliar.Const;
 
 public class MessagingService extends FirebaseMessagingService {
 
@@ -43,10 +39,10 @@ public class MessagingService extends FirebaseMessagingService {
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 switch (action) {
-                    case Constantes.notification.action.OPEN_MAIN:
+                    case Const.notification.action.OPEN_MAIN:
                         break;
-                    case Constantes.notification.action.OPEN_NOTIFICATION:
-                        intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+                    case Const.notification.action.OPEN_NOTIFICATION:
+                        intent.putExtra(Const.intent.PAGE_SELECT, Const.classes.fragments.pagerPosition.NOTIFICATIONS);
                         break;
                 }
             }

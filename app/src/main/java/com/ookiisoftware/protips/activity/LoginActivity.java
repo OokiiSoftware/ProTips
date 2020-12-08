@@ -15,10 +15,6 @@ import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -35,10 +31,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 //import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 public class LoginActivity extends AppCompatActivity {
@@ -133,8 +129,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void Init() {
         //region findViewById
-        LoginButton btn_login_facebook = findViewById(R.id.lb_facebook);
-        ImageView btn_login_twitter = findViewById(R.id.iv_twitter);
+//        LoginButton btn_login_facebook = findViewById(R.id.lb_facebook);
+//        ImageView btn_login_twitter = findViewById(R.id.iv_twitter);
         ImageView btn_login_google = findViewById(R.id.iv_google);
         TextView btn_cadastrar = findViewById(R.id.tv_cadastrar);
         TextView btn_login = findViewById(R.id.tv_login);
@@ -175,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
 
         recuperarSenha.setOnClickListener(v -> {
             Intent intent = new Intent(activity, RecuperarSenhaActivity.class);
-            intent.putExtra(Constantes.intent.EMAIL, et_email.getText().toString());
+            intent.putExtra(Const.intent.EMAIL, et_email.getText().toString());
             startActivity(intent);
         });
 
@@ -183,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_cadastrar.setOnClickListener(view -> IrParaCadastro());
         //endregion
 
-        //region Facebook
+        /*//region Facebook
         btn_login_facebook.setReadPermissions("email", "public_profile");
         btn_login_facebook.registerCallback(callbackManagerFacebook, new FacebookCallback<LoginResult>() {
             @Override
@@ -209,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
             LoginComTwitter();
             progressBar.setVisibility(View.VISIBLE);
         });
-        //endregion
+        //endregion*/
 
         //region Google
         btn_login_google.setOnClickListener(view -> {
@@ -258,14 +254,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void OrganizarDados(String email, String senha) {
-        Usuario usuario = new Usuario();
-        usuario.setEmail(email);
-        usuario.setSenha(senha);
-        LoginComEmailESenha(usuario);
+        UserDados userDados = new UserDados();
+        userDados.setEmail(email);
+        userDados.setSenha(senha);
+        LoginComEmailESenha(userDados);
     }
 
-    private void LoginComEmailESenha(@NonNull final Usuario usuario) {
-        firebaseAuth.signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+    private void LoginComEmailESenha(@NonNull final UserDados userDados) {
+        firebaseAuth.signInWithEmailAndPassword(userDados.getEmail(), userDados.getSenha())
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user == null) {
@@ -335,8 +331,8 @@ public class LoginActivity extends AppCompatActivity {
 
             startIntent(intent);
         } else */
-        if (Import.getFirebase.isFilePresent(activity, Constantes.files.USER_JSON)) {
-            User user = gson.fromJson(Import.getFirebase.read(activity, Constantes.files.USER_JSON), User.class);
+        if (Import.getFirebase.isFilePresent(activity, Const.files.USER_JSON)) {
+            User user = gson.fromJson(Import.getFirebase.read(activity, Const.files.USER_JSON), User.class);
             Import.getFirebase.setUser(activity, user, false);
             startIntent(intent);
         } else {
@@ -347,7 +343,7 @@ public class LoginActivity extends AppCompatActivity {
     private void VerificarLoginTipster() {
         final Intent intent = new Intent(activity, MainActivity.class);
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(Import.getFirebase.getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -361,7 +357,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Import.getFirebase.setUser(activity, item, true);
                         } catch (Exception ex){
-                            intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
+                            intent.putExtra(Const.intent.PRIMEIRO_LOGIN, true);
                         } finally {
                             startIntent(intent);
                         }

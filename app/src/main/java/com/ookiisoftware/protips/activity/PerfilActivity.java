@@ -32,11 +32,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageTask;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Data;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.Objects;
 public class PerfilActivity extends AppCompatActivity {
 
     //region Variáveis
-    private static final String TAG = "EditFragment";
+    private static final String TAG = "PerfilActivity";
     private User currentUser;
 
     // Elementos do layout
@@ -99,8 +99,8 @@ public class PerfilActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case Constantes.permissions.STORANGE:
-            case Constantes.permissions.CAMERA: {
+            case Const.permissions.STORANGE:
+            case Const.permissions.CAMERA: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Import.abrirCropView(activity, 1);
                 } else {
@@ -148,7 +148,7 @@ public class PerfilActivity extends AppCompatActivity {
         //region Bundle
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            isPrimeiroLogin = bundle.getBoolean(Constantes.intent.PRIMEIRO_LOGIN, false);
+            isPrimeiroLogin = bundle.getBoolean(Const.intent.PRIMEIRO_LOGIN, false);
         }
         //endregion
 
@@ -160,7 +160,7 @@ public class PerfilActivity extends AppCompatActivity {
             currentUser = new User(Import.getFirebase.getTipster());
 
         boolean isTipster = currentUser.getDados().isTipster();
-        Usuario usuario = currentUser.getDados();
+        UserDados userDados = currentUser.getDados();
 
         email.setEnabled(false);
         telefone.setFocusable(false);
@@ -176,21 +176,21 @@ public class PerfilActivity extends AppCompatActivity {
                 categoria.setText(getResources().getString(R.string.filiado));
                 categoria.setSelection(0);
             }
-            if (usuario != null) {
-                if (isTipster && usuario.isBloqueado()) {
+            if (userDados != null) {
+                if (isTipster && userDados.isBloqueado()) {
                     queroSerTipster.setText(getResources().getString(R.string.em_analize));
                 }
-                nome.setText(usuario.getNome());
-                info.setText(usuario.getInfo());
-                email.setText(usuario.getEmail());
-                tipName.setText(usuario.getTipname());
-                estado.setSelection(usuario.getEndereco().getEstado());
-                nascimento.setText(usuario.getNascimento().toString());
+                nome.setText(userDados.getNome());
+                info.setText(userDados.getInfo());
+                email.setText(userDados.getEmail());
+                tipName.setText(userDados.getTipname());
+                estado.setSelection(userDados.getEndereco().getEstado());
+                nascimento.setText(userDados.getNascimento().toString());
 
-                if (usuario.getFoto() != null && !usuario.getFoto().isEmpty())
-                    foto_path = usuario.getFoto();
-                if (usuario.getTelefone() != null && !usuario.getTelefone().isEmpty())
-                    telefone.setText(usuario.getTelefone());
+                if (userDados.getFoto() != null && !userDados.getFoto().isEmpty())
+                    foto_path = userDados.getFoto();
+                if (userDados.getTelefone() != null && !userDados.getTelefone().isEmpty())
+                    telefone.setText(userDados.getTelefone());
                 else
                     telefone.setHint(getResources().getString(R.string.registrar_numero));
             }
@@ -199,7 +199,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         Glide.with(activity).load(foto_path).into(foto);
 
-        SimpleMaskFormatter formatter = new SimpleMaskFormatter(Constantes.formats.DATA);
+        SimpleMaskFormatter formatter = new SimpleMaskFormatter(Const.formats.DATA);
         MaskTextWatcher watcher = new MaskTextWatcher(nascimento, formatter);
         nascimento.addTextChangedListener(watcher);
         //endregion
@@ -209,7 +209,7 @@ public class PerfilActivity extends AppCompatActivity {
         foto.setOnClickListener(view -> {
             String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
             if (!Import.hasPermissions(activity, PERMISSIONS)) {
-                ActivityCompat.requestPermissions(activity, PERMISSIONS, Constantes.permissions.STORANGE);
+                ActivityCompat.requestPermissions(activity, PERMISSIONS, Const.permissions.STORANGE);
             } else {
                 if (uploadTask != null && uploadTask.isInProgress()) {
                     foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
@@ -221,7 +221,7 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
 
-        btn_salvar.setOnClickListener(view -> CriarUsuario());
+        btn_salvar.setOnClickListener(view -> criarUsuario());
         btn_voltar.setOnClickListener(view -> {
             if (!isPrimeiroLogin) {
                 onBackPressed();
@@ -274,7 +274,7 @@ public class PerfilActivity extends AppCompatActivity {
         //endregion
     }
 
-    private void CriarUsuario() {
+    private void criarUsuario() {
         progressBar.setVisibility(View.VISIBLE);
         if (uploadTask != null && uploadTask.isInProgress()) {
             foto.setBackground(getDrawable(R.drawable.bg_circulo_vermelho));
@@ -320,7 +320,7 @@ public class PerfilActivity extends AppCompatActivity {
                 // Se estiver desabilitado não precisa verificar
                 // Verifica se este tipName já existe no banco de dados
                 DatabaseReference refTemp = Import.getFirebase.getReference()
-                        .child(Constantes.firebase.child.IDENTIFICADOR);
+                        .child(Const.firebase.child.IDENTIFICADOR);
                 refTemp.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -411,8 +411,8 @@ public class PerfilActivity extends AppCompatActivity {
         } else {
             Uri uri = Uri.parse(usuario.getDados().getFoto());
             uploadTask = Import.getFirebase.getStorage()
-                    .child(Constantes.firebase.child.USUARIO)
-                    .child(Constantes.firebase.child.PERFIL)
+                    .child(Const.firebase.child.USUARIO)
+                    .child(Const.firebase.child.PERFIL)
                     .child(usuario.getDados().getId())
                     .putFile(uri).addOnSuccessListener(taskSnapshot -> {
                         Handler handler = new Handler();

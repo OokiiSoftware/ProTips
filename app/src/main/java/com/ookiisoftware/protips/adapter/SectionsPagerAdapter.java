@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.fragment.NotificationsFragment;
 import com.ookiisoftware.protips.fragment.PostPerfilFragment;
 import com.ookiisoftware.protips.fragment.TipstersFragment;
@@ -29,8 +29,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITULOS_GERENCIA = new int[]{R.string.titulo_g_inicio, R.string.titulo_g_solicitacoes};
     @StringRes
     private static final int[] TAB_TITULOS_BATEPAPO = new int[]{R.string.titulo_conversas, R.string.titulo_contatos};
+    @StringRes
+    private static final int[] TAB_TITULOS_PERFIL = new int[]{R.string.titulo_post_perfil, R.string.titulo_perfil};
 
-    private final String className;
+    private String className;
     private final Activity activity;
 
     private FeedFragment feedFragment;
@@ -38,14 +40,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private PerfilFragment perfilFragment;
     private NotificationsFragment notificationsFragment;
 
-//    private GInicioFragment inicioFragment;
-//    private GSolicitacoesFragment solicitacoesFragment;
-
     private PostPerfilFragment postPerfilFragment1;
     private PostPerfilFragment postPerfilFragment2;
+
+    private static int behavior = FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
     //endregion
 
-    public SectionsPagerAdapter(FragmentManager fm, int behavior, Activity activity, FeedFragment feedFragment, TipstersFragment tipstersFragment, PerfilFragment perfilFragment, NotificationsFragment notificationsFragment) {
+    public SectionsPagerAdapter(FragmentManager fm, Activity activity, FeedFragment feedFragment, TipstersFragment tipstersFragment, PerfilFragment perfilFragment, NotificationsFragment notificationsFragment) {
         super(fm, behavior);
         this.className = activity.getClass().getSimpleName();
         this.activity = activity;
@@ -56,7 +57,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         this.notificationsFragment = notificationsFragment;
     }
 
-    public SectionsPagerAdapter(FragmentManager fm, int behavior, Activity activity, TipstersFragment tipstersFragment, NotificationsFragment notificationsFragment) {
+    public SectionsPagerAdapter(FragmentManager fm, Activity activity, TipstersFragment tipstersFragment, NotificationsFragment notificationsFragment) {
         super(fm, behavior);
         this.activity = activity;
         this.className = activity.getClass().getSimpleName();
@@ -64,19 +65,22 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         this.tipstersFragment = tipstersFragment;
     }
 
-    public SectionsPagerAdapter(FragmentManager fm, int behavior, Activity activity, PostPerfilFragment postPerfilFragment1, PostPerfilFragment postPerfilFragment2) {
+    public SectionsPagerAdapter(FragmentManager fm, Activity activity, PostPerfilFragment postPerfilFragment1, PostPerfilFragment postPerfilFragment2) {
         super(fm, behavior);
         this.className = activity.getClass().getSimpleName();
         this.activity = activity;
         this.postPerfilFragment1 = postPerfilFragment1;
         this.postPerfilFragment2 = postPerfilFragment2;
+        if (this.className.equals(Const.classes.activites.MAIN)) {
+            this.className = Const.classes.fragments.PERFIL;
+        }
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (className) {
-            case Constantes.classes.activites.MAIN: {
+            case Const.classes.activites.MAIN: {
                 switch (position){
                     case 0:
                         return feedFragment;
@@ -88,7 +92,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                         return notificationsFragment;
                 }
             }
-            case Constantes.classes.activites.GERENCIA: {
+            case Const.classes.activites.GERENCIA: {
                 switch (position) {
                     case 0:
                         return tipstersFragment;
@@ -96,7 +100,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                         return notificationsFragment;
                 }
             }
-            case Constantes.classes.activites.BATEPAPO: {
+            case Const.classes.activites.BATEPAPO: {
                 switch (position) {
                     case 0:
                         return new ConversasFragment();
@@ -104,7 +108,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                         return new ContatosFragment();
                 }
             }
-            case Constantes.classes.activites.PERFIL_TIPSTER: {
+            case Const.classes.activites.PERFIL_TIPSTER:
+            case Const.classes.fragments.PERFIL: {
                 switch (position) {
                     case 0:
                         return postPerfilFragment1;
@@ -120,17 +125,20 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (className) {
-            case Constantes.classes.activites.MAIN: {
+            case Const.classes.activites.MAIN: {
                 return activity.getResources().getString(TAB_TITULOS_MAIN_ACTIVITY[position]);
             }
-            case Constantes.classes.activites.GERENCIA: {
+            case Const.classes.activites.GERENCIA: {
                 return activity.getResources().getString(TAB_TITULOS_GERENCIA[position]);
             }
-            case Constantes.classes.activites.BATEPAPO: {
+            case Const.classes.activites.BATEPAPO: {
                 return activity.getResources().getString(TAB_TITULOS_BATEPAPO[position]);
             }
-            case Constantes.classes.activites.PERFIL_TIPSTER: {
+            case Const.classes.activites.PERFIL_TIPSTER: {
                 return "";
+            }
+            case Const.classes.fragments.PERFIL: {
+                return activity.getResources().getString(TAB_TITULOS_PERFIL[position]);
             }
         }
         return "";
@@ -139,17 +147,20 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         switch (className) {
-            case Constantes.classes.activites.MAIN: {
+            case Const.classes.activites.MAIN: {
                 return TAB_TITULOS_MAIN_ACTIVITY.length;
             }
-            case Constantes.classes.activites.GERENCIA: {
+            case Const.classes.activites.GERENCIA: {
                 return TAB_TITULOS_GERENCIA.length;
             }
-            case Constantes.classes.activites.BATEPAPO: {
+            case Const.classes.activites.BATEPAPO: {
                 return TAB_TITULOS_BATEPAPO.length;
             }
-            case Constantes.classes.activites.PERFIL_TIPSTER: {
+            case Const.classes.activites.PERFIL_TIPSTER: {
                 return 2;
+            }
+            case Const.classes.fragments.PERFIL: {
+                return TAB_TITULOS_PERFIL.length;
             }
         }
         return 0;

@@ -12,11 +12,11 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 //import com.ookiisoftware.protips.modelo.Punter;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 
 public class PerfilPunterActivity extends AppCompatActivity {
 
@@ -25,7 +25,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
 
     private Activity activity;
     private User user;
-    private Usuario usuario;
+    private UserDados userDados;
     private int acao;
     //endregion
 
@@ -61,7 +61,7 @@ public class PerfilPunterActivity extends AppCompatActivity {
         //region Bundle
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            String userId = bundle.getString(Constantes.intent.USER_ID, null);
+            String userId = bundle.getString(Const.intent.USER_ID, null);
             if (userId == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
                 Import.Alert.e(TAG, "Init", "idUser == null");
@@ -77,10 +77,10 @@ public class PerfilPunterActivity extends AppCompatActivity {
             if (user == null)
                 user = Import.get.tipsters.get(userId);
             if (user != null)
-                usuario = user.getDados();
+                userDados = user.getDados();
         }
 
-        if (usuario == null) {
+        if (userDados == null) {
             Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
             Import.Alert.e(TAG, "Init", "usuario == null");
             onBackPressed();
@@ -96,23 +96,23 @@ public class PerfilPunterActivity extends AppCompatActivity {
         tipName.setEnabled(false);
         telefone.setEnabled(false);
 
-        tipName.setText(usuario.getTipname());
-        nome.setText(usuario.getNome());
-        email.setText(usuario.getEmail());
-        telefone.setText(usuario.getTelefone());
-        Glide.with(activity).load(usuario.getFoto()).into(foto);
+        tipName.setText(userDados.getTipname());
+        nome.setText(userDados.getNome());
+        email.setText(userDados.getEmail());
+        telefone.setText(userDados.getTelefone());
+        Glide.with(activity).load(userDados.getFoto()).into(foto);
 
-        if (usuario.getInfo() == null || usuario.getInfo().isEmpty())
+        if (userDados.getInfo() == null || userDados.getInfo().isEmpty())
             info.setVisibility(View.GONE);
         else
-            info.setText(usuario.getInfo());
+            info.setText(userDados.getInfo());
 
-        if (usuario.isPrivado()) {
+        if (userDados.isPrivado()) {
             email_container.setVisibility(View.GONE);
             telefone_container.setVisibility(View.GONE);
         } else {
             email_container.setVisibility(View.VISIBLE);
-            if (usuario.getTelefone() == null || usuario.getTelefone().isEmpty())
+            if (userDados.getTelefone() == null || userDados.getTelefone().isEmpty())
                 telefone_container.setVisibility(View.GONE);
             else
                 telefone_container.setVisibility(View.VISIBLE);
@@ -120,13 +120,13 @@ public class PerfilPunterActivity extends AppCompatActivity {
 
         final User eu = Import.getFirebase.getTipster();
         if (Import.getFirebase.isTipster()) {
-            if (eu.getSeguidoresPendentes().containsValue(usuario.getId())) {
+            if (eu.getSeguidoresPendentes().containsValue(userDados.getId())) {
                 btn_aceitar.setVisibility(View.VISIBLE);
                 btn_recusar.setVisibility(View.VISIBLE);
                 btn_aceitar.setText(getResources().getString(R.string.aceitar));
                 btn_recusar.setText(getResources().getString(R.string.recusar));
                 acao = R.string.aceitar;
-            } else if (eu.getSeguidores().containsKey(usuario.getId())) {
+            } else if (eu.getSeguidores().containsKey(userDados.getId())) {
                 btn_aceitar.setVisibility(View.VISIBLE);
                 btn_aceitar.setText(getResources().getString(R.string.remover));
                 acao = R.string.remover;

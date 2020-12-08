@@ -23,8 +23,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.auxiliar.Const;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.Objects;
@@ -86,10 +86,10 @@ public class CadastroActivity extends AppCompatActivity {
             String senha = et_senha.getText().toString();
             String senha_2 = et_confirmar_senha.getText().toString();
             if (rad == 2 && radAtual == 5) {
-                Usuario usuario = new Usuario();
-                usuario.setEmail(email);
-                usuario.setSenha(senha);
-                login(usuario);
+                UserDados userDados = new UserDados();
+                userDados.setEmail(email);
+                userDados.setSenha(senha);
+                login(userDados);
             } else {
                 if(nome.isEmpty())
                     et_nome.setError(getResources().getString(R.string.campo_obrigatório));
@@ -135,29 +135,29 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     private void OrganizarDados(String nome, String email, String senha) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setSenha(senha);
-        criarContaNoFirebase(usuario);
+        UserDados userDados = new UserDados();
+        userDados.setNome(nome);
+        userDados.setEmail(email);
+        userDados.setSenha(senha);
+        criarContaNoFirebase(userDados);
     }
 
-    private void criarContaNoFirebase(final Usuario usuario) {
+    private void criarContaNoFirebase(final UserDados userDados) {
         progressBar.setVisibility(View.VISIBLE);
         final FirebaseAuth firebaseAuth = Import.getFirebase.getAuth();
-        firebaseAuth.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+        firebaseAuth.createUserWithEmailAndPassword(userDados.getEmail(), userDados.getSenha())
         .addOnCompleteListener(this, task -> {
             if(task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
                 final FirebaseUser user = task.getResult().getUser();
                 final UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(usuario.getNome())
+                        .setDisplayName(userDados.getNome())
                         .build();
                 user.sendEmailVerification().addOnCompleteListener(task12 -> {
                     if (task12.isSuccessful()) {
                         user.updateProfile(changeRequest).addOnCompleteListener(task1 -> {
                             SharedPreferences pref = getSharedPreferences("info", MODE_PRIVATE);
                             SharedPreferences.Editor editor = pref.edit();
-                            editor.putString(Constantes.user.logado.EMAIL, usuario.getEmail());
+                            editor.putString(Const.user.logado.EMAIL, userDados.getEmail());
 
                             Import.Alert.toast(activity, getResources().getString(R.string.cadastro_realizado));
                             editor.apply();
@@ -186,15 +186,15 @@ public class CadastroActivity extends AppCompatActivity {
         });
     }
 
-    private void login(final Usuario usuario) {
+    private void login(final UserDados userDados) {
         progressBar.setVisibility(View.VISIBLE);
-        Import.getFirebase.getAuth().signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+        Import.getFirebase.getAuth().signInWithEmailAndPassword(userDados.getEmail(), userDados.getSenha())
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser user = authResult.getUser();
                     if (user != null) {
                         if (user.isEmailVerified()) {
                             Import.getFirebase.getReference()
-                                    .child(Constantes.firebase.child.ADMINISTRADORES)
+                                    .child(Const.firebase.child.ADMINISTRADORES)
                                     .child(user.getUid())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override

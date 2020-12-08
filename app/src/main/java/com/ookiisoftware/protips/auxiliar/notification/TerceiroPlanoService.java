@@ -14,10 +14,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.GerenciaActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 
 public class TerceiroPlanoService extends Service {
 
@@ -57,7 +57,7 @@ public class TerceiroPlanoService extends Service {
     // Quando o usuario solicita para ser um tipster
     private void CommandSolicitacoes() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
+                .child(Const.firebase.child.SOLICITACAO_NOVO_TIPSTER)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -93,7 +93,7 @@ public class TerceiroPlanoService extends Service {
 
     private void getTipster(String id, boolean seguidorPendente) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(id)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -121,17 +121,17 @@ public class TerceiroPlanoService extends Service {
 
     //region notifications
 
-    private void notificationSolicitacao(@NonNull Usuario usuario) {
+    private void notificationSolicitacao(@NonNull UserDados userDados) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
-            if (Import.activites.getMainActivity().getPagePosition() != Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
+            if (Import.activites.getMainActivity().getPagePosition() != Const.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO) {
                 String titulo = getResources().getString(R.string.app_name);
-                String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + usuario.getNome();
+                String texto = getResources().getString(R.string.nova_solicitação_tipster) + "\n" + userDados.getNome();
 
                 Intent intent = null;
                 if (!inPrimeiroPlano) {
                     intent = new Intent(getContext(), GerenciaActivity.class);
-                    intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
+                    intent.putExtra(Const.intent.PAGE_SELECT, Const.classes.fragments.pagerPosition.TIPSTER_SOLICITACAO);
                 }
 //                int channelId = Constantes.notification.id.TIPSTER_SOLICITACAO;
 //                MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);

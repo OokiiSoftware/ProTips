@@ -8,8 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -20,16 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.ConversaActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.auxiliar.Import;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.modelo.Contato;
-import com.ookiisoftware.protips.modelo.Usuario;
 import com.ookiisoftware.protips.sqlite.SQLiteContato;
 
 import java.util.ArrayList;
@@ -223,10 +217,10 @@ public class ContatosFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), ConversaActivity.class);
-                        intent.putExtra(Constantes.intent.USER_ID, contatos.get(position).getId());
-                        intent.putExtra(Constantes.intent.USER_NOME, contatos.get(position).getNome());
+                        intent.putExtra(Const.intent.USER_ID, contatos.get(position).getId());
+                        intent.putExtra(Const.intent.USER_NOME, contatos.get(position).getNome());
 //                        intent.putExtra(Config.user.conversa.CONVERSA_CONTATO_EMAIL, contatos.get(position).getEmail());
-                        intent.putExtra(Constantes.intent.USER_FOTO, contatos.get(position).getImage_uri());
+                        intent.putExtra(Const.intent.USER_FOTO, contatos.get(position).getImage_uri());
                         startActivity(intent);
                     }
                 });

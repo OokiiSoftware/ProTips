@@ -1,27 +1,19 @@
 package com.ookiisoftware.protips.sqlite;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.ookiisoftware.protips.auxiliar.Constantes;
-import com.ookiisoftware.protips.auxiliar.Criptografia;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Contato;
-import com.ookiisoftware.protips.modelo.Conversa;
-
-import java.util.ArrayList;
 
 public class SQLiteConversa extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLiteConversa";
 
-    private static final int VERSAO_BANCO = Constantes.sqlite.SQLITE_BANCO_DE_DADOS_VERSAO;
+    private static final int VERSAO_BANCO = Const.sqlite.SQLITE_BANCO_DE_DADOS_VERSAO;
     private static final String TABELA_CONVERSAS = "conversas";
 
     private final String CONTATO_ID = "id_contato";

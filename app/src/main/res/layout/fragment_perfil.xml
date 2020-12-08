@@ -265,14 +265,20 @@
                 android:textSize="@dimen/title_size"
                 android:textColor="@color/text_light"/>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <include layout="@layout/toolslide"/>
+
+            <include layout="@layout/custon_view_pager"
+                android:layout_width="0dp"
+                android:layout_height="900dp"/>
+
+            <!--<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:spanCount="2"
                 tools:listitem="@layout/item_post_perfil"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
-
+-->
         </TableLayout>
 
     </com.ookiisoftware.protips.adapter.CustomNestedScrollView>

@@ -44,7 +44,7 @@ import com.ookiisoftware.protips.modelo.Activites;
 import com.ookiisoftware.protips.modelo.AutoComplete;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -80,7 +80,7 @@ public class Import {
         dialog.setContentView(progressBar);
 
         final DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.VERSAO);
+                .child(Const.firebase.child.VERSAO);
 
         final ValueEventListener eventListener = new ValueEventListener() {
             @Override
@@ -94,7 +94,7 @@ public class Import {
                 }
                 if (values.size() > 0) {
                     final long ultima = values.get(values.size() -1);
-                    if (ultima > Constantes.APP_VERSAO) {
+                    if (ultima > Const.APP_VERSAO) {
                         dialog.dismiss();
                         final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
                         dialog.setTitle(activity.getResources().getString(R.string.atualizacao_disponivel));
@@ -103,7 +103,7 @@ public class Import {
                             Import.Alert.toast(activity, "aguarde");
                             Import.Alert.d(TAG, "verificar_atualizacao", appName);
                             Import.getFirebase.getStorage()
-                                    .child(Constantes.firebase.child.APP)
+                                    .child(Const.firebase.child.APP)
                                     .child(appName)
                                     .getDownloadUrl()
                                     .addOnSuccessListener(uri -> {
@@ -294,7 +294,7 @@ public class Import {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            activity.startActivityForResult(intent, Constantes.permissions.STORANGE);
+            activity.startActivityForResult(intent, Const.permissions.STORANGE);
         }
         private static Typeface FonteNormal(Context context){
             return Typeface.createFromAsset(context.getAssets(), "bebasneue_regular.otf");
@@ -306,7 +306,7 @@ public class Import {
 
         public static String SQLiteDatabaseName(Context context){
             SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-            return pref.getString(Constantes.sqlite.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
+            return pref.getString(Const.sqlite.SQLITE_BANCO_DE_DADOS, Criptografia.criptografar(getFirebase.getEmail()));
         }
 
         public static AutoComplete autoComplete() {
@@ -713,13 +713,13 @@ public class Import {
             return tipster;
         }
 
-        public static Usuario getUsuario() {
+        public static UserDados getUsuario() {
                 return getTipster().getDados();
         }
 
         public static String getUltinoEmail(Context context) {
             SharedPreferences pref = context.getSharedPreferences("info", MODE_PRIVATE);
-            return pref.getString(Constantes.user.logado.ULTIMO_EMAIL, "");
+            return pref.getString(Const.user.logado.ULTIMO_EMAIL, "");
         }
 
         public static boolean isTipster() {
@@ -729,7 +729,7 @@ public class Import {
         }
 
         public static boolean isGerente(Activity activity) {
-            return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Constantes.presset.IS_GERENTE, false);
+            return activity.getSharedPreferences("info", MODE_PRIVATE).getBoolean(Const.presset.IS_GERENTE, false);
         }
 
         public static boolean isFilePresent(Context context, String fileName) {
@@ -751,7 +751,7 @@ public class Import {
                 Gson gson = new Gson();
                 String json = gson.toJson(user);
 
-                create(context, Constantes.files.USER_JSON, json);
+                create(context, Const.files.USER_JSON, json);
             }
 
             tipster = user;
@@ -759,13 +759,13 @@ public class Import {
 
         public static void setUltinoEmail(Context context, String email) {
             SharedPreferences.Editor editor = context.getSharedPreferences("info", MODE_PRIVATE).edit();
-            editor.putString(Constantes.user.logado.ULTIMO_EMAIL, email);
+            editor.putString(Const.user.logado.ULTIMO_EMAIL, email);
             editor.apply();
         }
 
         public static void setGerencia(Activity activity, boolean isGerente) {
             SharedPreferences.Editor editor = activity.getSharedPreferences("info", MODE_PRIVATE).edit();
-            editor.putBoolean(Constantes.presset.IS_GERENTE, isGerente);
+            editor.putBoolean(Const.presset.IS_GERENTE, isGerente);
             editor.apply();
         }
 
@@ -780,7 +780,7 @@ public class Import {
 //        }
 
         public static void deleteTipster(Context context) {
-            context.deleteFile(Constantes.files.USER_JSON);
+            context.deleteFile(Const.files.USER_JSON);
         }
 
         public static void saveUser(Context context) {

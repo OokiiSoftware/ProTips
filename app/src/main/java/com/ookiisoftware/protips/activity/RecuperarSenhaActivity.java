@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.Objects;
@@ -44,7 +44,7 @@ public class RecuperarSenhaActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null)
-            et_email.setText(bundle.getString(Constantes.intent.EMAIL));
+            et_email.setText(bundle.getString(Const.intent.EMAIL));
 
         enviar.setOnClickListener(v -> {
             {

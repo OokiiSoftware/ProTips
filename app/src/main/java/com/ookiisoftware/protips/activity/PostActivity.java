@@ -19,13 +19,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.AutoComplete;
 import com.ookiisoftware.protips.modelo.Post;
@@ -155,7 +154,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if(requestCode == Const.permissions.STORANGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             foto_path = uri.toString();
             foto.setText(foto_path);
@@ -367,13 +366,13 @@ public class PostActivity extends AppCompatActivity {
 
             //region Salva este novo dado no banco de dados
             if (!autoComplete.getEsportes().containsKey(post.getEsporte())) {
-                AutoComplete.add(Constantes.firebase.child.ESPORTES, post.getEsporte());
+                AutoComplete.add(Const.firebase.child.ESPORTES, post.getEsporte());
             }
             if (!autoComplete.getLinhas().containsKey(post.getLinha())) {
-                AutoComplete.add(Constantes.firebase.child.LINHAS, post.getLinha());
+                AutoComplete.add(Const.firebase.child.LINHAS, post.getLinha());
             }
             if (!autoComplete.getCampeonatos().containsKey(post.getCampeonato())) {
-                AutoComplete.add(Constantes.firebase.child.CAMPEONATOS, post.getCampeonato());
+                AutoComplete.add(Const.firebase.child.CAMPEONATOS, post.getCampeonato());
             }
             //endregion
             return false;

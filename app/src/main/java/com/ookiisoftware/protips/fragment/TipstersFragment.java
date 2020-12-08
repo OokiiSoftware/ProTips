@@ -18,7 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
 import com.ookiisoftware.protips.adapter.UserAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.User;
 
@@ -77,8 +77,8 @@ public class TipstersFragment extends Fragment {
                 User item = userAdapter.getItem(position);
 
                 Intent intent = new Intent(activity, PerfilTipsterActivity.class);
-                intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
-                intent.putExtra(Constantes.intent.IS_GERENCIA, isGerencia);
+                intent.putExtra(Const.intent.USER_ID, item.getDados().getId());
+                intent.putExtra(Const.intent.IS_GERENCIA, isGerencia);
                 activity.startActivity(intent);
             }
         };

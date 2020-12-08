@@ -1,7 +1,6 @@
 package com.ookiisoftware.protips.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -20,25 +18,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.ActionMenuItemView;
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.tabs.TabLayout;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PostActivity;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.SeguidoresActivity;
 import com.ookiisoftware.protips.activity.SeguindoActivity;
 import com.ookiisoftware.protips.adapter.CustomNestedScrollView;
+import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.PostPerfilAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.OnSwipeListener;
+import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.PostPerfil;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class PerfilFragment extends Fragment {
     //region Variáveis
     private static final String TAG = "PerfilFragment";
 
-    private Activity activity;
+    private AppCompatActivity activity;
     private OnSwipeListener onSwipeListener = new OnSwipeListener() {
 
         @Override
@@ -64,20 +65,26 @@ public class PerfilFragment extends Fragment {
 
     private String foto_path;
 
+    private PostPerfilFragment postPerfilFragment1;
+    private PostPerfilFragment postPerfilFragment2;
+
+    private SectionsPagerAdapter pagerAdapter;
     private PostPerfilAdapter perfilAdapter;
     private ArrayList<PostPerfil> postPerfils;
+    private ArrayList<Post> posts;
     private boolean isTipster;
 
     private Dialog dialog;
+    private CustomViewPager viewPager;
     private ImageView btn_notificacao;
     private TextView notification_quant;
-    private RecyclerView recyclerView;
+//    private RecyclerView recyclerView;
     private CustomNestedScrollView scrollView;
 
     //endregion
 
     public PerfilFragment(){}
-    public PerfilFragment(Activity activity) {
+    public PerfilFragment(AppCompatActivity activity) {
         this.activity = activity;
     }
 
@@ -103,7 +110,7 @@ public class PerfilFragment extends Fragment {
             final ImageView foto = dialog.findViewById(R.id.iv_foto);
 //            final ConstraintLayout constraintLayout = dialog.findViewById(R.id.constraint);
 
-            if(requestCode == Constantes.permissions.STORANGE && resultCode == RESULT_OK) {
+            if(requestCode == Const.permissions.STORANGE && resultCode == RESULT_OK) {
                 Import.Alert.d(TAG, "onActivityResult", "resultCode == RESULT_OK");
                 if (data == null || data.getData() == null) {
                     dialog.dismiss();
@@ -150,16 +157,20 @@ public class PerfilFragment extends Fragment {
         ImageView btn_planilha = view.findViewById(R.id.iv_planilha);
         ImageView btn_3_perfil_fragment = view.findViewById(R.id.btn_3_perfil_fragment);
 
-        recyclerView = view.findViewById(R.id.recycler);
+//        recyclerView = view.findViewById(R.id.recycler);
         scrollView = view.findViewById(R.id.scrollView);
         btn_notificacao = view.findViewById(R.id.iv_new_punter);
         notification_quant = view.findViewById(R.id.tv_notification_quant);
+
+        TabLayout tabs = view.findViewById(R.id.tabs);
+
+        viewPager = view.findViewById(R.id.viewPager);
         //endregion
 
         //region setValues
 
         isTipster = Import.getFirebase.isTipster();
-        Usuario user = Import.getFirebase.getTipster().getDados();
+        UserDados user = Import.getFirebase.getTipster().getDados();
 
         if (user == null)
             return;
@@ -171,8 +182,10 @@ public class PerfilFragment extends Fragment {
 
         if (isTipster) {
             postPerfils = new ArrayList<>(Import.getFirebase.getTipster().getPost_perfil().values());
+            posts = new ArrayList<>(Import.getFirebase.getTipster().getPostes().values());
+
             Collections.sort(postPerfils, new PostPerfil.orderByDate());
-            perfilAdapter = new PostPerfilAdapter(activity, postPerfils, true, onSwipeListener) {
+            /*perfilAdapter = new PostPerfilAdapter(activity, postPerfils, true, onSwipeListener) {
                 @Override
                 public void onClick(View v) {
                     int position = recyclerView.getChildAdapterPosition(v);
@@ -197,20 +210,40 @@ public class PerfilFragment extends Fragment {
                     Import.activites.getMainActivity().setPagingEnabled(false);
                     return super.onLongClick(v);
                 }
-            };
-            recyclerView.setAdapter(perfilAdapter);
-            recyclerView.setOnTouchListener(onSwipeListener);
+            };*/
+//            recyclerView.setAdapter(perfilAdapter);
+//            recyclerView.setOnTouchListener(onSwipeListener);
 
             btn_newPostPerfil.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
+//            recyclerView.setVisibility(View.VISIBLE);
             btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_filiados));
             posts_no_perfil.setVisibility(View.VISIBLE);
+
+            //region viewPager
+//            if (postPerfilFragment1 == null)
+                postPerfilFragment1 = new PostPerfilFragment(activity, postPerfils, true);
+//            if (postPerfilFragment2 == null)
+                postPerfilFragment2 = new PostPerfilFragment(activity, posts);
+
+            Import.Alert.d(TAG, "init", "" + viewPager.getLayoutParams().height);
+
+            pagerAdapter = new SectionsPagerAdapter(activity.getSupportFragmentManager(), activity, postPerfilFragment1, postPerfilFragment2);
+            viewPager.setAdapter(pagerAdapter);
+
+            //region Tabs
+            tabs.setSelectedTabIndicatorColor(ContextCompat.getColor(activity, R.color.colorAccent));
+            tabs.setTabTextColors(activity.getResources().getColor(R.color.brancoDark), activity.getResources().getColor(R.color.colorAccent));
+            tabs.setupWithViewPager(viewPager);
+            //endregion
+
+            //endregion
+
         } else {
             posts_no_perfil.setVisibility(View.GONE);
             btn_seguidores.setText(activity.getResources().getString(R.string.titulo_meus_tipsters));
             btn_newPost.setVisibility(View.GONE);
             btn_planilha.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.GONE);
+//            recyclerView.setVisibility(View.GONE);
             btn_newPostPerfil.setVisibility(View.GONE);
         }
 
@@ -232,7 +265,7 @@ public class PerfilFragment extends Fragment {
         }
         btn_notificacao.setOnClickListener(v -> {
             removeNotification();
-            Import.activites.getMainActivity().setPagePosition(Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+            Import.activites.getMainActivity().setPagePosition(Const.classes.fragments.pagerPosition.NOTIFICATIONS);
         });
         btn_3_perfil_fragment.setOnClickListener(v -> {
 
@@ -274,9 +307,9 @@ public class PerfilFragment extends Fragment {
 
     private void removeNotification() {
         if (isTipster)
-            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_PENDENTE);
+            Import.notificacaoCancel(activity, Const.notification.id.NOVO_PUNTER_PENDENTE);
         else
-            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_ACEITO);
+            Import.notificacaoCancel(activity, Const.notification.id.NOVO_PUNTER_ACEITO);
     }
 
     private void postPerfil() {
@@ -330,7 +363,7 @@ public class PerfilFragment extends Fragment {
             dialog.setContentView(R.layout.popup_foto);
             dialog.setOnDismissListener(dialog -> {
                 scrollView.setScrollingEnabled(true);
-                recyclerView.suppressLayout(false);
+//                recyclerView.suppressLayout(false);
                 Import.activites.getMainActivity().setPagingEnabled(true);
             });
             if (dialog.getWindow() != null)

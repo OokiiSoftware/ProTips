@@ -29,7 +29,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.PerfilActivity;
 import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
@@ -42,7 +42,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implements View.OnClickListener, View.OnTouchListener {
 
     //region Variáveis
-    private final static String TAG = "PostAdapter";
+//    private final static String TAG = "PostAdapter";
     private ConstraintSet set = new ConstraintSet();
     private Activity activity;
     private ArrayList<Post> data;
@@ -187,7 +187,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.Holder> implem
                 intent = new Intent(activity, PerfilActivity.class);
             } else {
                 intent = new Intent(activity, PerfilTipsterActivity.class);
-                intent.putExtra(Constantes.intent.USER_ID, item.getId_tipster());
+                intent.putExtra(Const.intent.USER_ID, item.getId_tipster());
             }
             activity.startActivity(intent);
         });

@@ -23,12 +23,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Criptografia;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Conversa;
 import com.ookiisoftware.protips.modelo.Mensagem;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 import com.ookiisoftware.protips.sqlite.SQLiteConversa;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class ConversaActivity extends AppCompatActivity {
 
     private ValueEventListener valueEventListenerMensagens;
     //======================= Dados dos usuarios da conversa
-    private Usuario usuarioDestino = new Usuario();
+    private UserDados userDadosDestino = new UserDados();
     private String usuarioLogadoId;
     //======================================================
 //    private SingleItemMensagemAdapter adapter;
@@ -80,11 +80,11 @@ public class ConversaActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
-            usuarioDestino.setId(bundle.getString(Constantes.intent.USER_ID));
-            usuarioDestino.setNome(bundle.getString(Constantes.intent.USER_NOME));
-            usuarioDestino.setFoto(bundle.getString(Constantes.intent.USER_FOTO));
+            userDadosDestino.setId(bundle.getString(Const.intent.USER_ID));
+            userDadosDestino.setNome(bundle.getString(Const.intent.USER_NOME));
+            userDadosDestino.setFoto(bundle.getString(Const.intent.USER_FOTO));
 
-            usuarioDestino.setId(Criptografia.criptografar(usuarioDestino.getId()));
+            userDadosDestino.setId(Criptografia.criptografar(userDadosDestino.getId()));
         }
         else{
             onBackPressed();
@@ -94,8 +94,8 @@ public class ConversaActivity extends AppCompatActivity {
         {
             SQLiteConversa db = new SQLiteConversa(this);
             Conversa conversa = new Conversa();
-            conversa.setId(usuarioDestino.getId());
-            conversa.setLido(Constantes.user.conversa.MENSAGEM_LIDA);
+            conversa.setId(userDadosDestino.getId());
+            conversa.setLido(Const.user.conversa.MENSAGEM_LIDA);
 //            db.update(this, conversa);
 
         }// Atualizar o banco de dados ao entrar na conversa, coloca a msg como lida
@@ -110,7 +110,7 @@ public class ConversaActivity extends AppCompatActivity {
          * NOME do contato da conversa    <-- OK
          */
         {
-            toolbar.setTitle(usuarioDestino.getNome());
+            toolbar.setTitle(userDadosDestino.getNome());
             toolbar.setNavigationIcon(R.drawable.ic_voltar);
             setSupportActionBar(toolbar);
         }// toolbar
@@ -224,10 +224,10 @@ public class ConversaActivity extends AppCompatActivity {
         // Todos os dados devem estar descriptografados, na hora de salvar que criptografa
         Mensagem mensagem = new Mensagem();
         mensagem.setId_remetente(usuarioLogadoId);
-        mensagem.setId_conversa(usuarioDestino.getId());
+        mensagem.setId_conversa(userDadosDestino.getId());
         mensagem.setData_de_envio(data_de_envio);
         mensagem.setMensagem(texto);
-        mensagem.setStatus(Constantes.user.conversa.MENSAGEM_NAO_ENVIADA);
+        mensagem.setStatus(Const.user.conversa.MENSAGEM_NAO_ENVIADA);
         mensagem.setArquivo(0);
 
 //        if (Import.SalvarMensagemNoDispositivo(this, mensagem))
@@ -238,11 +238,11 @@ public class ConversaActivity extends AppCompatActivity {
 
             Conversa conversa = new Conversa();
             conversa.setId(mensagem.getId_conversa());// C
-            conversa.setNome_contato(usuarioDestino.getNome());
+            conversa.setNome_contato(userDadosDestino.getNome());
             conversa.setUltima_msg(mensagem.getMensagem());// C
             conversa.setData(mensagem.getData_de_envio());
-            conversa.setFoto(usuarioDestino.getFoto());
-            conversa.setLido(Constantes.user.conversa.MENSAGEM_LIDA);
+            conversa.setFoto(userDadosDestino.getFoto());
+            conversa.setLido(Const.user.conversa.MENSAGEM_LIDA);
 
 //            Import.SalvarConversaNoDispositivo(this, conversa);
 //            mensagem.setId_conversa(usuarioLogadoId);
@@ -340,15 +340,15 @@ public class ConversaActivity extends AppCompatActivity {
                     paramsData.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                     paramsData.addRule(RelativeLayout.END_OF, R.id.item_conversa_layout_geral);
                     switch (mensagems.get(position).getStatus()){
-                        case Constantes.user.conversa.MENSAGEM_NAO_ENVIADA:{
+                        case Const.user.conversa.MENSAGEM_NAO_ENVIADA:{
                             holder.data.setTextColor(getResources().getColor(R.color.vermelho));
                             break;
                         }
-                        case Constantes.user.conversa.MENSAGEM_ENVIADA:{
+                        case Const.user.conversa.MENSAGEM_ENVIADA:{
                             holder.data.setTextColor(getResources().getColor(R.color.amareloDark));
                             break;
                         }
-                        case Constantes.user.conversa.MENSAGEM_LIDA:{
+                        case Const.user.conversa.MENSAGEM_LIDA:{
                             holder.data.setTextColor(getResources().getColor(R.color.verde));
                             break;
                         }

@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_postar_feed1"
-        android:title="@string/menu_postar_feed"
-        android:icon="@drawable/ic_add"
-        android:visible="false"
+        android:id="@+id/menu_meus_postes"
+        android:title="@string/menu_meus_postes"
+        android:checkable="true"
+        android:checked="false"
+        android:icon="@drawable/ic_notification_icon_light"
         app:showAsAction="ifRoom"/>
 
     <item

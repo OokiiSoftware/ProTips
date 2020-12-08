@@ -116,6 +116,17 @@ public class FeedFragment extends Fragment {
         return adapter.getItemCount();
     }
 
+    /*public void mostrarSomenteMeusPosts(boolean b) {
+        if (data != null) {
+            data.clear();
+            if (b)
+                data.addAll(Import.getFirebase.getTipster().getPostes().values());
+            else
+                data.addAll(Import.get.seguindo.getPostes());
+            adapterUpdate();
+        }
+    }*/
+
     public void adapterUpdate() {
         if (adapter != null) {
             adapter.notifyDataSetChanged();

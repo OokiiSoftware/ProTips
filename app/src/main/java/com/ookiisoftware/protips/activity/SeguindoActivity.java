@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.UserAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.User;
 
@@ -77,7 +77,7 @@ public class SeguindoActivity extends AppCompatActivity {
                     intent = new Intent(activity, PerfilTipsterActivity.class);
                 else
                     intent = new Intent(activity, PerfilPunterActivity.class);
-                intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
+                intent.putExtra(Const.intent.USER_ID, item.getDados().getId());
                 activity.startActivity(intent);
             }
         };

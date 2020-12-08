@@ -1,6 +1,6 @@
 package com.ookiisoftware.protips.modelo;
 
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 import java.util.Comparator;
@@ -16,16 +16,16 @@ public class AutoComplete {
     //region Metodos
 
     public static void add(String categoria, String value) {
-        String esportes = Constantes.firebase.child.ESPORTES;
-        String linhas = Constantes.firebase.child.LINHAS;
-        String campeonatos = Constantes.firebase.child.CAMPEONATOS;
+        String esportes = Const.firebase.child.ESPORTES;
+        String linhas = Const.firebase.child.LINHAS;
+        String campeonatos = Const.firebase.child.CAMPEONATOS;
 
         if (value == null || value.isEmpty())
             return;
 
         if (categoria.equals(esportes) || categoria.equals(linhas) || categoria.equals(campeonatos)) {
             Import.getFirebase.getReference()
-                    .child(Constantes.firebase.child.AUTO_COMPLETE)
+                    .child(Const.firebase.child.AUTO_COMPLETE)
                     .child(categoria)
                     .child(value)
                     .setValue(value);

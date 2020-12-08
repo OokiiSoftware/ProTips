@@ -7,20 +7,19 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseReference;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class User {
 
     //region Variaveis
-    private Usuario dados;
+    private UserDados dados;
 
     private HashMap<String, String> seguidores;
     private HashMap<String, String> seguindo;
@@ -39,7 +38,7 @@ public class User {
         post_perfil = new HashMap<>();
         seguidoresPendentes = new HashMap<>();
         postes = new HashMap<>();
-        dados = new Usuario();
+        dados = new UserDados();
     }
     public User(User user) {
         seguindo = new HashMap<>(user.getSeguindo());
@@ -47,9 +46,9 @@ public class User {
         post_perfil = new HashMap<>(user.getPost_perfil());
         seguidoresPendentes = new HashMap<>(user.getSeguidoresPendentes());
         postes = new HashMap<>(user.getPostes());
-        dados = new Usuario();
+        dados = new UserDados();
 
-        Usuario u = user.getDados();
+        UserDados u = user.getDados();
         dados.setBloqueado(u.isBloqueado());
         dados.setTipster(u.isTipster());
         dados.setSenha(u.getSenha());
@@ -69,25 +68,25 @@ public class User {
 
     public void salvarToken() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.TOKENS)
+                .child(Const.firebase.child.DADOS)
+                .child(Const.firebase.child.TOKENS)
                 .setValue(getDados().getToken());
     }
 
     public void logout() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.TOKENS)
+                .child(Const.firebase.child.TOKENS)
                 .child(Import.getFirebase.getToken())
                 .removeValue();
     }
 
     public void solicitarSerTipster() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
+                .child(Const.firebase.child.SOLICITACAO_NOVO_TIPSTER)
                 .child(getDados().getId())
                 .setValue(getDados().getTipname());
 
@@ -99,10 +98,10 @@ public class User {
 
     public void habilitarTipster(boolean b) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.TIPSTER)
+                .child(Const.firebase.child.DADOS)
+                .child(Const.firebase.child.TIPSTER)
                 .setValue(b);
 
         getDados().setTipster(b);
@@ -111,7 +110,7 @@ public class User {
 
     public void solicitarSerTipsterCancelar() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.SOLICITACAO_NOVO_TIPSTER)
+                .child(Const.firebase.child.SOLICITACAO_NOVO_TIPSTER)
                 .child(getDados().getId())
                 .removeValue();
 
@@ -123,7 +122,7 @@ public class User {
     public void salvar(Activity activity) {
         DatabaseReference reference = Import.getFirebase.getReference();
         reference
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
                 .setValue(this)
                 .addOnSuccessListener(aVoid -> {
@@ -134,7 +133,7 @@ public class User {
                 });
 
         reference
-                .child(Constantes.firebase.child.IDENTIFICADOR)
+                .child(Const.firebase.child.IDENTIFICADOR)
                 .child(getDados().getTipname())
                 .setValue(getDados().getId());
     }
@@ -142,9 +141,9 @@ public class User {
     public void addSolicitacao(Context context, User user) {
         String id = user.getDados().getId();
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUIDORES_PENDENTES)
+                .child(Const.firebase.child.SEGUIDORES_PENDENTES)
                 .child(id)
                 .setValue(id);
 
@@ -153,27 +152,27 @@ public class User {
 
     public void removerSolicitacao(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUIDORES_PENDENTES)
+                .child(Const.firebase.child.SEGUIDORES_PENDENTES)
                 .child(id)
                 .removeValue();
     }
 
     private void addSeguindo(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUINDO)
+                .child(Const.firebase.child.SEGUINDO)
                 .child(id)
                 .setValue(id);
     }
 
     private void removerSeguindo(String id) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUINDO)
+                .child(Const.firebase.child.SEGUINDO)
                 .child(id)
                 .removeValue();
 
@@ -183,9 +182,9 @@ public class User {
     public void aceitarSeguidor(Context context, @NonNull User user) {
         String id = user.getDados().getId();
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUIDORES)
+                .child(Const.firebase.child.SEGUIDORES)
                 .child(id)
                 .setValue(id);
 
@@ -198,9 +197,9 @@ public class User {
     public void removerSeguidor(@NonNull User punter) {
         String id = punter.getDados().getId();
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.SEGUIDORES)
+                .child(Const.firebase.child.SEGUIDORES)
                 .child(id)
                 .removeValue();
 
@@ -210,27 +209,27 @@ public class User {
 
     public void excluir() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
                 .removeValue();
     }
 
     public void bloquear() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.BLOQUEADO)
+                .child(Const.firebase.child.DADOS)
+                .child(Const.firebase.child.BLOQUEADO)
                 .setValue(true);
         getDados().setBloqueado(true);
     }
 
     public void desbloquear() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(getDados().getId())
-                .child(Constantes.firebase.child.DADOS)
-                .child(Constantes.firebase.child.BLOQUEADO)
+                .child(Const.firebase.child.DADOS)
+                .child(Const.firebase.child.BLOQUEADO)
                 .setValue(false);
         getDados().setBloqueado(false);
     }
@@ -286,11 +285,11 @@ public class User {
 
     //region gets sets
 
-    public Usuario getDados() {
+    public UserDados getDados() {
         return dados;
     }
 
-    public void setDados(Usuario dados) {
+    public void setDados(UserDados dados) {
         this.dados = dados;
     }
 

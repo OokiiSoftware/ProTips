@@ -19,7 +19,7 @@ import com.ookiisoftware.protips.activity.PerfilPunterActivity;
 //import com.ookiisoftware.protips.adapter.PunterAdapter;
 import com.ookiisoftware.protips.activity.PerfilTipsterActivity;
 import com.ookiisoftware.protips.adapter.UserAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.User;
 //import com.ookiisoftware.protips.modelo.Punter;
@@ -78,8 +78,8 @@ public class NotificationsFragment extends Fragment {
                     intent = new Intent(activity, PerfilTipsterActivity.class);
                 else
                     intent = new Intent(activity, PerfilPunterActivity.class);
-                intent.putExtra(Constantes.intent.USER_ID, item.getDados().getId());
-                intent.putExtra(Constantes.intent.IS_GERENCIA, isGerencia);
+                intent.putExtra(Const.intent.USER_ID, item.getDados().getId());
+                intent.putExtra(Const.intent.IS_GERENCIA, isGerencia);
                 activity.startActivity(intent);
             }
         };
@@ -116,9 +116,9 @@ public class NotificationsFragment extends Fragment {
 
     private void removeNotification() {
         if (isTipster)
-            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_PENDENTE);
+            Import.notificacaoCancel(activity, Const.notification.id.NOVO_PUNTER_PENDENTE);
         else
-            Import.notificacaoCancel(activity, Constantes.notification.id.NOVO_PUNTER_ACEITO);
+            Import.notificacaoCancel(activity, Const.notification.id.NOVO_PUNTER_ACEITO);
     }
 
 }

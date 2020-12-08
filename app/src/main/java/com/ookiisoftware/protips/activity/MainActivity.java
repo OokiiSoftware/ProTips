@@ -1,6 +1,5 @@
 package com.ookiisoftware.protips.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,7 +17,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.auxiliar.notification.MyNotificationManager;
 import com.ookiisoftware.protips.auxiliar.notification.SegundoPlanoService;
@@ -40,14 +39,13 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import java.util.TimeZone;
 
-import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.FEED;
-import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.PERFIL;
-import static com.ookiisoftware.protips.auxiliar.Constantes.classes.fragments.pagerPosition.TIPSTERS;
+import static com.ookiisoftware.protips.auxiliar.Const.classes.fragments.pagerPosition.FEED;
+import static com.ookiisoftware.protips.auxiliar.Const.classes.fragments.pagerPosition.PERFIL;
+import static com.ookiisoftware.protips.auxiliar.Const.classes.fragments.pagerPosition.TIPSTERS;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private static final String TAG = "MainActivity";
 
-    private Activity activity;
+    private MainActivity activity;
     private String meuId;
     private SectionsPagerAdapter sectionsPagerAdapter;
     private boolean inPrimeiroPlano;
@@ -70,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private DrawerLayout drawer;
     private BottomNavigationView navView;
     // Itens do Menu
+    private MenuItem menu_meus_posts;
     private MenuItem menu_pesquisa;
     //Fragments
     public FeedFragment feedFragment;
@@ -123,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu_pesquisa = menu.findItem(R.id.menu_pesquisa);
+        menu_meus_posts = menu.findItem(R.id.menu_meus_postes);
+
+        menu_meus_posts.setVisible(Import.getFirebase.isTipster());
 
         SearchView sv_pesquisa = (SearchView) menu_pesquisa.getActionView();
         sv_pesquisa.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -141,14 +143,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
 
-        SwithMenu(pageSelect);
+        swithMenu(pageSelect);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            drawer.openDrawer(GravityCompat.START, true);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawer.openDrawer(GravityCompat.START, true);
+                break;
+            case R.id.menu_meus_postes: {
+                item.setChecked(!item.isChecked());
+                if (item.isChecked()) {
+                    item.setTitle(getResources().getString(R.string.menu_todos_postes));
+                    item.setIcon(getResources().getDrawable(R.drawable.ic_notification_icon_dark));
+                } else {
+                    item.setTitle(getResources().getString(R.string.menu_meus_postes));
+                    item.setIcon(getResources().getDrawable(R.drawable.ic_notification_icon_light));
+                }
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -192,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (title != null)
             Import.organizarTituloTollbar(activity, action_bar_titulo_1, action_bar_titulo_2, title);
 
-        SwithMenu(position);
+        swithMenu(position);
     }
 
     @Override
@@ -227,18 +242,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            boolean primeiroLogin = bundle.getBoolean(Constantes.intent.PRIMEIRO_LOGIN);
-            pageSelect = bundle.getInt(Constantes.intent.PAGE_SELECT);
+            boolean primeiroLogin = bundle.getBoolean(Const.intent.PRIMEIRO_LOGIN);
+            pageSelect = bundle.getInt(Const.intent.PAGE_SELECT);
             if (primeiroLogin) {
                 Intent intent = new Intent(activity, PerfilActivity.class);
-                intent.putExtra(Constantes.intent.PRIMEIRO_LOGIN, true);
+                intent.putExtra(Const.intent.PRIMEIRO_LOGIN, true);
                 startActivity(intent);
             }
         }
 
         try {
             feedFragment = new FeedFragment(activity);
-            perfilFragment = new PerfilFragment(activity);
+            perfilFragment = new PerfilFragment(this);
             tipstersFragment = new TipstersFragment(activity, false);
             notificationsFragment = new NotificationsFragment(activity, false);
 
@@ -274,8 +289,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //endregion
 
         //region viewPager
-        sectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
                 activity, feedFragment, tipstersFragment, perfilFragment, notificationsFragment);
 
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -287,17 +301,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getAllTipsters();
     }
 
-    private void SwithMenu(int position) {
+    private void swithMenu(int position) {
         boolean recolherSV = true;
         switch (position) {
-            case 0:
+            case FEED:
                 navView.setSelectedItemId(R.id.nav_menu_feed);
                 break;
-            case 1:
+            case TIPSTERS:
                 navView.setSelectedItemId(R.id.nav_menu_tipster);
                 recolherSV = false;
                 break;
-            case 2:
+            case PERFIL:
                 navView.setSelectedItemId(R.id.nav_menu_perfil);
                 break;
         }
@@ -305,13 +319,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             if (recolherSV && menu_pesquisa.isActionViewExpanded()) {
                 menu_pesquisa.collapseActionView();
             }
-            menu_pesquisa.setVisible(position == 1);
+            menu_pesquisa.setVisible(position == TIPSTERS);
         }
+
+        menu_meus_posts.setVisible(position == FEED && Import.getFirebase.isTipster());
     }
 
     private void baixarEsportes() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.AUTO_COMPLETE)
+                .child(Const.firebase.child.AUTO_COMPLETE)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -335,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void getAllTipsters() {
         refAllTipsters = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO);
+                .child(Const.firebase.child.USUARIO);
 
         eventAllTipsters = new ChildEventListener() {
             @Override
@@ -421,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void atualizarMeusDados() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(meuId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

@@ -15,11 +15,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.activity.MainActivity;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.modelo.Post;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 
 public class SegundoPlanoService extends Service {
 
@@ -75,9 +75,9 @@ public class SegundoPlanoService extends Service {
     private void CommandTipsterPunterPendente() {
         final String meu_id = Import.getFirebase.getId();
         final DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(meu_id)
-                .child(Constantes.firebase.child.SEGUIDORES_PENDENTES);
+                .child(Const.firebase.child.SEGUIDORES_PENDENTES);
 
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -123,9 +123,9 @@ public class SegundoPlanoService extends Service {
     private void CommandTipsterPunter() {
         final String meu_id = Import.getFirebase.getId();
         final DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(meu_id)
-                .child(Constantes.firebase.child.SEGUIDORES);
+                .child(Const.firebase.child.SEGUIDORES);
 
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -165,9 +165,9 @@ public class SegundoPlanoService extends Service {
     private void CommandPunterPendenteAceito() {
         final String meu_id = Import.getFirebase.getId();
         final DatabaseReference ref = Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(meu_id)
-                .child(Constantes.firebase.child.SEGUINDO);
+                .child(Const.firebase.child.SEGUINDO);
 
         ref.addChildEventListener(new ChildEventListener() {
             @Override
@@ -302,24 +302,24 @@ public class SegundoPlanoService extends Service {
 
     //region notifications
 
-    private void notificationPunterPendente1(@NonNull Usuario usuario) {
+    private void notificationPunterPendente1(@NonNull UserDados userDados) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
-                case Constantes.classes.fragments.pagerPosition.NOTIFICATIONS:
+                case Const.classes.fragments.pagerPosition.NOTIFICATIONS:
                     Import.activites.getMainActivity().notificationsFragment.adapterUpdate();
                     break;
-                case Constantes.classes.fragments.pagerPosition.PERFIL:
+                case Const.classes.fragments.pagerPosition.PERFIL:
                     Import.activites.getMainActivity().perfilFragment.updateNotificacao();
                     break;
                 default: {
                     String titulo = getResources().getString(R.string.app_name);
-                    String texto = getResources().getString(R.string.nova_solicitação_filiado) + "\n" + usuario.getNome();
+                    String texto = getResources().getString(R.string.nova_solicitação_filiado) + "\n" + userDados.getNome();
 
                     Intent intent = null;
                     if (!inPrimeiroPlano) {
                         intent = new Intent(getContext(), MainActivity.class);
-                        intent.putExtra(Constantes.intent.PAGE_SELECT, Constantes.classes.fragments.pagerPosition.NOTIFICATIONS);
+                        intent.putExtra(Const.intent.PAGE_SELECT, Const.classes.fragments.pagerPosition.NOTIFICATIONS);
                     }
 //                    int channelId = Constantes.notification.id.NOVO_PUNTER_PENDENTE;
 //                    MyNotificationManager.getInstance(getContext()).create(titulo, texto, intent);
@@ -329,17 +329,17 @@ public class SegundoPlanoService extends Service {
         } catch (Exception ignored) {}
     }
 
-    private void notificationPunterAceito1(@NonNull Usuario usuario) {
+    private void notificationPunterAceito1(@NonNull UserDados userDados) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
             switch (Import.activites.getMainActivity().getPagePosition()) {
-                case Constantes.classes.fragments.pagerPosition.PERFIL:
+                case Const.classes.fragments.pagerPosition.PERFIL:
                     Import.activites.getMainActivity().perfilFragment.updateNotificacao();
                     break;
-                case Constantes.classes.fragments.pagerPosition.FEED:
+                case Const.classes.fragments.pagerPosition.FEED:
                 default: {
                     String titulo = getResources().getString(R.string.app_name);
-                    String texto = getResources().getString(R.string.filiado_aceito) + "\n" + getResources().getString(R.string.tipster) + ": " + usuario.getNome();
+                    String texto = getResources().getString(R.string.filiado_aceito) + "\n" + getResources().getString(R.string.tipster) + ": " + userDados.getNome();
 
                     Intent intent = null;
                     if (!inPrimeiroPlano)
@@ -355,7 +355,7 @@ public class SegundoPlanoService extends Service {
     private void notificationNewPost(@NonNull User usuario, @NonNull Post post) {
         try {
             boolean inPrimeiroPlano = Import.activites.getMainActivity().isInPrimeiroPlano();
-            if (Import.activites.getMainActivity().getPagePosition() == Constantes.classes.fragments.pagerPosition.FEED &&
+            if (Import.activites.getMainActivity().getPagePosition() == Const.classes.fragments.pagerPosition.FEED &&
                     inPrimeiroPlano) {
                 Import.activites.getMainActivity().feedFragment.haveNewPostes(true);
             } else  {
@@ -440,7 +440,7 @@ public class SegundoPlanoService extends Service {
 
     private void getTipster(String key, int notificationID, boolean notificationVisible) {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(key)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -487,9 +487,9 @@ public class SegundoPlanoService extends Service {
 
     private void postAddChildEventList(String userId) {
         DatabaseReference ref =  Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(userId)
-                .child(Constantes.firebase.child.POSTES);
+                .child(Const.firebase.child.POSTES);
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {

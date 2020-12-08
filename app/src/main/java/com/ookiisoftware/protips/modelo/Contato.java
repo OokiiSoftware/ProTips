@@ -14,14 +14,14 @@ public class Contato {
         this.categoria = categoria;
     }
 
-    public static Usuario converterParaUsuario(Contato contato){
-        Usuario usuario = new Usuario();
-        usuario.setId(contato.getId());
-        usuario.setNome(contato.getNome());
-        usuario.setEmail(contato.getEmail());
+    public static UserDados converterParaUsuario(Contato contato){
+        UserDados userDados = new UserDados();
+        userDados.setId(contato.getId());
+        userDados.setNome(contato.getNome());
+        userDados.setEmail(contato.getEmail());
 //        usuario.setCategoria(contato.getCategoria());
-        contato.setImage_uri(usuario.getFoto());
-        return usuario;
+        contato.setImage_uri(userDados.getFoto());
+        return userDados;
     }
 
     public String getId() {

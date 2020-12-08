@@ -1,6 +1,6 @@
 package com.ookiisoftware.protips.modelo;
 
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 
 public class Notificacao {
@@ -26,7 +26,7 @@ public class Notificacao {
 
     public void enviar() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.MESSAGES)
+                .child(Const.firebase.child.MESSAGES)
                 .child(getPara())
                 .push()
                 .setValue(this);

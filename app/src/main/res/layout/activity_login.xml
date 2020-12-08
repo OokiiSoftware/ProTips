@@ -142,7 +142,7 @@
             android:layout_marginTop="@dimen/login_item_margin"
             android:gravity="center">
 
-            <RelativeLayout
+            <!--<RelativeLayout
                 android:layout_width="50dp"
                 android:layout_height="50dp">
 
@@ -165,7 +165,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_twitter" />
+                android:src="@drawable/ic_twitter" />-->
 
             <ImageView
                 android:id="@+id/iv_google"

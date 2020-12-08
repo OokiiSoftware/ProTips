@@ -280,6 +280,10 @@
     <string name="info_verifique_seu_email">Verifique sua caixa de email ou span e clique no link enviado para recuperar a sua senha</string>
     <string name="info_tip_publico">Um Tip público pode ser visto por pessoas que não estão em sua lista de Filiados. Você pode postar 5 Tips públicas por dia.</string>
     <string name="info_registrar_telefone">Insira seu Número de telefone abaixo e solicite um código via sms. Este serviço poderá ser cobrado pela sua operadora.</string>
+    <string name="menu_meus_postes">Mostrar meus posts</string>
+    <string name="menu_todos_postes">Mostrar todos os posts</string>
+    <string name="titulo_post">POSTS</string>
+    <string name="titulo_post_perfil">POST PERFIL</string>
 
     <!-- TODO: Arrays -->
     <string-array name="privacidade">

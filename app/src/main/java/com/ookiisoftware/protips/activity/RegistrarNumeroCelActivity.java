@@ -21,9 +21,9 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.ookiisoftware.protips.R;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -110,7 +110,7 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         erro.setVisibility(View.GONE);
 
-        SimpleMaskFormatter formatter = new SimpleMaskFormatter(Constantes.formats.TELEFONE);
+        SimpleMaskFormatter formatter = new SimpleMaskFormatter(Const.formats.TELEFONE);
         MaskTextWatcher watcher = new MaskTextWatcher(telefone, formatter);
         telefone.addTextChangedListener(watcher);
 
@@ -131,9 +131,9 @@ public class RegistrarNumeroCelActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
 //                                boolean isTipster = Import.getFirebase.isTipster();
-                                Usuario usuario = Import.getFirebase.getUsuario();
-                                if (usuario != null)
-                                    usuario.atualizarNumero(numero);
+                                UserDados userDados = Import.getFirebase.getUsuario();
+                                if (userDados != null)
+                                    userDados.atualizarNumero(numero);
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

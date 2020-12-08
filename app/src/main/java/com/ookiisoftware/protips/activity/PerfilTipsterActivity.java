@@ -3,11 +3,9 @@ package com.ookiisoftware.protips.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,12 +19,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.ookiisoftware.protips.R;
 import com.ookiisoftware.protips.adapter.CustomViewPager;
 import com.ookiisoftware.protips.adapter.SectionsPagerAdapter;
-import com.ookiisoftware.protips.auxiliar.Constantes;
+import com.ookiisoftware.protips.auxiliar.Const;
 import com.ookiisoftware.protips.auxiliar.Import;
 import com.ookiisoftware.protips.fragment.PostPerfilFragment;
 import com.ookiisoftware.protips.modelo.PostPerfil;
 import com.ookiisoftware.protips.modelo.User;
-import com.ookiisoftware.protips.modelo.Usuario;
+import com.ookiisoftware.protips.modelo.UserDados;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,10 +40,10 @@ public class PerfilTipsterActivity extends AppCompatActivity {
     private PostPerfilFragment postPerfilFragment2;
 
     private SectionsPagerAdapter pagerAdapter;
+    private PerfilTipsterActivity activity;
     private ArrayList<PostPerfil> data;
-    private Activity activity;
     private User user;
-    private Usuario usuario;
+    private UserDados userDados;
     private String meuId;
     private int acao;
     private boolean isGerencia;
@@ -92,8 +90,8 @@ public class PerfilTipsterActivity extends AppCompatActivity {
             //region Bundle
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
-                String userId = bundle.getString(Constantes.intent.USER_ID, null);
-                isGerencia = bundle.getBoolean(Constantes.intent.IS_GERENCIA);
+                String userId = bundle.getString(Const.intent.USER_ID, null);
+                isGerencia = bundle.getBoolean(Const.intent.IS_GERENCIA);
                 if (userId == null) {
                     Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
                     Import.Alert.e(TAG, "Init", "idUser == null");
@@ -104,10 +102,10 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                 user = Import.get.tipsters.get(userId);
 
                 if (user != null)
-                    usuario = user.getDados();
+                    userDados = user.getDados();
             }
 
-            if (usuario == null) {
+            if (userDados == null) {
                 Import.Alert.toast(activity, getResources().getString(R.string.erro_generico));
                 Import.Alert.e(TAG, "Init", "usuario == null");
                 onBackPressed();
@@ -120,18 +118,18 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
         //region setValues
 
-        nome.setText(usuario.getNome());
-        email.setText(usuario.getEmail());
-        tipName.setText(usuario.getTipname());
-        telefone.setText(usuario.getTelefone());
+        nome.setText(userDados.getNome());
+        email.setText(userDados.getEmail());
+        tipName.setText(userDados.getTipname());
+        telefone.setText(userDados.getTelefone());
         String seguidoresS = getResources().getString(R.string.filiados) + ": " + user.getSeguidores().size();
         seguidores.setText(seguidoresS);
-        Glide.with(activity).load(usuario.getFoto()).into(foto);
+        Glide.with(activity).load(userDados.getFoto()).into(foto);
 
-        if (usuario.getInfo() == null || usuario.getInfo().isEmpty())
+        if (userDados.getInfo() == null || userDados.getInfo().isEmpty())
             info.setVisibility(View.GONE);
         else
-            info.setText(usuario.getInfo());
+            info.setText(userDados.getInfo());
 
         btn_remover.setVisibility(View.GONE);
         btn_aceitar.setVisibility(View.GONE);
@@ -139,7 +137,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
         btn_seguir.setVisibility(View.GONE);
 
         if (isGerencia) {
-            if (usuario.isBloqueado()) {
+            if (userDados.isBloqueado()) {
                 btn_aceitar.setVisibility(View.VISIBLE);
                 btn_recusar.setVisibility(View.VISIBLE);
             } else {
@@ -164,12 +162,12 @@ public class PerfilTipsterActivity extends AppCompatActivity {
                 btn_recusar.setVisibility(View.VISIBLE);
             }
 
-            if (usuario.isPrivado()) {
+            if (userDados.isPrivado()) {
                 email.setVisibility(View.GONE);
                 telefone.setVisibility(View.GONE);
             } else {
                 email.setVisibility(View.VISIBLE);
-                if (usuario.getTelefone() == null || usuario.getTelefone().isEmpty())
+                if (userDados.getTelefone() == null || userDados.getTelefone().isEmpty())
                     telefone.setVisibility(View.GONE);
                 else
                     telefone.setVisibility(View.VISIBLE);
@@ -180,9 +178,9 @@ public class PerfilTipsterActivity extends AppCompatActivity {
             data = new ArrayList<>(user.getPost_perfil().values());
             Collections.sort(data, new PostPerfil.orderByDate());
             if (postPerfilFragment1 == null)
-                postPerfilFragment1 = new PostPerfilFragment(this, data, false);
+                postPerfilFragment1 = new PostPerfilFragment(activity, data, false);
             if (postPerfilFragment2 == null)
-                postPerfilFragment2 = new PostPerfilFragment(this, data, true);
+                postPerfilFragment2 = new PostPerfilFragment(activity, data, true);
         } else {
             data.clear();
             data.addAll(user.getPost_perfil().values());
@@ -193,8 +191,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
         //region viewPager
         if (pagerAdapter == null) {
-            pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
-                    FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, activity, postPerfilFragment1, postPerfilFragment2);
+            pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), activity, postPerfilFragment1, postPerfilFragment2);
             viewPager.setAdapter(pagerAdapter);
         }
         //endregion
@@ -284,7 +281,7 @@ public class PerfilTipsterActivity extends AppCompatActivity {
 
     private void updateDados() {
         Import.getFirebase.getReference()
-                .child(Constantes.firebase.child.USUARIO)
+                .child(Const.firebase.child.USUARIO)
                 .child(user.getDados().getId())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
